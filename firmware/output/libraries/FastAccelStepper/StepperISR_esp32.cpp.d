@@ -1,4 +1,4 @@
-d:\Timelapse_Slider\Timelapse_Slider_ESP_32\output\libraries\FastAccelStepper\StepperISR_esp32.cpp.o: \
+d:\Timelapse_Slider\ESP32_Camera_Slider\firmware\output\libraries\FastAccelStepper\StepperISR_esp32.cpp.o: \
  C:\Users\Carl\Documents\Arduino\libraries\FastAccelStepper\src\StepperISR_esp32.cpp \
  C:\Users\Carl\Documents\Arduino\libraries\FastAccelStepper\src\StepperISR.h \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6/tools/sdk/include/newlib/stdint.h \

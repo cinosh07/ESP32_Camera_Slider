@@ -1,4 +1,4 @@
-# 1 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+# 1 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
 // Websocket Example
 // https://techtutorialsx.com/2018/08/14/esp32-async-http-web-server-websockets-introduction/
 // https://techtutorialsx.com/2017/11/05/esp32-arduino-websocket-server-receiving-and-parsing-json-content/
@@ -8,16 +8,16 @@
 // https://getbootstrap.com/docs/5.1/utilities/colors/
 // https://getbootstrap.com/docs/5.1/
 
-# 11 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 2
-# 12 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 2
-# 13 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 2
-# 14 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 2
-# 15 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 2
-# 16 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 2
-# 17 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 2
-# 18 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 2
-# 19 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 2
-# 20 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 2
+# 11 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 2
+# 12 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 2
+# 13 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 2
+# 14 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 2
+# 15 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 2
+# 16 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 2
+# 17 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 2
+# 18 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 2
+# 19 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 2
+# 20 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 2
 
 // As in StepperDemo for Motor 1 on ESP32
 #define dirPinStepper 27
@@ -36,18 +36,18 @@ Config config;
 String message = "";
 FastAccelStepperEngine engine = FastAccelStepperEngine();
 FastAccelStepper *stepper = 
-# 37 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 3 4
+# 37 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 3 4
                            __null
-# 37 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+# 37 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
                                ;
 
 // Set web server port number to 80
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 AsyncWebSocketClient *globalClient = 
-# 42 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 3 4
+# 42 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 3 4
                                     __null
-# 42 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+# 42 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
                                         ;
 
 const char *PARAM_MESSAGE = "message";
@@ -84,9 +84,9 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
   {
     Serial.println("Client disconnected");
     globalClient = 
-# 77 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino" 3 4
+# 77 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino" 3 4
                   __null
-# 77 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+# 77 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
                       ;
   }
 }
@@ -161,16 +161,6 @@ void readConfigFile()
 
           String access_point = doc["wifi"]["access_point"];
           config.access_point = doc["wifi"]["access_point"];
-
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
         }
         Serial.println("");
       }
@@ -255,7 +245,7 @@ void setup()
   }
   else
   {
-    Serial.println("Setting Slider Wifi Connection...");
+    Serial.println("Setting Camera Slider Wifi Connection...");
     WiFi.begin((char *)config.ssid.c_str(), (char *)config.password.c_str());
     if (WiFi.waitForConnectResult() != WL_CONNECTED)
     {

@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#line 1 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+#line 1 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
 // Websocket Example
 // https://techtutorialsx.com/2018/08/14/esp32-async-http-web-server-websockets-introduction/
 // https://techtutorialsx.com/2017/11/05/esp32-arduino-websocket-server-receiving-and-parsing-json-content/
@@ -58,25 +58,25 @@ uint32_t clk = 0;
 RTC_DS3231 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
-#line 59 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+#line 59 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
 String ipToString(const IPAddress& address);
-#line 64 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+#line 64 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len);
-#line 80 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+#line 80 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
 void notFound(AsyncWebServerRequest *request);
-#line 84 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+#line 84 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
 bool getBoolValue(String value);
-#line 95 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+#line 95 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
 void readConfigFile();
-#line 174 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+#line 164 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
 String processor(const String &var);
-#line 196 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+#line 186 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
 void moveSlider(int dir);
-#line 217 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+#line 207 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
 void setup();
-#line 379 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+#line 369 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
 void loop();
-#line 59 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\Timelapse_Slider_ESP_32.ino"
+#line 59 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\Timelapse_Slider_ESP_32.ino"
 String ipToString(const IPAddress& address){
   return String() + address[0] + "." + address[1] + "." + address[2] + "." + address[3];
 }
@@ -169,16 +169,6 @@ void readConfigFile()
 
           String access_point = doc["wifi"]["access_point"];
           config.access_point = doc["wifi"]["access_point"];
-
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
-          // strcpy(config.password, doc["wifi"]["password"]);
         }
         Serial.println("");
       }
@@ -263,7 +253,7 @@ void setup()
   }
   else
   {
-    Serial.println("Setting Slider Wifi Connection...");
+    Serial.println("Setting Camera Slider Wifi Connection...");
     WiFi.begin((char *)config.ssid.c_str(), (char *)config.password.c_str());
     if (WiFi.waitForConnectResult() != WL_CONNECTED)
     {

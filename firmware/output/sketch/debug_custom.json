@@ -1,4 +1,4 @@
-#line 1 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\debug_custom.json"
+#line 1 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\debug_custom.json"
 {
 	"name":"Arduino on ESP32",
 	"toolchainPrefix":"xtensa-esp32-elf",

@@ -1,4 +1,4 @@
-d:\Timelapse_Slider\Timelapse_Slider_ESP_32\output\libraries\FS\FS.cpp.o: \
+d:\Timelapse_Slider\ESP32_Camera_Slider\firmware\output\libraries\FS\FS.cpp.o: \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6\libraries\FS\src\FS.cpp \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6\libraries\FS\src\FS.h \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6\cores\esp32/Arduino.h \

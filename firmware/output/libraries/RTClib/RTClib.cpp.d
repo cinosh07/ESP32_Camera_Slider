@@ -1,4 +1,4 @@
-d:\Timelapse_Slider\Timelapse_Slider_ESP_32\output\libraries\RTClib\RTClib.cpp.o: \
+d:\Timelapse_Slider\ESP32_Camera_Slider\firmware\output\libraries\RTClib\RTClib.cpp.o: \
  C:\Users\Carl\Documents\Arduino\libraries\RTClib\src\RTClib.cpp \
  C:\Users\Carl\Documents\Arduino\libraries\RTClib\src\RTClib.h \
  C:\Users\Carl\Documents\Arduino\libraries\Adafruit_BusIO/Adafruit_I2CDevice.h \

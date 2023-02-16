@@ -10,67 +10,67 @@
     "Includepath": "C:\\Users\\Carl\\Documents\\ArduinoData\\packages\\esp32\\hardware\\esp32\\1.0.6\\variants\\esp32"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "FastAccelStepper.h",
     "Includepath": "C:\\Users\\Carl\\Documents\\Arduino\\libraries\\FastAccelStepper\\src"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "WiFi.h",
     "Includepath": "C:\\Users\\Carl\\Documents\\ArduinoData\\packages\\esp32\\hardware\\esp32\\1.0.6\\libraries\\WiFi\\src"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "AsyncTCP.h",
     "Includepath": "C:\\Users\\Carl\\Documents\\Arduino\\libraries\\AsyncTCP\\src"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "ESPAsyncWebServer.h",
     "Includepath": "C:\\Users\\Carl\\Documents\\Arduino\\libraries\\ESPAsyncWebServer-master\\src"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "FS.h",
     "Includepath": "C:\\Users\\Carl\\Documents\\ArduinoData\\packages\\esp32\\hardware\\esp32\\1.0.6\\libraries\\FS\\src"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "Wire.h",
     "Includepath": "C:\\Users\\Carl\\Documents\\ArduinoData\\packages\\esp32\\hardware\\esp32\\1.0.6\\libraries\\Wire\\src"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "AS5600.h",
     "Includepath": "C:\\Users\\Carl\\Documents\\Arduino\\libraries\\AS5600"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "RTClib.h",
     "Includepath": "C:\\Users\\Carl\\Documents\\Arduino\\libraries\\RTClib\\src"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "Adafruit_I2CDevice.h",
     "Includepath": "C:\\Users\\Carl\\Documents\\Arduino\\libraries\\Adafruit_BusIO"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "SPIFFS.h",
     "Includepath": "C:\\Users\\Carl\\Documents\\ArduinoData\\packages\\esp32\\hardware\\esp32\\1.0.6\\libraries\\SPIFFS\\src"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "ArduinoJson.h",
     "Includepath": "C:\\Users\\Carl\\Documents\\Arduino\\libraries\\ArduinoJson\\src"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "ESPmDNS.h",
     "Includepath": "C:\\Users\\Carl\\Documents\\ArduinoData\\packages\\esp32\\hardware\\esp32\\1.0.6\\libraries\\ESPmDNS\\src"
   },
   {
-    "Sourcefile": "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
+    "Sourcefile": "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\firmware\\output\\sketch\\Timelapse_Slider_ESP_32.ino.cpp",
     "Include": "",
     "Includepath": null
   },

@@ -1,4 +1,4 @@
-d:\Timelapse_Slider\Timelapse_Slider_ESP_32\output\core\esp32-hal-log.c.o: \
+d:\Timelapse_Slider\ESP32_Camera_Slider\firmware\output\core\esp32-hal-log.c.o: \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6\cores\esp32\esp32-hal-log.c \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6/tools/sdk/include/newlib/stdio.h \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6/tools/sdk/include/newlib/_ansi.h \

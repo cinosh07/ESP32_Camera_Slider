@@ -1,4 +1,4 @@
-d:\Timelapse_Slider\Timelapse_Slider_ESP_32\output\libraries\SPI\SPI.cpp.o: \
+d:\Timelapse_Slider\ESP32_Camera_Slider\firmware\output\libraries\SPI\SPI.cpp.o: \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6\libraries\SPI\src\SPI.cpp \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6\libraries\SPI\src\SPI.h \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6/tools/sdk/include/newlib/stdlib.h \

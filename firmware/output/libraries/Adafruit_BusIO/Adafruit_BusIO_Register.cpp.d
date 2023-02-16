@@ -1,4 +1,4 @@
-d:\Timelapse_Slider\Timelapse_Slider_ESP_32\output\libraries\Adafruit_BusIO\Adafruit_BusIO_Register.cpp.o: \
+d:\Timelapse_Slider\ESP32_Camera_Slider\firmware\output\libraries\Adafruit_BusIO\Adafruit_BusIO_Register.cpp.o: \
  C:\Users\Carl\Documents\Arduino\libraries\Adafruit_BusIO\Adafruit_BusIO_Register.cpp \
  C:\Users\Carl\Documents\Arduino\libraries\Adafruit_BusIO/Adafruit_BusIO_Register.h \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6\cores\esp32/Arduino.h \

@@ -1,4 +1,4 @@
-d:\Timelapse_Slider\Timelapse_Slider_ESP_32\output\libraries\WiFi\ETH.cpp.o: \
+d:\Timelapse_Slider\ESP32_Camera_Slider\firmware\output\libraries\WiFi\ETH.cpp.o: \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6\libraries\WiFi\src\ETH.cpp \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6\libraries\WiFi\src\ETH.h \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6\libraries\WiFi\src\WiFi.h \

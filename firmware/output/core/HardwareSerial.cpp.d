@@ -1,4 +1,4 @@
-d:\Timelapse_Slider\Timelapse_Slider_ESP_32\output\core\HardwareSerial.cpp.o: \
+d:\Timelapse_Slider\ESP32_Camera_Slider\firmware\output\core\HardwareSerial.cpp.o: \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6\cores\esp32\HardwareSerial.cpp \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6/tools/sdk/include/newlib/stdlib.h \
  C:\Users\Carl\Documents\ArduinoData\packages\esp32\hardware\esp32\1.0.6/tools/sdk/include/newlib/machine/ieeefp.h \
