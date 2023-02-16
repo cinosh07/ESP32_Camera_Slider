@@ -27,6 +27,24 @@ h1{
 p{
   font-size: 1.5rem;
 }
+.about {
+  font-weight: lighter !important;
+  font-size: smaller;
+}
+.about-copyright {
+  font-weight: normal !important;
+  font-size: xx-small;
+  opacity: 0.75;
+  filter: drop-shadow(2px 2px 10px black) !important;
+}
+.about-picture{
+  position: absolute;
+    /* top: 20px; */
+    left: 10px;
+    right: 10px;
+    /* bottom: 20px; */
+    margin-top: -25px;
+}
 .graph {
   width: 300px;
   margin-left: auto;

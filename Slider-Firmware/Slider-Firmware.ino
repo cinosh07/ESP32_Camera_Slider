@@ -129,7 +129,6 @@ void readConfigFile()
         }
         else
         {
-          Serial.println("Another winner!");
           String ssidap = doc["wifi"]["ssidap"];
           config.ssidap = ssidap;
           Serial.println((String)config.ssidap);
@@ -302,8 +301,8 @@ void setup()
             { request->send(SPIFFS, "/www/images/joystick-blue.png", "image/png"); });
   server.on("/images/joystick-base.png", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/joystick-base.png", "image/png"); });
-  server.on("/images/splash.png", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/www/images/splash.png", "image/png"); });
+  server.on("/images/splash.jpg", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/images/splash.jpg", "image/jpeg"); });
 
   // Route to set GPIO to HIGH
   server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request)

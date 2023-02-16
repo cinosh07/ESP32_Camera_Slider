@@ -17,7 +17,8 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-darker">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">SLIDER CONTROL PANEL</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -29,15 +30,20 @@
             <a class="nav-link" href="#">Settings</a>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
               Profiles
             </a>
             <ul class="dropdown-menu bg-darker" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item text-light bg-darker" href="#">Default</a></li>
-              <li><hr class="dropdown-divider text-light"></li>
+              <li>
+                <hr class="dropdown-divider text-light">
+              </li>
               <li><a class="dropdown-item text-secondary bg-darker" href="#">Profile 1</a></li>
               <li><a class="dropdown-item text-secondary bg-darker" href="#">Profile 2</a></li>
-              <li><hr class="dropdown-divider text-light"></li>
+              <li>
+                <hr class="dropdown-divider text-light">
+              </li>
               <li><a class="dropdown-item text-primary bg-darker" href="#">... Edit Profiles</a></li>
             </ul>
           </li>
@@ -75,7 +81,7 @@
           <img src="images/joystick-red.png" />
         </div>
       </div>
-    
+
       <div class="joystick2">
         <img src="images/joystick-base.png" />
         <div id="stick2" class="stick">
@@ -84,8 +90,8 @@
       </div>
     </div>
   </div>
-  
-  
+
+
   <hr>
   <div class="graph">
     <canvas id="myChart"></canvas>
@@ -97,22 +103,37 @@
     **************************************************************
   -->
   <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content bg-dark">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">About</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <img src="./images/splash.png" class="img-fluid" alt="...">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">About</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+          <div class="card bg-darker">
+            <div class="card-img-top">
+              <img src="./images/splash.jpg" class="img-fluid" alt="...">
+              <div class="about-picture">
+                <h6 class="about-copyright text-warning">ESP32 Camera Slider Controller - version 0.1 - &copy; 2023 Carl Tremblay</h6>
+              </div>
+            </div>
+            <div class="card-body bg-darker">
+              <!-- <h5 class="card-title">ESP32 Camera Slider</h5> -->
+              <p class="h5 text-primary">ESP32 Camera Slider Controller</p>
+              <p class="h6 text-white-50 about">ESP32 Camera Slider Controller is a universal video / timelapse slider control system compatible with virtually any camera sliders. It is designed by Carl Tremblay (aka Cinosh07) with astrophotography timelapse and video production in mind. </p>
+            </div>
+          </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
   <!-- 
     **************************************************************
                               Scripts
