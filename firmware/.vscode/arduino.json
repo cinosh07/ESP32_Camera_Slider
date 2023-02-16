@@ -1,0 +1,8 @@
+{
+    "sketch": "Timelapse_Slider_ESP_32.ino",
+    "port": "COM4",
+    "configuration": "PartitionScheme=default,FlashMode=qio,FlashFreq=80,UploadSpeed=921600,DebugLevel=none",
+    "board": "esp32:esp32:esp32wrover",
+    "programmer": "esptool",
+    "output": "./output"
+}

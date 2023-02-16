@@ -1,0 +1,35 @@
+#line 1 "d:\\Timelapse_Slider\\Timelapse_Slider_ESP_32\\data\\config.json"
+{
+    "wifi": {
+        "ssidap": "Camera-Slider",
+        "passwordap": "slider12345678",
+        "ssid": "Garage2.5",
+        "password": "bienvenuesurgarage",
+        "access_point": false
+    },
+    "motors": {
+        "slider": {
+            "include": true,
+            "dir_pin": 0,
+            "step_pin": 0,
+            "enable_pin": 0,
+            "encoder": false,
+            "limit_switch": false,
+            "step_per_mm": 0,
+            "always_enabled": true
+        },
+        "pan": {},
+        "tilt": {},
+        "focus": {}
+    },
+    "camera_trigger": {
+        "trigger_type": "CANON",
+        "cam1_pin": 0,
+        "cam2_pin": 0,
+        "slave_pin": 0
+    },
+    "current_profile": "DEFAULT",
+    "slave_mode": true,
+    "slider_mode": "TIMELAPSE",
+    "current_state": "IDLE"
+}

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+
+<head>
+  <title>Slider Control Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/chart.js"></script>
+</head>
+
+<body class="bg-dark">
+  <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">SLIDER CONTROL PANEL</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Control Panel <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Settings</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Profiles
+          </a>
+          <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item text-light bg-dark" href="#">Default</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-light bg-dark" href="#">Profile 1</a>
+            <a class="dropdown-item text-light bg-dark" href="#">Profile 2</a>
+            <a class="dropdown-item text-primary bg-dark" href="#">... edit profiles</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+      </ul>
+
+    </div>
+  </nav> -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">SLIDER CONTROL PANEL</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Control Panel</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Settings</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Profiles
+            </a>
+            <ul class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item text-light bg-dark" href="#">Default</a></li>
+              <li><hr class="dropdown-divider text-light"></li>
+              <li><a class="dropdown-item text-secondary bg-dark" href="#">Profile 1</a></li>
+              <li><a class="dropdown-item text-secondary bg-dark" href="#">Profile 2</a></li>
+              <li><hr class="dropdown-divider text-light"></li>
+              <li><a class="dropdown-item text-primary bg-dark" href="#">... Edit Profiles</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">About</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <input id="ip" type="hidden" value="%IP%" />
+  <h3>
+    STATUS:
+    <small id="status" class="text-muted">%STATE%</small>
+  </h3>
+
+  <p><a href="/on"><button class="btn btn-primary">&#62;&#62;&#62;</button></a></p>
+  <p><a href="/off"><button class="btn btn-success">&#60;&#60;&#60;</button></a></p>
+  <div class="form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+    <label class="form-check-label" for="flexSwitchCheckDefault">SLAVE MODE</label>
+  </div>
+  <div class="form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault1">
+    <label class="form-check-label" for="flexSwitchCheckDefault">TIMELAPSE MODE</label>
+  </div>
+  <hr>
+  <div id="status1" style="color: #ff2900;">Joystick 1</div>
+  <div id="status2" style="color: #3370c2;">Joystick 2</div>
+  <div class="control-container">
+    <div class="joystick-container">
+      <div class="joystick1">
+        <img src="images/joystick-base.png" />
+        <div id="stick1" class="stick">
+          <img src="images/joystick-red.png" />
+        </div>
+      </div>
+    
+      <div class="joystick2">
+        <img src="images/joystick-base.png" />
+        <div id="stick2" class="stick">
+          <img src="images/joystick-blue.png" />
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <hr>
+  <div class="graph">
+    <canvas id="myChart"></canvas>
+  </div>
+
+  <!-- 
+    **************************************************************
+                              Modals
+    **************************************************************
+  -->
+  <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">About</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <img src="./images/splash.png" class="img-fluid" alt="...">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+  <!-- 
+    **************************************************************
+                              Scripts
+    **************************************************************
+  -->
+  <script>
+    const ctx = document.getElementById('myChart');
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Start', 'Ease-in 1 sec.', '', '', '', 'Ease-out 1 sec.', 'Stop'],
+        datasets: [{
+          label: 'Speed',
+          data: [0, 10, null, null, null, 10, 0],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+        spanGaps: true,
+        tension: 0.5
+      }
+    });
+  </script>
+  <script>
+    class JoystickController {
+      // stickID: ID of HTML element (representing joystick) that will be dragged
+      // maxDistance: maximum amount joystick can move in any direction
+      // deadzone: joystick must move at least this amount from origin to register value change
+      constructor(stickID, maxDistance, deadzone) {
+        this.id = stickID;
+        let stick = document.getElementById(stickID);
+
+        // location from which drag begins, used to calculate offsets
+        this.dragStart = null;
+
+        // track touch identifier in case multiple joysticks present
+        this.touchId = null;
+
+        this.active = false;
+        this.value = {
+          x: 0,
+          y: 0
+        };
+
+        let self = this;
+
+        function handleDown(event) {
+          self.active = true;
+
+          // all drag movements are instantaneous
+          stick.style.transition = '0s';
+
+          // touch event fired before mouse event; prevent redundant mouse event from firing
+          event.preventDefault();
+
+          if (event.changedTouches)
+            self.dragStart = {
+              x: event.changedTouches[0].clientX,
+              y: event.changedTouches[0].clientY
+            };
+          else
+            self.dragStart = {
+              x: event.clientX,
+              y: event.clientY
+            };
+
+          // if this is a touch event, keep track of which one
+          if (event.changedTouches)
+            self.touchId = event.changedTouches[0].identifier;
+        }
+
+        function handleMove(event) {
+          if (!self.active) return;
+
+          // if this is a touch event, make sure it is the right one
+          // also handle multiple simultaneous touchmove events
+          let touchmoveId = null;
+          if (event.changedTouches) {
+            for (let i = 0; i < event.changedTouches.length; i++) {
+              if (self.touchId == event.changedTouches[i].identifier) {
+                touchmoveId = i;
+                event.clientX = event.changedTouches[i].clientX;
+                event.clientY = event.changedTouches[i].clientY;
+              }
+            }
+
+            if (touchmoveId == null) return;
+          }
+
+          const xDiff = event.clientX - self.dragStart.x;
+          const yDiff = event.clientY - self.dragStart.y;
+          const angle = Math.atan2(yDiff, xDiff);
+          const distance = Math.min(maxDistance, Math.hypot(xDiff, yDiff));
+          const xPosition = distance * Math.cos(angle);
+          const yPosition = distance * Math.sin(angle);
+
+          // move stick image to new position
+          stick.style.transform = `translate3d(${xPosition}px, ${yPosition}px, 0px)`;
+
+          // deadzone adjustment
+          const distance2 = (distance < deadzone) ? 0 : maxDistance / (maxDistance - deadzone) * (distance -
+            deadzone);
+          const xPosition2 = distance2 * Math.cos(angle);
+          const yPosition2 = distance2 * Math.sin(angle);
+          const xPercent = parseFloat((xPosition2 / maxDistance).toFixed(4));
+          const yPercent = parseFloat((yPosition2 / maxDistance).toFixed(4));
+
+          self.value = {
+            x: xPercent,
+            y: yPercent
+          };
+        }
+
+        function handleUp(event) {
+          if (!self.active) return;
+
+          // if this is a touch event, make sure it is the right one
+          if (event.changedTouches && self.touchId != event.changedTouches[0].identifier) return;
+
+          // transition the joystick position back to center
+          stick.style.transition = '.2s';
+          stick.style.transform = `translate3d(0px, 0px, 0px)`;
+
+          // reset everything
+          self.value = {
+            x: 0,
+            y: 0
+          };
+          self.touchId = null;
+          self.active = false;
+        }
+
+        stick.addEventListener('mousedown', handleDown);
+        stick.addEventListener('touchstart', handleDown);
+        document.addEventListener('mousemove', handleMove, {
+          passive: false
+        });
+        document.addEventListener('touchmove', handleMove, {
+          passive: false
+        });
+        document.addEventListener('mouseup', handleUp);
+        document.addEventListener('touchend', handleUp);
+      }
+    }
+
+    let joystick1 = new JoystickController("stick1", 64, 8);
+    let joystick2 = new JoystickController("stick2", 64, 8);
+
+    function update() {
+      document.getElementById("status1").innerText = "Joystick 1: " + JSON.stringify(joystick1.value);
+      document.getElementById("status2").innerText = "Joystick 2: " + JSON.stringify(joystick2.value);
+    }
+
+    function loop() {
+      requestAnimationFrame(loop);
+      update();
+    }
+
+    loop();
+  </script>
+</body>
+
+</html>
