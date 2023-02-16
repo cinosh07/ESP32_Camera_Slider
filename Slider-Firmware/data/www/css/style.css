@@ -7,6 +7,9 @@ html {
   color: #f0f2f6;
 }
 .bg-dark {
+  background-color: #212936 ! important;
+}
+.bg-darker {
   background-color: #171d26 ! important;
 }
 .text-light {

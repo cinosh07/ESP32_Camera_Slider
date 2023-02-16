@@ -4,5 +4,5 @@
     "port": "COM4",
     "programmer": "esptool",
     "output": "./output",
-    "sketch": "Timelapse_Slider_ESP_32.ino"
+    "sketch": "Slider-Firmware.ino"
 }
