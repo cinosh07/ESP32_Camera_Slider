@@ -6,60 +6,85 @@ html {
   background-color: #212936;
   color: #f0f2f6;
 }
-.bg-dark {
-  background-color: #212936 ! important;
-}
-.bg-darker {
-  background-color: #171d26 ! important;
-}
-.text-light {
-  color: #f0f2f6 ! important;
-}
+
 body {
   background-color: #212936;
   color: #f0f2f6;
   text-align: center;
 }
-h1{
-  color: #f0f2f6;
-  padding: 2vh;
+
+.bg-dark {
+  background-color: #212936 ! important;
 }
-p{
-  font-size: 1.5rem;
+
+.bg-darker {
+  background-color: #171d26 ! important;
+}
+.text-success {
+  color: #12babf ! important;
+}
+.btn-success {
+  background-color: #12babf ! important;
+}
+.text-info {
+  color: #2e144d ! important;
+}
+.text-danger {
+  color: #ff2900 ! important;
+}
+.text-warning {
+  color: #ffc25e ! important;
+}
+.text-primary {
+  color: #3370c2 ! important;
+}
+.text-light {
+  color: #f0f2f6 ! important;
+}
+.title {
+  margin-left: 20px !important;
+}
+.header-icon {
+  margin-top: -7px !important;
 }
 .about {
   font-weight: lighter !important;
   font-size: smaller;
 }
+
 .about-copyright {
   font-weight: normal !important;
   font-size: xx-small;
   opacity: 0.75;
   filter: drop-shadow(2px 2px 10px black) !important;
 }
-.about-picture{
+
+.about-picture {
   position: absolute;
-    /* top: 20px; */
-    left: 10px;
-    right: 10px;
-    /* bottom: 20px; */
-    margin-top: -25px;
+  left: 10px;
+  right: 10px;
+  margin-top: -25px;
 }
+
 .graph {
   width: 300px;
   margin-left: auto;
   margin-right: auto;
 }
+
 .stick {
-  position: absolute; 
-  left:32px; top:32px;
+  position: absolute;
+  left: 32px;
+  top: 32px;
   filter: drop-shadow(10px 10px 10px black);
 }
+
 .control-container {
   height: 128px;
   margin-top: 50px;
-  
+
 }
+
 .joystick-container {
   margin-top: 50px;
   position: relative;
@@ -68,18 +93,21 @@ p{
   margin-left: auto;
   margin-right: auto;
 }
+
 .joystick1 {
-  width: 128px; 
-  position: absolute; 
-  left:0px; 
+  width: 128px;
+  position: absolute;
+  left: 0px;
   filter: drop-shadow(2px 2px 10px black);
 }
+
 .joystick2 {
-  width: 128px; 
-  position: absolute; 
-  right:0px; 
+  width: 128px;
+  position: absolute;
+  right: 0px;
   filter: drop-shadow(2px 2px 10px black);
 }
+
 .button {
   display: inline-block;
   background-color: #3370c2;
@@ -92,6 +120,7 @@ p{
   margin: 2px;
   cursor: pointer;
 }
+
 .button2 {
   background-color: #ff2900;
 }

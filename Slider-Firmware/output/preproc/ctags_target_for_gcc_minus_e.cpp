@@ -65,10 +65,10 @@ uint32_t clk = 0;
 RTC_DS3231 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
-String ipToString(const IPAddress& address){
+String ipToString(const IPAddress &address)
+{
   return String() + address[0] + "." + address[1] + "." + address[2] + "." + address[3];
 }
-
 
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
@@ -189,7 +189,8 @@ String processor(const String &var)
     Serial.print(ledState);
     return ledState;
   }
-  if (var == "IP") {
+  if (var == "IP")
+  {
     return ipToString(IP);
   }
   return String();
@@ -314,6 +315,18 @@ void setup()
             { request->send(SPIFFS, "/www/images/joystick-blue.png", "image/png"); });
   server.on("/images/joystick-base.png", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/joystick-base.png", "image/png"); });
+  server.on("/images/icon-64.png", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/images/icon-64.png", "image/png"); });
+
+  server.on("/images/icon-32.png", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/images/icon-32.png", "image/png"); });
+
+  server.on("/images/icon-120.png", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/images/icon120.png", "image/png"); });
+
+  server.on("/images/icon-240.png", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/images/icon-240.png", "image/png"); });
+
   server.on("/images/splash.jpg", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/splash.jpg", "image/jpeg"); });
 
