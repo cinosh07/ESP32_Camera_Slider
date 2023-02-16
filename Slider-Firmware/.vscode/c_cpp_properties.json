@@ -1,7 +1,6 @@
 {
     "version": 4,
     "configurations": [
-       
         {
             "name": "Arduino",
             "compilerPath": "C:\\Users\\Carl\\Documents\\ArduinoData\\packages\\esp32\\tools\\xtensa-esp32-elf-gcc\\1.22.0-97-gc752ad5-5.2.0\\bin\\xtensa-esp32-elf-g++",
