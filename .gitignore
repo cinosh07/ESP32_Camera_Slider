@@ -1,4 +1,13 @@
 output
 .vscode
+Slider-Firmware/output/*
 Slider-Firmware/output
 Slider-Firmware/.vscode
+DP NMX Screenshots
+
+Slider-Firmware/output/build.options.json
+Slider-Firmware/output/libraries/ESPAsyncWebServer-master/SPIFFSEditor.cpp.o
+Slider-Firmware/output/libraries/FastAccelStepper/FastAccelStepper.a
+Slider-Firmware/output/preproc/ctags_target_for_gcc_minus_e.cpp
+Slider-Firmware/output/sketch/data/config.json
+Slider-Firmware/output/build.options.json

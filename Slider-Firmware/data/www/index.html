@@ -2,7 +2,7 @@
 <html data-bs-theme="dark">
 
 <head>
-  <title>Slider Control Panel</title>
+  <title>Slider Controller</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="css/bootstrap.min.css" rel="stylesheet" />
@@ -13,10 +13,16 @@
   <script src="js/chart.js"></script>
 </head>
 
-<body class="bg-dark">
+<body class="bg-dark user-select-none">
+  <!-- 
+    **************************************************************
+                       Navigation Bar
+    **************************************************************
+  -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-darker">
     <div class="container-fluid">
-      <a class="navbar-brand text-white-50" href="#"><img class="header-icon" src="./images/icon-32.png" /> SLIDER CONTROLLER</a>
+      <a class="navbar-brand text-white-50 " href="#"><img class="header-icon" src="./images/icon-32.png" /> SLIDER
+        CONTROLLER</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -35,12 +41,14 @@
               Profiles
             </a>
             <ul class="dropdown-menu bg-darker" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item text-light bg-darker" href="#">Default</a></li>
+              <li><a class="dropdown-item text-light bg-darker" href="#">Profile 1</a></li>
               <li>
                 <hr class="dropdown-divider text-light">
               </li>
-              <li><a class="dropdown-item text-secondary bg-darker" href="#">Profile 1</a></li>
               <li><a class="dropdown-item text-secondary bg-darker" href="#">Profile 2</a></li>
+              <li><a class="dropdown-item text-secondary bg-darker" href="#">Profile 3</a></li>
+              <li><a class="dropdown-item text-secondary bg-darker" href="#">Profile 4</a></li>
+              <li><a class="dropdown-item text-secondary bg-darker" href="#">Profile 5</a></li>
               <li>
                 <hr class="dropdown-divider text-light">
               </li>
@@ -54,98 +62,179 @@
       </div>
     </div>
   </nav>
-  <input id="ip" type="hidden" value="%IP%" />
-  <h3>
-    STATUS:
-    <small id="status" class="text-muted">%STATE%</small>
-  </h3>
-
-  <p><a href="/on"><button class="btn btn-primary">&#62;&#62;&#62;</button></a></p>
-  <p><a href="/off"><button class="btn btn-success">&#60;&#60;&#60;</button></a></p>
-  <div class="form-check form-switch">
-    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-    <label class="form-check-label" for="flexSwitchCheckDefault">SLAVE MODE</label>
-  </div>
-  <div class="form-check form-switch">
-    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault1">
-    <label class="form-check-label" for="flexSwitchCheckDefault">TIMELAPSE MODE</label>
-  </div>
-  <hr>
-  <div id="status1" style="color: #ff2900;">Joystick 1</div>
-  <div id="status2" style="color: #3370c2;">Joystick 2</div>
-  <div class="control-container">
-    <div class="joystick-container">
-      <div class="joystick1">
-        <img src="images/joystick-base.png" />
-        <div id="stick1" class="stick">
-          <img src="images/joystick-red.png" />
-        </div>
+  <div class="container content">
+    <!-- 
+    **************************************************************
+                              Content
+    **************************************************************
+  -->
+    <!-- 
+    **************************************************************
+                              Settings
+  -->
+    <input id="ip" type="hidden" value="%IP%" />
+    <!-- <h6 class="statusBar">
+      STATUS:
+      <small id="status" class="text-muted">%STATE%</small>
+    </h6> -->
+    <div class="mode-container">
+      <div class="form-check form-switch checkContainer">
+        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+        <label class="form-check-label checkContainerLabel" for="flexSwitchCheckDefault"> SLAVE MODE</label>
       </div>
-
-      <div class="joystick2">
-        <img src="images/joystick-base.png" />
-        <div id="stick2" class="stick">
-          <img src="images/joystick-blue.png" />
-        </div>
+      <div class="form-check form-switch checkContainer">
+        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault1">
+        <label class="form-check-label checkContainerLabel" for="flexSwitchCheckDefault"> TIMELAPSE MODE</label>
       </div>
     </div>
-  </div>
+    <p><a href="#"><button class="btn btn-primary">IN</button></a> <a href="#"><button
+          class="btn btn-success">OUT</button></a> <a href="#"><button class="btn btn-secondary">+</button></a></p>
+    
+
+    <hr>
+
+    <!-- 
+    **************************************************************
+                              Joystick
+  -->
+    <div class="control-container">
+      <div class="joystick-box">
+        <div class="joystick-container">
+          <div class="joystick1">
+            <img src="images/joystick-base.png" />
+            <div id="stick1" class="stick">
+              <img src="images/joystick-red.png" />
+            </div>
+          </div>
+          <label class="form-label joystick-label text-secondary">SLIDE / FOCUS</label>
+          <div class="form-check form-switch checkContainer">
+            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault1" checked>
+            <label class="form-check-label checkContainerLabel" for="flexSwitchCheckDefault"> LOCK AXIS</label>
+          </div>
+        </div>
+      </div>
+      <div class="joystick-box">
+        <div class="joystick-container">
+          <div class="joystick2">
+            <img src="images/joystick-base.png" />
+            <div id="stick2" class="stick">
+              <img src="images/joystick-blue.png" />
+            </div>
+          </div>
+          <label class="form-label joystick-label  text-secondary">PAN / TILT</label>
+          <div class="form-check form-switch checkContainer">
+            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault1">
+            <label class="form-check-label checkContainerLabel" for="flexSwitchCheckDefault"> LOCK AXIS</label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <hr>
+    <!-- 
+    **************************************************************
+                             Graphs
+  -->
+    <p class="kinematic-title">KEYFRAME KINEMATIC</p>
+    <div class="graph">
+      <canvas id="myChart" class="graphChildren"></canvas>
+    </div>
+    <div class="btn-group" role="group" aria-label="Choose Axis">
+      <button type="button" class="btn btn-outline-primary active">Slide</button>
+      <button type="button" class="btn btn-outline-primary">Pan</button>
+      <button type="button" class="btn btn-outline-primary">Tilt</button>
+      <button type="button" class="btn btn-outline-primary">Focus</button>
+    </div><br>
+    <hr>
+    <p class="kinematic-title">KINEMATIC CONTROLS</p>
+    <div class="btn-group kinetic-group-button" role="group" aria-label="Axis Kinematic">
+      <button type="button" class="btn btn-outline-primary ">Off</button>
+      <button type="button" class="btn btn-outline-primary ">Linear</button>
+      <button type="button" class="btn btn-outline-primary active">Parabolic</button>
+      <button type="button" class="btn btn-outline-primary">Inverse</button>
+    </div><br>
+    <div class="range-container">
+      <label for="customRange1" class="form-label ease-control-label">Ease-in&nbsp;</label>
+      <input type="range" class="form-range ease-control" id="ease-in">&nbsp;
+      <label for="customRange1" class="form-label ease-control-label">Duration</label>
+      <input type="range" class="form-range ease-control" id="ease-in-duration">
+    </div>
+    <div class="range-container">
+      <label for="customRange1" class="form-label ease-control-label">Ease-out</label>
+      <input type="range" class="form-range ease-control" id="ease-out">&nbsp;
+      <label for="customRange1" class="form-label ease-control-label">Duration</label>
+      <input type="range" class="form-range ease-control" id="ease-out-duration">
+    </div>
 
 
-  <hr>
-  <div class="graph">
-    <canvas id="myChart"></canvas>
-  </div>
 
-  <!-- 
+    <!-- 
     **************************************************************
                               Modals
     **************************************************************
   -->
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content bg-dark">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">About</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-
-          <div class="card bg-darker">
-            <div class="card-img-top">
-              <img src="./images/splash.jpg" class="img-fluid" alt="...">
-              <div class="about-picture">
-                <h6 class="about-copyright text-warning">ESP32 Camera Slider Controller - version 0.1 - &copy; 2023 Carl Tremblay</h6>
+    <!-- 
+    **************************************************************
+                              About -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+          <div class="modal-header">
+            <h5 class="modal-title text-white-50" id="exampleModalLabel"><img class="header-icon"
+                src="./images/icon-32.png" /> About</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="card bg-darker">
+              <div class="card-img-top">
+                <img src="./images/splash.jpg" class="img-fluid" alt="...">
+                <div class="about-picture">
+                  <h6 class="about-copyright text-warning">ESP32 Camera Slider Controller - version 0.1 - &copy; 2023
+                    Carl
+                    Tremblay</h6>
+                </div>
+              </div>
+              <div class="card-body bg-darker">
+                <p class="h5 text-primary">ESP32 Camera Slider Controller</p>
+                <p class="h6 text-white-50 about">ESP32 Camera Slider Controller is a universal video / timelapse slider
+                  control system compatible with virtually any camera sliders. It is designed by Carl Tremblay (aka
+                  Cinosh07) with astrophotography timelapse and video production in mind. </p>
               </div>
             </div>
-            <div class="card-body bg-darker">
-              <!-- <h5 class="card-title">ESP32 Camera Slider</h5> -->
-              <p class="h5 text-primary">ESP32 Camera Slider Controller</p>
-              <p class="h6 text-white-50 about">ESP32 Camera Slider Controller is a universal video / timelapse slider control system compatible with virtually any camera sliders. It is designed by Carl Tremblay (aka Cinosh07) with astrophotography timelapse and video production in mind. </p>
-            </div>
           </div>
-
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <!-- Footer -->
+  <footer id="sticky-footer" class="card-footer fixed-bottom app-footer bg-darker text-white-50">
+    <div class="container text-end app-footer-content">
+      <div class="copyright-container">
+        <smaller >Copyright &copy; Carl Tremblay - 2023</smaller>
+      </div>
+      
+      <button class="btn btn-primary">NEXT</button>
+    </div>
+  </footer>
+  <!-- Footer -->
   <!-- 
     **************************************************************
                               Scripts
     **************************************************************
   -->
+  <!-- 
+    **************************************************************
+                              Chart -->
   <script>
     const ctx = document.getElementById('myChart');
 
     new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['Start', 'Ease-in 1 sec.', '', '', '', 'Ease-out 1 sec.', 'Stop'],
+        labels: ['Start', 'Ease-in', '', '', '', 'Ease-out', 'Stop'],
         datasets: [{
           label: 'Speed',
           data: [0, 10, null, null, null, 10, 0],
@@ -163,6 +252,9 @@
       }
     });
   </script>
+  <!-- 
+    **************************************************************
+                              Joystick -->
   <script>
     class JoystickController {
       // stickID: ID of HTML element (representing joystick) that will be dragged
@@ -289,8 +381,8 @@
     let joystick2 = new JoystickController("stick2", 64, 8);
 
     function update() {
-      document.getElementById("status1").innerText = "Joystick 1: " + JSON.stringify(joystick1.value);
-      document.getElementById("status2").innerText = "Joystick 2: " + JSON.stringify(joystick2.value);
+      // document.getElementById("status1").innerText = "Joystick 1: " + JSON.stringify(joystick1.value);
+      // document.getElementById("status2").innerText = "Joystick 2: " + JSON.stringify(joystick2.value);
     }
 
     function loop() {

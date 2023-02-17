@@ -1,46 +1,55 @@
+/* ***************************************************************
+                          Variables
+  ****************************************************************
+*/
 let socket;
-
+/* ***************************************************************
+                        Initialization
+  ****************************************************************
+*/
 $(document).ready(function () {
   startWebsocket();
 });
+$(window).on("beforeunload", function () {
+  socket.close();
+});
+$(window).on("unload", function () {});
+/* ***************************************************************
+                          Websocket
+  ****************************************************************
+*/
 function startWebsocket() {
   socket = new WebSocket("ws://" + $("#ip").val() + "/ws");
 
   socket.onopen = function (e) {
-    // alert("[open] Connection established");
-    // alert("Sending to server");
-    socket.send("My name is John");
-    $('#status').removeClass('text-danger');
-    $('#status').removeClass('text-muted');
-    $('#status').addClass('text-success');
-    $('#status').text('Connected')
+    socket.send("CONNECTED");
+    $("#status").removeClass("text-danger");
+    $("#status").removeClass("text-muted");
+    $("#status").addClass("text-success");
+    $("#status").text("Connected");
   };
 
   socket.onmessage = function (event) {
-    // alert(`[message] Data received from server: ${event.data}`);
+    // TODO
   };
 
   socket.onclose = function (event) {
     if (event.wasClean) {
-      // alert(
-      //   `[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`
-      // );
+      //  Connection closed cleanly
     } else {
       // e.g. server process killed or network down
-      // event.code is usually 1006 in this case
-      // alert("[close] Connection died");
     }
-    $('#status').removeClass('text-success');
-    $('#status').removeClass('text-muted');
-    $('#status').addClass('text-danger');
-    $('#status').text('Error')
+    $("#status").removeClass("text-success");
+    $("#status").removeClass("text-muted");
+    $("#status").addClass("text-danger");
+    $("#status").text("Error");
   };
 
   socket.onerror = function (error) {
-    // alert(`[error]`);
-    $('#status').removeClass('text-success');
-    $('#status').removeClass('text-muted');
-    $('#status').addClass('text-danger');
-    $('#status').text('Error')
+    //TODO ALERT ERROR
+    $("#status").removeClass("text-success");
+    $("#status").removeClass("text-muted");
+    $("#status").addClass("text-danger");
+    $("#status").text("Error");
   };
 }

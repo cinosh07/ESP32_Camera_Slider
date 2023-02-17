@@ -20,33 +20,43 @@ body {
 .bg-darker {
   background-color: #171d26 ! important;
 }
+
 .text-success {
   color: #12babf ! important;
 }
+
 .btn-success {
   background-color: #12babf ! important;
 }
+
 .text-info {
   color: #2e144d ! important;
 }
+
 .text-danger {
   color: #ff2900 ! important;
 }
+
 .text-warning {
   color: #ffc25e ! important;
 }
+
 .text-primary {
   color: #3370c2 ! important;
 }
+
 .text-light {
   color: #f0f2f6 ! important;
 }
+
 .title {
   margin-left: 20px !important;
 }
+
 .header-icon {
   margin-top: -7px !important;
 }
+
 .about {
   font-weight: lighter !important;
   font-size: smaller;
@@ -66,10 +76,45 @@ body {
   margin-top: -25px;
 }
 
+.checkContainerLabel {
+  margin-left: 10px !important;
+
+}
+
+.mode-container {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+.checkContainer {
+  display: inline-flex;
+}
+
+.settingsContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.statusBar {
+  font-size: smaller;
+  margin-top: 10px;
+}
+
 .graph {
-  width: 300px;
+  width: 90%;
   margin-left: auto;
   margin-right: auto;
+}
+
+.graphChildren {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.joystick-box {
+  width: 128px;
+  height: 188px;
+  margin: auto;
 }
 
 .stick {
@@ -79,19 +124,29 @@ body {
   filter: drop-shadow(10px 10px 10px black);
 }
 
+.kinematic-title {
+  margin-bottom: 0px;
+  margin-top: -10px;
+}
+
+
 .control-container {
-  height: 128px;
-  margin-top: 50px;
+  height: 188px;
+  width: 100%;
+  display: inline-flex;
 
 }
 
 .joystick-container {
-  margin-top: 50px;
   position: relative;
-  width: 356px;
-  height: 128px;
+  height: 188px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.joystick-label {
+  margin-top: 138px !important;
+  ;
 }
 
 .joystick1 {
@@ -123,4 +178,38 @@ body {
 
 .button2 {
   background-color: #ff2900;
+}
+
+.ease-control {
+  width: 30% !important;
+}
+
+.ease-control-label {
+  font-size: smaller;
+}
+
+.range-container {
+  margin-top: 5px;
+}
+
+.kinetic-group-button {
+  margin-top: 5px;
+}
+
+.content {
+  margin-bottom: 50px !important;
+}
+
+.app-footer {
+  height: 55px;
+}
+
+.app-footer-content {
+  display: flex;
+  flex-direction: row;
+}
+
+.copyright-container {
+  margin-right: auto;
+  padding-top: 5px;
 }

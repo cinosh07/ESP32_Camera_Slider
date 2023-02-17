@@ -6,29 +6,18 @@
         "password": "bienvenuesurgarage",
         "access_point": false
     },
-    "motors": {
-        "slider": {
-            "include": true,
-            "dir_pin": 0,
-            "step_pin": 0,
-            "enable_pin": 0,
-            "encoder": false,
-            "limit_switch": false,
-            "step_per_mm": 0,
-            "always_enabled": true
-        },
-        "pan": {},
-        "tilt": {},
-        "focus": {}
-    },
     "camera_trigger": {
-        "trigger_type": "CANON",
-        "cam1_pin": 0,
-        "cam2_pin": 0,
-        "slave_pin": 0
+        "cam1_pin": 2,
+        "cam2_pin": 4,
+        "slave_pin": 16
     },
-    "current_profile": "DEFAULT",
-    "slave_mode": true,
-    "slider_mode": "TIMELAPSE",
-    "current_state": "IDLE"
+    "bat_pin": 39,
+    "profile": "profile-1",
+    "profiles_name" : {
+        "profile-1" : "Cinosh - 1 axis slider",
+        "profile-2" : "Dynamic Perception - 3 axis slider",
+        "profile-3" : "none",
+        "profile-4" : "none",
+        "profile-5" : "none"
+    }
 }

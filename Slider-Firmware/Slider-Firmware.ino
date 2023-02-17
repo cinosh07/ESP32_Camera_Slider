@@ -6,6 +6,7 @@
 // https://www.chartjs.org/docs/latest/samples/information.html
 // https://getbootstrap.com/docs/5.1/utilities/colors/
 // https://getbootstrap.com/docs/5.1/
+// http://wiki.fluidnc.com/en/hardware/esp32_pin_reference
 
 #include "FastAccelStepper.h"
 #include <WiFi.h>
@@ -18,7 +19,6 @@
 #include "ArduinoJson.h"
 #include <ESPmDNS.h>
 
-// As in StepperDemo for Motor 1 on ESP32
 #define dirPinStepper 27
 #define enablePinStepper 13
 #define stepPinStepper 26
@@ -30,6 +30,8 @@ struct Config
   String ssid;
   String password;
   bool access_point;
+  JsonVariant configJson;
+  JsonVariant profileJson;
 };
 Config config;
 String message = "";
@@ -81,17 +83,6 @@ void notFound(AsyncWebServerRequest *request)
 {
   request->send(404, "text/plain", "Not found");
 }
-bool getBoolValue(String value)
-{
-  if (value == "true" || value == "TRUE" || value == "1")
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
 void readConfigFile()
 {
   if (!SPIFFS.begin())
@@ -104,7 +95,7 @@ void readConfigFile()
 
     if (!configFile)
     {
-      Serial.println("There was an error opening the file");
+      Serial.println("There was an error opening the config file");
       return;
     }
 
@@ -119,32 +110,28 @@ void readConfigFile()
       }
       else
       {
-        StaticJsonDocument<1024> doc;
-
+        DynamicJsonDocument doc(1024);
         DeserializationError error = deserializeJson(doc, configFile);
+        JsonVariant configJson = doc.as<JsonVariant>();
+        config.configJson = configJson;
         if (error)
         {
           Serial.println("Failed to parse config file");
-          //          Serial.println(error.f_str());
         }
         else
         {
           String ssidap = doc["wifi"]["ssidap"];
           config.ssidap = ssidap;
           Serial.println((String)config.ssidap);
-          //
           String passwordap = doc["wifi"]["passwordap"];
           Serial.println(passwordap);
           config.passwordap = passwordap;
-
           String ssid = doc["wifi"]["ssid"];
           config.ssid = ssid;
           Serial.println((String)config.ssid);
-
           String password = doc["wifi"]["password"];
           config.password = password;
           Serial.println((String)config.password);
-
           String access_point = doc["wifi"]["access_point"];
           config.access_point = doc["wifi"]["access_point"];
         }
@@ -153,9 +140,64 @@ void readConfigFile()
     }
 
     configFile.close();
+    openProfile();
   }
 }
+void openProfile()
+{
 
+  String filename = config.configJson["profile"];
+  String file = "/profiles/" + filename + ".json";
+  Serial.print("Profile file to load: ");
+  Serial.println(file);
+
+  if (!SPIFFS.begin())
+  {
+    Serial.println("Failed to mount SPIFFS");
+  }
+  else
+  {
+    File profileFile = SPIFFS.open(file, FILE_READ);
+
+    if (!profileFile)
+    {
+      Serial.println("There was an error opening the profile file");
+      return;
+    }
+
+    else
+    {
+      Serial.println("Profile File opened!");
+      size_t size = profileFile.size();
+      if (size > 1024)
+      {
+        Serial.print("Profile file size is too large: ");
+        Serial.println(size);
+      }
+      else
+      {
+
+        DynamicJsonDocument doc(1024);
+        DeserializationError error = deserializeJson(doc, profileFile);
+        JsonVariant profileJson = doc.as<JsonVariant>();
+        config.profileJson = profileJson;
+        if (error)
+        {
+          Serial.println("Failed to parse profile file");
+        }
+        else
+        {
+          String brand = doc["brand"];
+          String description = doc["description"];
+          Serial.println("Slider Model: " + brand + " " + description);
+        }
+        Serial.println("");
+      }
+    }
+
+    profileFile.close();
+  }
+}
 const int ledPin = 2;
 // Stores LED state
 String ledState;
@@ -266,7 +308,6 @@ void setup()
   Serial.println("Real TIme CLock initialized");
 
   // SPIFFS initialisation
-  //  Initialize SPIFFS
   if (!SPIFFS.begin(true))
   {
     Serial.println("An Error has occurred while mounting SPIFFS");
@@ -307,12 +348,6 @@ void setup()
 
   server.on("/images/icon-32.png", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/icon-32.png", "image/png"); });
-
-  server.on("/images/icon-120.png", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/www/images/icon120.png", "image/png"); });
-
-  server.on("/images/icon-240.png", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/www/images/icon-240.png", "image/png"); });
 
   server.on("/images/splash.jpg", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/splash.jpg", "image/jpeg"); });

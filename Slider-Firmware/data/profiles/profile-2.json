@@ -1,0 +1,20 @@
+{
+    "brand" : "Dynamic Perception",
+    "description" : "3 Axis Slider",
+    "motors": {
+        "slider": {
+            "include": true,
+            "dir_pin": 27,
+            "step_pin": 26,
+            "enable_pin": 13,
+            "encoder": false,
+            "limit_switch": 15,
+            "step_per_mm": 0,
+            "always_enabled": true
+        },
+        "pan": {},
+        "tilt": {},
+        "focus": {}
+    },
+    "length": 250
+}

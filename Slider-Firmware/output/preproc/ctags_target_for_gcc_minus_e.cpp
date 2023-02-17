@@ -19,7 +19,6 @@
 # 19 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino" 2
 # 20 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino" 2
 
-// As in StepperDemo for Motor 1 on ESP32
 #define dirPinStepper 27
 #define enablePinStepper 13
 #define stepPinStepper 26
@@ -31,23 +30,25 @@ struct Config
   String ssid;
   String password;
   bool access_point;
+  JsonVariant configJson;
+  JsonVariant profileJson;
 };
 Config config;
 String message = "";
 FastAccelStepperEngine engine = FastAccelStepperEngine();
 FastAccelStepper *stepper = 
-# 37 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino" 3 4
+# 38 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino" 3 4
                            __null
-# 37 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino"
+# 38 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino"
                                ;
 
 // Set web server port number to 80
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 AsyncWebSocketClient *globalClient = 
-# 42 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino" 3 4
+# 43 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino" 3 4
                                     __null
-# 42 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino"
+# 43 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino"
                                         ;
 
 const char *PARAM_MESSAGE = "message";
@@ -84,9 +85,9 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
   {
     Serial.println("Client disconnected");
     globalClient = 
-# 77 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino" 3 4
+# 78 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino" 3 4
                   __null
-# 77 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino"
+# 78 "d:\\Timelapse_Slider\\ESP32_Camera_Slider\\Slider-Firmware\\Slider-Firmware.ino"
                       ;
   }
 }
@@ -117,7 +118,7 @@ void readConfigFile()
 
     if (!configFile)
     {
-      Serial.println("There was an error opening the file");
+      Serial.println("There was an error opening the config file");
       return;
     }
 
@@ -132,13 +133,15 @@ void readConfigFile()
       }
       else
       {
-        StaticJsonDocument<1024> doc;
+        // StaticJsonDocument<1024> doc;
+        DynamicJsonDocument doc(1024);
 
         DeserializationError error = deserializeJson(doc, configFile);
+        JsonVariant configJson = doc.as<JsonVariant>();
+        config.configJson = configJson;
         if (error)
         {
           Serial.println("Failed to parse config file");
-          //          Serial.println(error.f_str());
         }
         else
         {
@@ -166,9 +169,70 @@ void readConfigFile()
     }
 
     configFile.close();
+    openProfile();
   }
 }
+void openProfile()
+{
 
+  // DynamicJsonDocument configDoc(1024);
+
+  String filename = config.configJson["profile"];
+  String file = "/profiles/" + filename + ".json";
+  Serial.print("Profile file to load: ");
+  Serial.println(file);
+
+  if (!SPIFFS.begin())
+  {
+    Serial.println("Failed to mount SPIFFS");
+  }
+  else
+  {
+    File profileFile = SPIFFS.open(file, "r");
+
+    if (!profileFile)
+    {
+      Serial.println("There was an error opening the profile file");
+      return;
+    }
+
+    else
+    {
+      Serial.println("Profile File opened!");
+      size_t size = profileFile.size();
+      if (size > 1024)
+      {
+        Serial.print("Profile file size is too large: ");
+        Serial.println(size);
+      }
+      else
+      {
+
+        DynamicJsonDocument doc(1024);
+
+        DeserializationError error = deserializeJson(doc, profileFile);
+        JsonVariant profileJson = doc.as<JsonVariant>();
+        config.profileJson = profileJson;
+        if (error)
+        {
+          Serial.println("Failed to parse profile file");
+        }
+        else
+        {
+          String brand = doc["brand"];
+          String description = doc["description"];
+
+          // Serial.print("Slider Model: ");
+          Serial.println("Slider Model: " + brand + " " + description);
+
+        }
+        Serial.println("");
+      }
+    }
+
+    profileFile.close();
+  }
+}
 const int ledPin = 2;
 // Stores LED state
 String ledState;
@@ -320,12 +384,6 @@ void setup()
 
   server.on("/images/icon-32.png", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/icon-32.png", "image/png"); });
-
-  server.on("/images/icon-120.png", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/www/images/icon120.png", "image/png"); });
-
-  server.on("/images/icon-240.png", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/www/images/icon-240.png", "image/png"); });
 
   server.on("/images/splash.jpg", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/splash.jpg", "image/jpeg"); });
