@@ -33,7 +33,7 @@
             <a class="nav-link active" aria-current="page" href="#">Control Panel</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Settings</a>
+            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#settingsModal" href="#">Settings</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
@@ -52,17 +52,18 @@
               <li>
                 <hr class="dropdown-divider text-light">
               </li>
-              <li><a class="dropdown-item text-primary bg-darker" href="#">... Edit Profiles</a></li>
+              <li><a class="dropdown-item text-primary bg-darker" data-bs-toggle="modal" data-bs-target="#profilesModal"
+                  href="#">... Edit Profiles</a></li>
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">About</a>
+            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#aboutModal" href="#">About</a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
-  <div class="container content">
+  <div id="control-panel" class="container content">
     <!-- 
     **************************************************************
                               Content
@@ -89,7 +90,7 @@
     </div>
     <p><a href="#"><button class="btn btn-primary">IN</button></a> <a href="#"><button
           class="btn btn-success">OUT</button></a> <a href="#"><button class="btn btn-secondary">+</button></a></p>
-    
+
 
     <hr>
 
@@ -133,7 +134,7 @@
     <hr>
     <!-- 
     **************************************************************
-                             Graphs
+                       Graphs & Kinematic
   -->
     <p class="kinematic-title">KEYFRAME KINEMATIC</p>
     <div class="graph">
@@ -166,59 +167,102 @@
       <input type="range" class="form-range ease-control" id="ease-out-duration">
     </div>
 
+  </div>
 
+  <!-- 
+    **************************************************************
+                       Intervalometer
+  -->
 
-    <!-- 
+  <div id="intervalometer" class="container content">
+    <!-- Intervalometer html file is imported by javascript load function.
+            This allow to use the intervalometer as a component
+          to be used in a standalone intervalometer device.
+
+          (Without the slider controls if firmware is in 
+      intervalometer mode -> "interval-mode" : true in config.json,) 
+      -->
+  </div>
+  <!-- 
+    **************************************************************
+                           Run
+  -->
+  <div id="run" class="container content">
+    <p class="kinematic-title">RUN</p>
+    <div class="btn-group" role="group" aria-label="Choose Axis">
+      <button type="button" class="btn btn-outline-primary active">START</button>
+      <button type="button" class="btn btn-outline-primary">STOP</button>
+    </div>
+  </div>
+
+  <!-- 
     **************************************************************
                               Modals
     **************************************************************
   -->
-    <!-- 
+  <!-- 
     **************************************************************
-                              About -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content bg-dark">
-          <div class="modal-header">
-            <h5 class="modal-title text-white-50" id="exampleModalLabel"><img class="header-icon"
-                src="./images/icon-32.png" /> About</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                      About dynamic Container
+  -->
+  <div id="about-mockup"></div>
+  <!-- 
+    **************************************************************
+                      Settings dynamic Container
+  -->
+  <div id="settings-mockup"></div>
+  <!-- 
+    **************************************************************
+                           Profiles modal
+  -->
+  <div class="modal fade" id="profilesModal" tabindex="-1" aria-labelledby="profilesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title text-white-50" id="profilesModalLabel"><img class="header-icon"
+              src="./images/icon-32.png" /> Edit Profiles</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="kinematic-title">EDIT PROFILES</p>
+          <div class="btn-group" role="group" aria-label="Choose Axis">
+            <button type="button" class="btn btn-outline-primary active">START</button>
+            <button type="button" class="btn btn-outline-primary">STOP</button>
           </div>
-          <div class="modal-body">
-            <div class="card bg-darker">
-              <div class="card-img-top">
-                <img src="./images/splash.jpg" class="img-fluid" alt="...">
-                <div class="about-picture">
-                  <h6 class="about-copyright text-warning">ESP32 Camera Slider Controller - version 0.1 - &copy; 2023
-                    Carl
-                    Tremblay</h6>
-                </div>
-              </div>
-              <div class="card-body bg-darker">
-                <p class="h5 text-primary">ESP32 Camera Slider Controller</p>
-                <p class="h6 text-white-50 about">ESP32 Camera Slider Controller is a universal video / timelapse slider
-                  control system compatible with virtually any camera sliders. It is designed by Carl Tremblay (aka
-                  Cinosh07) with astrophotography timelapse and video production in mind. </p>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
   </div>
   <!-- 
     **************************************************************
-                              Footer -->
+    **************************************************************
+                              Footer 
+    **************************************************************
+    **************************************************************                       
+                            -->
+
   <footer id="sticky-footer" class="card-footer fixed-bottom app-footer bg-darker text-white-50">
     <div class="container text-end app-footer-content">
       <div class="copyright-container">
-        <smaller >Copyright &copy; Carl Tremblay - 2023</smaller>
+        <smaller>Copyright &copy; Carl Tremblay - 2023</smaller>
       </div>
-      
-      <button class="btn btn-primary">NEXT</button>
+
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <li id="previous-button-container" class="page-item">
+            <div class="page-link bg-darker text-light border-primary" onclick="previousPage();" aria-label="Next">
+              <span id="previous-button" aria-hidden="true">&laquo;</span>
+            </div>
+          </li>
+          <li id="next-button-container" class="page-item">
+            <div class="page-link bg-primary text-light border-primary" onclick="nextPage();" aria-label="Next">
+              <span id="next-button" aria-hidden="true">&raquo; Intervalometer</span>
+            </div>
+          </li>
+        </ul>
+      </nav>
     </div>
   </footer>
   <!-- 

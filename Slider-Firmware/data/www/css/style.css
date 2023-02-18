@@ -199,7 +199,24 @@ body {
 .content {
   margin-bottom: 50px !important;
 }
-
+.content-hidden {
+  display: none;
+}
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+.iframe-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  margin-top: -5px;
+}
 .app-footer {
   height: 55px;
 }
@@ -211,5 +228,6 @@ body {
 
 .copyright-container {
   margin-right: auto;
-  padding-top: 5px;
+  padding-top: 12px;
+  font-size: xx-small;
 }

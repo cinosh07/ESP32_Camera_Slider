@@ -313,28 +313,37 @@ void setup()
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
-
+  // HTML Files
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/index.html", String(), false, processor); });
-  // Route to load style.css file
+  // TODO Swtich to this index page if firmware is in intervalometer mode -> "interval-mode" : true in config.json,
+  //  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+  //            { request->send(SPIFFS, "/www/index-interv.html", String(), false, processor); });
+  server.on("/interval.html", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/interval.html", String(), false, processor); });
+  server.on("/about.html", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/about.html", String(), false, processor); });
+  server.on("/settings.html", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/settings.html", String(), false, processor); });
+  // CSS Files
   server.on("/css/style.css", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/css/style.css", "text/css"); });
   server.on("/css/bootstrap.min.css", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/css/bootstrap.min.css", "text/css"); });
+  // Javascript Files
   server.on("/js/jquery.min.js", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/js/jquery.min.js", "text/javascript"); });
   server.on("/js/main.js", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/js/main.js", "text/javascript"); });
-
   server.on("/js/chart.js", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/js/chart.js", "text/javascript"); });
-
   server.on("/js/helpers.js", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/js/helpers.js", "text/javascript"); });
-
   server.on("/js/bootstrap.min.js", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/js/bootstrap.min.js", "text/javascript"); });
-
+  server.on("/js/interval.js", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/js/interval.js", "text/javascript"); });
+  // Image Files
   server.on("/favicon.ico", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/favicon.ico", "image/x-icon"); });
   server.on("/images/joystick-red.png", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -345,10 +354,8 @@ void setup()
             { request->send(SPIFFS, "/www/images/joystick-base.png", "image/png"); });
   server.on("/images/icon-64.png", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/icon-64.png", "image/png"); });
-
   server.on("/images/icon-32.png", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/icon-32.png", "image/png"); });
-
   server.on("/images/splash.jpg", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/splash.jpg", "image/jpeg"); });
 
