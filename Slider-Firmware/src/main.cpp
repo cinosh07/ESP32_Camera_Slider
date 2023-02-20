@@ -8,13 +8,25 @@
 // https://getbootstrap.com/docs/5.1/
 // http://wiki.fluidnc.com/en/hardware/esp32_pin_reference
 
+// https://randomnerdtutorials.com/esp32-pinout-reference-gpios/
+// https://www.upesy.fr/blogs/tutorials/esp32-pinout-reference-gpio-pins-ultimate-guide
+// https://forum.arduino.cc/t/solved-slave-address-tmc2209-uart/693615
+// https://github.com/teemuatlut/TMCStepper/issues/192
+// https://forum.arduino.cc/t/tmcstepper-arduino-tmc2209/956036/7
+// https://github.com/teemuatlut/TMCStepper/blob/master/examples/TMC_AccelStepper/TMC_AccelStepper.ino
+// https://forum.arduino.cc/t/using-a-tmc2209-silent-stepper-motor-driver-with-an-arduino/666992/10
+
+// https://github.com/sleemanj/DS3231_Simple/blob/master/examples/z2_Alarms/Alarm/Alarm.ino
+#include <Arduino.h>
+#include <TMCStepper.h>
 #include "FastAccelStepper.h"
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <Wire.h>
 #include "AS5600.h"
-#include "RTClib.h"
+// #include "RTClib.h"
+#include <DS3231_Simple.h>
 #include "SPIFFS.h"
 #include "ArduinoJson.h"
 #include <ESPmDNS.h>
@@ -22,6 +34,11 @@
 #define dirPinStepper 27
 #define enablePinStepper 13
 #define stepPinStepper 26
+
+#define SERIAL_PORT Serial2 
+#define R_SENSE 0.11f 
+#define DRIVER_ADDRESS 0b00
+
 IPAddress IP;
 struct Config
 {
@@ -37,6 +54,8 @@ Config config;
 String message = "";
 FastAccelStepperEngine engine = FastAccelStepperEngine();
 FastAccelStepper *stepper = NULL;
+
+// TMC2209Stepper driver = TMC2209Stepper(&SERIAL_PORT, R_SENSE, DRIVER_ADDRESS);
 
 // Set web server port number to 80
 AsyncWebServer server(80);
@@ -55,7 +74,8 @@ AS5600 as5600;
 uint32_t clk = 0;
 
 // RTC Clock
-RTC_DS3231 rtc;
+// RTC_DS3231 rtc;
+DS3231_Simple Clock;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 String ipToString(const IPAddress &address)
@@ -82,6 +102,61 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
 void notFound(AsyncWebServerRequest *request)
 {
   request->send(404, "text/plain", "Not found");
+}
+void openProfile()
+{
+
+  String filename = config.configJson["profile"];
+  String file = "/profiles/" + filename + ".json";
+  Serial.print("Profile file to load: ");
+  Serial.println(file);
+
+  if (!SPIFFS.begin())
+  {
+    Serial.println("Failed to mount SPIFFS");
+  }
+  else
+  {
+    File profileFile = SPIFFS.open(file, FILE_READ);
+
+    if (!profileFile)
+    {
+      Serial.println("There was an error opening the profile file");
+      return;
+    }
+
+    else
+    {
+      Serial.println("Profile File opened!");
+      size_t size = profileFile.size();
+      if (size > 1024)
+      {
+        Serial.print("Profile file size is too large: ");
+        Serial.println(size);
+      }
+      else
+      {
+
+        DynamicJsonDocument doc(1024);
+        DeserializationError error = deserializeJson(doc, profileFile);
+        JsonVariant profileJson = doc.as<JsonVariant>();
+        config.profileJson = profileJson;
+        if (error)
+        {
+          Serial.println("Failed to parse profile file");
+        }
+        else
+        {
+          String brand = doc["brand"];
+          String description = doc["description"];
+          Serial.println("Slider Model: " + brand + " " + description);
+        }
+        Serial.println("");
+      }
+    }
+
+    profileFile.close();
+  }
 }
 void readConfigFile()
 {
@@ -143,61 +218,7 @@ void readConfigFile()
     openProfile();
   }
 }
-void openProfile()
-{
 
-  String filename = config.configJson["profile"];
-  String file = "/profiles/" + filename + ".json";
-  Serial.print("Profile file to load: ");
-  Serial.println(file);
-
-  if (!SPIFFS.begin())
-  {
-    Serial.println("Failed to mount SPIFFS");
-  }
-  else
-  {
-    File profileFile = SPIFFS.open(file, FILE_READ);
-
-    if (!profileFile)
-    {
-      Serial.println("There was an error opening the profile file");
-      return;
-    }
-
-    else
-    {
-      Serial.println("Profile File opened!");
-      size_t size = profileFile.size();
-      if (size > 1024)
-      {
-        Serial.print("Profile file size is too large: ");
-        Serial.println(size);
-      }
-      else
-      {
-
-        DynamicJsonDocument doc(1024);
-        DeserializationError error = deserializeJson(doc, profileFile);
-        JsonVariant profileJson = doc.as<JsonVariant>();
-        config.profileJson = profileJson;
-        if (error)
-        {
-          Serial.println("Failed to parse profile file");
-        }
-        else
-        {
-          String brand = doc["brand"];
-          String description = doc["description"];
-          Serial.println("Slider Model: " + brand + " " + description);
-        }
-        Serial.println("");
-      }
-    }
-
-    profileFile.close();
-  }
-}
 const int ledPin = 2;
 // Stores LED state
 String ledState;
@@ -250,7 +271,13 @@ void setup()
 {
   Serial.begin(115200);
   Wire.begin();
-
+  Clock.begin();
+  
+  // We will set 2 alarms, the first alarm will fire at the 30th second of every minute
+  //  and the second alarm will fire every minute (at the 0th second)
+  
+  // First we will disable any existing alarms
+  Clock.disableAlarms();
   Serial.print("Slider Init ...");
   readConfigFile();
   delay(2000);
@@ -299,13 +326,30 @@ void setup()
   Serial.println(b);
 
   // RTC Clock
-  if (!rtc.begin())
-  {
-    Serial.println("Couldn't find RTC");
-    while (1)
-      ;
-  }
-  Serial.println("Real TIme CLock initialized");
+  // if (!rtc.begin())
+  // {
+  //   Serial.println("Couldn't find RTC");
+  //   while (1)
+  //     ;
+  // }
+  // Get an initialized timestamp
+  DateTime MyTimestamp = Clock.read();              
+  
+  // We want the alarm at this second
+  MyTimestamp.Second   = 30;     
+  Serial.print("Real TIme CLock initialized: ");
+  Serial.print(MyTimestamp.Year);
+  Serial.print("-");
+  Serial.print(MyTimestamp.Month);
+  Serial.print("-");
+  Serial.print(MyTimestamp.Day);
+  Serial.print(" ");
+  Serial.print(MyTimestamp.Hour);
+  Serial.print("h ");
+  Serial.print(MyTimestamp.Minute);
+  Serial.print("min ");
+  Serial.print(MyTimestamp.Second);
+  Serial.print("sec ");
 
   // SPIFFS initialisation
   if (!SPIFFS.begin(true))
@@ -360,43 +404,43 @@ void setup()
             { request->send(SPIFFS, "/www/images/splash.jpg", "image/jpeg"); });
 
   // Route to set GPIO to HIGH
-  server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
-    //    digitalWrite(ledPin, HIGH);
-    moveSlider(1);
-    request->send(SPIFFS, "/www/index.html", String(), false, processor); });
+  // server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request)
+  //           {
+  //   //    digitalWrite(ledPin, HIGH);
+  //   moveSlider(1);
+  //   request->send(SPIFFS, "/www/index.html", String(), false, processor); });
 
-  // Route to set GPIO to LOW
-  server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
-    //    digitalWrite(ledPin, LOW);
-    moveSlider(-1);
-    request->send(SPIFFS, "/www/index.html", String(), false, processor); });
+  // // Route to set GPIO to LOW
+  // server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request)
+  //           {
+  //   //    digitalWrite(ledPin, LOW);
+  //   moveSlider(-1);
+  //   request->send(SPIFFS, "/www/index.html", String(), false, processor); });
   // Send a GET request to <IP>/get?message=<message>
-  server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
-    //String message;
-    if (request->hasParam(PARAM_MESSAGE)) {
-      message = request->getParam(PARAM_MESSAGE)->value();
-    } else if (request->hasParam(COMMAND_MOVE)) {
-      message = request->getParam(COMMAND_MOVE)->value();
-    } else {
-      message = "No message sent";
-    }
-    Serial.print("Command received: ");
-    Serial.println(message);
-    request->send(200, "text/plain", "Hello, GET: " + message); });
+  // server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request)
+  //           {
+  //   //String message;
+  //   if (request->hasParam(PARAM_MESSAGE)) {
+  //     message = request->getParam(PARAM_MESSAGE)->value();
+  //   } else if (request->hasParam(COMMAND_MOVE)) {
+  //     message = request->getParam(COMMAND_MOVE)->value();
+  //   } else {
+  //     message = "No message sent";
+  //   }
+  //   Serial.print("Command received: ");
+  //   Serial.println(message);
+  //   request->send(200, "text/plain", "Hello, GET: " + message); });
 
   // Send a POST request to <IP>/post with a form field message set to <message>
-  server.on("/post", HTTP_POST, [](AsyncWebServerRequest *request)
-            {
-    //String message;
-    if (request->hasParam(PARAM_MESSAGE, true)) {
-      message = request->getParam(PARAM_MESSAGE, true)->value();
-    } else {
-      message = "No message sent";
-    }
-    request->send(200, "text/plain", "Hello, POST: " + message); });
+  // server.on("/post", HTTP_POST, [](AsyncWebServerRequest *request)
+  //           {
+  //   //String message;
+  //   if (request->hasParam(PARAM_MESSAGE, true)) {
+  //     message = request->getParam(PARAM_MESSAGE, true)->value();
+  //   } else {
+  //     message = "No message sent";
+  //   }
+  //   request->send(200, "text/plain", "Hello, POST: " + message); });
 
   server.onNotFound(notFound);
   ws.onEvent(onWsEvent);
