@@ -1,6 +1,6 @@
 {
-    "brand" : "Dynamic Perception",
-    "description" : "3 Axis Slider",
+    "brand": "Dynamic Perception",
+    "description": "3 Axis Slider",
     "motors": {
         "slider": {
             "include": true,
@@ -10,7 +10,8 @@
             "encoder": false,
             "limit_switch": 15,
             "step_per_mm": 0,
-            "always_enabled": true
+            "always_enabled": true,
+            "tmc_driver_address": "0b00"
         },
         "pan": {},
         "tilt": {},

@@ -9,7 +9,7 @@
     "camera_trigger": {
         "cam1_pin": 2,
         "cam2_pin": 4,
-        "slave_pin": 16
+        "slave_pin": 0
     },
     "bat_pin": 39,
     "profile": "profile-1",
@@ -20,5 +20,7 @@
         "profile-3" : "none",
         "profile-4" : "none",
         "profile-5" : "none"
-    }
+    }, 
+    "tmc_uart_rx": 16,
+    "tmc_uart_tx": 17
 }

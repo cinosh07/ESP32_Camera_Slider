@@ -17,7 +17,11 @@
 // https://forum.arduino.cc/t/using-a-tmc2209-silent-stepper-motor-driver-with-an-arduino/666992/10
 
 // https://github.com/sleemanj/DS3231_Simple/blob/master/examples/z2_Alarms/Alarm/Alarm.ino
+
+// https://m1cr0lab-esp32.github.io/remote-control-with-websocket/websocket-and-json/
+
 #include <Arduino.h>
+#include "esp_task_wdt.h"
 #include <TMCStepper.h>
 #include "FastAccelStepper.h"
 #include <WiFi.h>
@@ -25,18 +29,13 @@
 #include <ESPAsyncWebServer.h>
 #include <Wire.h>
 #include "AS5600.h"
-// #include "RTClib.h"
 #include <DS3231_Simple.h>
 #include "SPIFFS.h"
 #include "ArduinoJson.h"
 #include <ESPmDNS.h>
 
-#define dirPinStepper 27
-#define enablePinStepper 13
-#define stepPinStepper 26
-
-#define SERIAL_PORT Serial2 
-#define R_SENSE 0.11f 
+#define SERIAL_PORT Serial2
+#define R_SENSE 0.11f
 #define DRIVER_ADDRESS 0b00
 
 IPAddress IP;
@@ -46,16 +45,38 @@ struct Config
   String passwordap;
   String ssid;
   String password;
+  int tmc_uart_rx;
+  int tmc_uart_tx;
   bool access_point;
   JsonVariant configJson;
   JsonVariant profileJson;
 };
+struct Stepper_Motor
+{
+  String include;
+  int dir_pin;
+  int step_pin;
+  int enable_pin;
+  bool encoder;
+  int limit_switch;
+  int step_per_mm;
+  bool always_enabled;
+  String tmc_driver_address; // "tmc_driver_address": "0b00"
+};
+
 Config config;
+Stepper_Motor slider_Motor;
+Stepper_Motor pan_Motor;
+Stepper_Motor tilt_Motor;
+Stepper_Motor focus_motor;
+
 String message = "";
+TaskHandle_t CPU0_Timing_Task;
 FastAccelStepperEngine engine = FastAccelStepperEngine();
-FastAccelStepper *stepper = NULL;
+FastAccelStepper *stepperSlide = NULL;
 
 // TMC2209Stepper driver = TMC2209Stepper(&SERIAL_PORT, R_SENSE, DRIVER_ADDRESS);
+TMC2208Stepper tmcDriverSlide = TMC2208Stepper(&SERIAL_PORT, R_SENSE);
 
 // Set web server port number to 80
 AsyncWebServer server(80);
@@ -63,7 +84,6 @@ AsyncWebSocket ws("/ws");
 AsyncWebSocketClient *globalClient = NULL;
 
 const char *PARAM_MESSAGE = "message";
-
 const char *COMMAND_MOVE = "move";
 const char *COMMAND_MOVE_DIR = "move_dir";
 
@@ -150,6 +170,31 @@ void openProfile()
           String brand = doc["brand"];
           String description = doc["description"];
           Serial.println("Slider Model: " + brand + " " + description);
+
+          //   "slider": {
+          //     "include": true,
+          //     "dir_pin": 27,
+          //     "step_pin": 14,
+          //     "enable_pin": 12,
+          //     "encoder": false,
+          //     "limit_switch": 13,
+          //     "step_per_mm": 0,
+          //     "always_enabled": true,
+          //     "tmc_driver_address": "0b00"
+          // },
+          bool include = doc["motors"]["slider"]["include"];
+          if (include)
+          {
+            slider_Motor.dir_pin = doc["motors"]["slider"]["dir_pin"];
+            slider_Motor.step_pin = doc["motors"]["slider"]["step_pin"];
+            slider_Motor.enable_pin = doc["motors"]["slider"]["enable_pin"];
+            slider_Motor.encoder = doc["motors"]["slider"]["encoder"];
+            slider_Motor.limit_switch = doc["motors"]["slider"]["limit_switch"];
+            slider_Motor.step_per_mm = doc["motors"]["slider"]["step_per_mm"];
+            slider_Motor.always_enabled = doc["motors"]["slider"]["always_enabled"];
+            String tmc_driver_address = doc["motors"]["slider"]["tmc_driver_address"];
+            slider_Motor.tmc_driver_address = tmc_driver_address;
+          }
         }
         Serial.println("");
       }
@@ -209,6 +254,14 @@ void readConfigFile()
           Serial.println((String)config.password);
           String access_point = doc["wifi"]["access_point"];
           config.access_point = doc["wifi"]["access_point"];
+
+          int tmc_uart_rx = doc["tmc_uart_rx"];
+          config.tmc_uart_rx = tmc_uart_rx;
+          Serial.println((int)config.tmc_uart_rx);
+
+          int tmc_uart_tx = doc["tmc_uart_tx"];
+          config.tmc_uart_tx = tmc_uart_tx;
+          Serial.println((int)config.tmc_uart_tx);
         }
         Serial.println("");
       }
@@ -250,18 +303,52 @@ void moveSlider(int dir)
 {
   if (dir == 1)
   {
-    stepper->setSpeedInUs(1000); // the parameter is us/step !!!
-    stepper->setAcceleration(100);
-    stepper->move(2000);
+    stepperSlide->setSpeedInUs(1000); // the parameter is us/step !!!
+    stepperSlide->setAcceleration(10000);
+    stepperSlide->move(15000);
   }
   else
   {
-    stepper->setSpeedInUs(1000); // the parameter is us/step !!!
-    stepper->setAcceleration(100);
-    stepper->move(-2000);
+    stepperSlide->setSpeedInUs(1000); // the parameter is us/step !!!
+    stepperSlide->setAcceleration(100);
+    stepperSlide->move(-15000);
   }
 }
+void readEncoders()
+{
 
+  // if (ResetEncoder == 1) {
+  //   encoder.setZero();
+  //   lastOutput = 0;
+  //   S_position = 0;
+  //   E_position = 0;
+  //   revolutions = 0;
+  //   ResetEncoder = 0;
+  // }
+  // output = encoder.getPosition();           // get the raw value of the encoder
+
+  // if ((lastOutput - output) > 2047 )        // check if a full rotation has been made
+  //   revolutions++;
+  // if ((lastOutput - output) < -2047 )
+  //   revolutions--;
+
+  // E_position = revolutions * 4096 + output;   // calculate the position the the encoder is at based off of the number of revolutions
+
+  // lastOutput = output;                      // save the last raw value for the next loop
+  // E_outputPos = E_position;
+
+  // S_position = ((E_position / 2.56));               //Ajust encoder to stepper values the number of steps eqiv
+  // Serial.println(S_position);
+}
+void core0_timing_task(void *pvParameters)
+{
+  for (;;)
+  {
+    readEncoders();
+    vTaskDelay(10);
+    // BatCheck();
+  }
+}
 //***********************************************************
 //
 //                         Setup
@@ -269,21 +356,68 @@ void moveSlider(int dir)
 //***********************************************************
 void setup()
 {
+
   Serial.begin(115200);
+  Serial2.begin(115200, SERIAL_8N1, 16, 17);
+  // uint8_t result = tmcDriverSlide.test_connection();
+  // if (result)
+  // {
+  //   Serial.println(F("failed!"));
+  //   Serial.print(F("Likely cause: "));
+  //   switch (result)
+  //   {
+  //   case 1:
+  //     Serial.println(F("loose connection"));
+  //     break;
+  //   case 2:
+  //     Serial.println(F("Likely cause: no power"));
+  //     break;
+  //   }
+  //   Serial.println(F("Fix the problem and reset board."));
+  //   // abort();
+  // }
+  // tmcDriverSlide.push();
+  // tmcDriverSlide.beginSerial(115200);
+  
   Wire.begin();
   Clock.begin();
-  
+
   // We will set 2 alarms, the first alarm will fire at the 30th second of every minute
   //  and the second alarm will fire every minute (at the 0th second)
-  
+
   // First we will disable any existing alarms
   Clock.disableAlarms();
   Serial.print("Slider Init ...");
   readConfigFile();
   delay(2000);
+  // Prepare pins
+  pinMode(slider_Motor.enable_pin, OUTPUT);
+  pinMode(slider_Motor.step_pin, OUTPUT);
+  pinMode(slider_Motor.dir_pin, OUTPUT);
+  digitalWrite(slider_Motor.enable_pin, LOW); // Disable driver in hardware
+
   engine.init();
 
-  stepper = engine.stepperConnectToPin(stepPinStepper);
+  stepperSlide = engine.stepperConnectToPin(slider_Motor.step_pin);
+
+  // tmcDriverSlide.pdn_disable(true);     // Use PDN/UART pin for communication
+  tmcDriverSlide.I_scale_analog(false); // Use internal voltage reference
+  tmcDriverSlide.rms_current(990);      // Set driver current 500mA
+  tmcDriverSlide.toff(2);               // Enable driver in software
+  // tmcDriverSlide.en_pwm_mode(1);      // Enable extremely quiet stepping
+    tmcDriverSlide.pwm_autoscale(1);
+  tmcDriverSlide.microsteps(32);
+  tmcDriverSlide.begin();
+
+  uint32_t data = 0;
+  Serial.println("DRV_STATUS = 0x");
+  // tmcDriverSlide.DRV_STATUS();
+  // tmcDriverSlide.DRV_STATUS()
+  // tmcDriverSlide.DRV_STATUS(&data);
+  //  tmcDriverSlide.DRV_STATUS(data);
+  // Serial.println(data, HEX);
+  // int ready = tmcDriverSlide.available()
+  // Serial.println(tmcDriverSlide.DRV_STATUS);
 
   // Connect to Wi-Fi network with SSID and password
 
@@ -325,18 +459,11 @@ void setup()
   Serial.print("AS5600 Connected: ");
   Serial.println(b);
 
-  // RTC Clock
-  // if (!rtc.begin())
-  // {
-  //   Serial.println("Couldn't find RTC");
-  //   while (1)
-  //     ;
-  // }
   // Get an initialized timestamp
-  DateTime MyTimestamp = Clock.read();              
-  
+  DateTime MyTimestamp = Clock.read();
+
   // We want the alarm at this second
-  MyTimestamp.Second   = 30;     
+  MyTimestamp.Second = 30;
   Serial.print("Real TIme CLock initialized: ");
   Serial.print(MyTimestamp.Year);
   Serial.print("-");
@@ -349,7 +476,7 @@ void setup()
   Serial.print(MyTimestamp.Minute);
   Serial.print("min ");
   Serial.print(MyTimestamp.Second);
-  Serial.print("sec ");
+  Serial.println("sec ");
 
   // SPIFFS initialisation
   if (!SPIFFS.begin(true))
@@ -403,60 +530,25 @@ void setup()
   server.on("/images/splash.jpg", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/splash.jpg", "image/jpeg"); });
 
-  // Route to set GPIO to HIGH
-  // server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request)
-  //           {
-  //   //    digitalWrite(ledPin, HIGH);
-  //   moveSlider(1);
-  //   request->send(SPIFFS, "/www/index.html", String(), false, processor); });
-
-  // // Route to set GPIO to LOW
-  // server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request)
-  //           {
-  //   //    digitalWrite(ledPin, LOW);
-  //   moveSlider(-1);
-  //   request->send(SPIFFS, "/www/index.html", String(), false, processor); });
-  // Send a GET request to <IP>/get?message=<message>
-  // server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request)
-  //           {
-  //   //String message;
-  //   if (request->hasParam(PARAM_MESSAGE)) {
-  //     message = request->getParam(PARAM_MESSAGE)->value();
-  //   } else if (request->hasParam(COMMAND_MOVE)) {
-  //     message = request->getParam(COMMAND_MOVE)->value();
-  //   } else {
-  //     message = "No message sent";
-  //   }
-  //   Serial.print("Command received: ");
-  //   Serial.println(message);
-  //   request->send(200, "text/plain", "Hello, GET: " + message); });
-
-  // Send a POST request to <IP>/post with a form field message set to <message>
-  // server.on("/post", HTTP_POST, [](AsyncWebServerRequest *request)
-  //           {
-  //   //String message;
-  //   if (request->hasParam(PARAM_MESSAGE, true)) {
-  //     message = request->getParam(PARAM_MESSAGE, true)->value();
-  //   } else {
-  //     message = "No message sent";
-  //   }
-  //   request->send(200, "text/plain", "Hello, POST: " + message); });
-
   server.onNotFound(notFound);
   ws.onEvent(onWsEvent);
   server.addHandler(&ws);
   server.begin();
 
-  if (stepper)
+  if (stepperSlide)
   {
-    stepper->setDirectionPin(dirPinStepper);
-    stepper->setEnablePin(enablePinStepper);
-    stepper->setAutoEnable(true);
+    stepperSlide->setDirectionPin(slider_Motor.dir_pin);
+    stepperSlide->setEnablePin(slider_Motor.enable_pin);
+    stepperSlide->setAutoEnable(true);
 
     //   // If auto enable/disable need delays, just add (one or both):
-    //   // stepper->setDelayToEnable(50);
-    //   // stepper->setDelayToDisable(1000);
+    //   // stepperSlide->setDelayToEnable(50);
+    //   // stepperSlide->setDelayToDisable(1000);
   }
+  xTaskCreatePinnedToCore(core0_timing_task, "Core_0", 10000, NULL, 2, &CPU0_Timing_Task, 0);
+  delay(100);
+  disableCore0WDT();
+  moveSlider(1);
 }
 
 //***********************************************************

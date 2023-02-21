@@ -1,16 +1,17 @@
 {
-    "brand" : "Cinosh",
-    "description" : "1 Axis Slider",
+    "brand": "Cinosh",
+    "description": "1 Axis Slider",
     "motors": {
         "slider": {
             "include": true,
             "dir_pin": 27,
-            "step_pin": 26,
-            "enable_pin": 13,
+            "step_pin": 14,
+            "enable_pin": 33,
             "encoder": false,
-            "limit_switch": 15,
+            "limit_switch": 13,
             "step_per_mm": 0,
-            "always_enabled": true
+            "always_enabled": true,
+            "tmc_driver_address": "0b00"
         },
         "pan": {},
         "tilt": {},

@@ -10,7 +10,8 @@
             "encoder": false,
             "limit_switch": 0,
             "step_per_mm": 0,
-            "always_enabled": true
+            "always_enabled": true,
+            "tmc_driver_address": "0b00"
         },
         "pan": {},
         "tilt": {},
