@@ -101,10 +101,10 @@
     <div class="control-container">
       <div class="joystick-box">
         <div class="joystick-container">
-          <div class="joystick1">
+          <div class="joystickPanTilt">
             <img src="images/joystick-base.png" />
             <div id="stick1" class="stick">
-              <img src="images/joystick-red.png" />
+              <img id="stick1IMG" src="images/joystick-red.png" />
             </div>
           </div>
           <label class="form-label joystick-label text-secondary">SLIDE / FOCUS</label>
@@ -116,10 +116,10 @@
       </div>
       <div class="joystick-box">
         <div class="joystick-container">
-          <div class="joystick2">
+          <div class="joystickSlideFocus">
             <img src="images/joystick-base.png" />
             <div id="stick2" class="stick">
-              <img src="images/joystick-blue.png" />
+              <img id="stick2IMG" src="images/joystick-blue.png" />
             </div>
           </div>
           <label class="form-label joystick-label  text-secondary">PAN / TILT</label>
@@ -391,6 +391,7 @@
         }
 
         function handleUp(event) {
+          console.log(event);
           if (!self.active) return;
 
           // if this is a touch event, make sure it is the right one
@@ -407,6 +408,25 @@
           };
           self.touchId = null;
           self.active = false;
+          // if (event.target.id === )
+          var nodeValueId = event.target.attributes.id;
+          var nodeValue;
+          if (nodeValueId === undefined) {
+            //TODO fix this problem when we devent.target.attributes.id is undefined
+            nodeValue = "stick2IMG";
+          } else {
+            nodeValue =  event.target.attributes.id.nodeValue
+          }
+          switch (nodeValue) {
+            case "stick1IMG":
+              joystickPanMove(0.00);
+              joystickTiltMove(0.00);
+              break;
+            case "stick2IMG":
+              joystickSlideMove(0.00);
+              joystickFocusMove(0.00);
+              break;
+          }
         }
 
         stick.addEventListener('mousedown', handleDown);
@@ -422,12 +442,31 @@
       }
     }
 
-    let joystick1 = new JoystickController("stick1", 64, 8);
-    let joystick2 = new JoystickController("stick2", 64, 8);
+    let joystickPanTilt = new JoystickController("stick1", 64, 8);
+    let joystickSlideFocus = new JoystickController("stick2", 64, 8);
+    var joystickPanTiltPrevVal = { x: 0, y: 0 };
+    var joystickSlideFocusPrevVal = { x: 0, y: 0 };
 
     function update() {
-      // document.getElementById("status1").innerText = "Joystick 1: " + JSON.stringify(joystick1.value);
-      // document.getElementById("status2").innerText = "Joystick 2: " + JSON.stringify(joystick2.value);
+
+      if (joystickPanTilt.value.x !== joystickPanTiltPrevVal.x) {
+        joystickPanMove(joystickPanTilt.value.x);
+        joystickPanTiltPrevVal.x = joystickPanTilt.value.x;
+      }
+      if (joystickPanTilt.value.y !== joystickPanTiltPrevVal.y) {
+        joystickTiltMove(joystickPanTilt.value.y);
+        joystickPanTiltPrevVal.y = joystickPanTilt.value.y;
+      }
+      if (joystickSlideFocus.value.x !== joystickSlideFocusPrevVal.x) {
+        joystickSlideMove(joystickSlideFocus.value.x);
+        joystickPanTiltPrevVal.x = joystickSlideFocus.value.x;
+      }
+      if (joystickSlideFocus.value.y !== joystickSlideFocusPrevVal.y) {
+        joystickFocusMove(joystickSlideFocus.value.y);
+        joystickPanTiltPrevVal.y = joystickSlideFocus.value.y;
+      }
+
+
     }
 
     function loop() {

@@ -20,6 +20,9 @@
 
 // https://m1cr0lab-esp32.github.io/remote-control-with-websocket/websocket-and-json/
 
+// https://groups.google.com/g/accelstepper/c/t6ergGz30Lo?pli=1
+// https://www.instructables.com/Playing-with-Accelstepper-Code-HodgePodging-for-a-/
+
 #include <Arduino.h>
 #include "esp_task_wdt.h"
 #include <TMCStepper.h>
@@ -102,7 +105,146 @@ String ipToString(const IPAddress &address)
 {
   return String() + address[0] + "." + address[1] + "." + address[2] + "." + address[3];
 }
+enum Command
+{
+  JOYSTICK_PAN_MOVE,
+  JOYSTICK_TILT_MOVE,
+  JOYSTICK_SLIDE_MOVE,
+  JOYSTICK_FOCUS_MOVE
+};
 
+int getCommandEnum(String command)
+{
+  if (command == "JOYSTICK_PAN_MOVE")
+  {
+    return JOYSTICK_PAN_MOVE;
+  }
+  if (command == "JOYSTICK_TILT_MOVE")
+  {
+    return JOYSTICK_TILT_MOVE;
+  }
+  if (command == "JOYSTICK_SLIDE_MOVE")
+  {
+    return JOYSTICK_SLIDE_MOVE;
+  }
+  if (command == "JOYSTICK_FOCUS_MOVE")
+  {
+    return JOYSTICK_FOCUS_MOVE;
+  }
+}
+
+int previousSlideDir = -2;
+double previousSlideSpeed = -2.00;
+
+
+int SPEED_US = 100;
+int SPEED_MULTIPLICATOR = 10;
+int ACCELL = 10000;
+
+int getSpeedInUS(double speed) {
+  return round(((1.00-speed)+0.10)*SPEED_US*SPEED_MULTIPLICATOR);
+}
+
+void processCommand(StaticJsonDocument<128> command)
+{
+  // Serial.println("Webscoket Command Received: ");
+  String commandString = command["command"];
+  // Serial.println(commandString);
+
+  int switchCommand = getCommandEnum(commandString);
+  double speed = command["speed"];
+  int dir = command["dir"];
+  switch (switchCommand)
+  {
+  case JOYSTICK_PAN_MOVE:
+
+    break;
+  case JOYSTICK_TILT_MOVE:
+
+    break;
+  case JOYSTICK_SLIDE_MOVE:
+    // stepperSlide->setSpeedInUs(100); // the parameter is us/step !!!
+    // stepperSlide->setAcceleration(1000);
+    // stepperSlide->runForward();
+    // stepperSlide->runBackward();
+    // Serial.println("Webscoket Speed: " + (String) speed);
+    // Serial.println("Webscoket previousSlideSpeed: " + (String) previousSlideSpeed);
+    // Serial.println("Webscoket Dir: " + (String) dir);
+    // Serial.println("Webscoket previousSlideDir: " + (String) previousSlideDir);
+    // Serial.println("Webscoket getDirectionPin: " + (String) stepperSlide->getDirectionPin());
+    // if (speed != previousSlideSpeed)
+    // {
+      if (speed == 0.00)
+      {
+        Serial.println("Webscoket Command Received: stopMove()");
+        // stepperSlide->stopMove();
+        stepperSlide->setSpeedInUs(0);
+        // stepperSlide->setAcceleration(10);
+        stepperSlide->applySpeedAcceleration();
+        // stepperSlide->setAcceleration(1000);
+        // stepperSlide->applySpeedAcceleration();
+        stepperSlide->stopMove();
+        // stepperSlide->forceStop();
+        // stepperSlide->keepRunning();
+        // stepperSlide->
+        previousSlideSpeed = -2.00;
+        previousSlideDir = -2;
+      }
+      
+    // }
+    // if (dir != previousSlideDir)
+    // {
+      if (command["dir"] == 0 && speed > 0)
+      {
+        // double speed = command["speed"];
+        
+        Serial.println("Webscoket Command Received: runForward() Speed: " + (String) getSpeedInUS(speed));
+        stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
+        
+        // if (stepperSlide->isRunning()) {
+        //   // stepperSlide->applySpeedAcceleration();
+        // }
+        // if (!stepperSlide->isRunning()) {
+          stepperSlide->setAcceleration(ACCELL);
+          stepperSlide->runForward();
+        // }
+        // stepperSlide->applySpeedAcceleration();
+        // stepperSlide->move(100);
+        // stepperSlide->keepRunning();
+        // stepperSlide->runForward();
+        previousSlideDir = dir;
+        
+      }
+      else if (command["dir"] == -1 && speed > 0)
+      {
+        Serial.println("Webscoket Command Received: runBackward() Speed: " + (String) getSpeedInUS(speed));
+        stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
+        
+        // if (stepperSlide->isRunning()) {
+        //   // stepperSlide->applySpeedAcceleration();
+        // }
+        // if (stepperSlide->getDirectionPin() == 0){
+        //   stepperSlide->
+        // };
+        // stepperSlide->move(-100);
+        // stepperSlide->keepRunning();
+        // stepperSlide->applySpeedAcceleration();
+        // stepperSlide->runBackward();
+        // if (!stepperSlide->isRunning()) {
+          stepperSlide->setAcceleration(ACCELL);
+          stepperSlide->runBackward();
+        // }
+        previousSlideDir = dir;
+      }
+      
+    // }
+
+    break;
+  case JOYSTICK_FOCUS_MOVE:
+
+    break;
+  }
+}
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
 
@@ -117,6 +259,20 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
   {
     Serial.println("Client disconnected");
     globalClient = NULL;
+  }
+  else if (type == WS_EVT_DATA)
+  {
+
+    StaticJsonDocument<64> doc;
+    DeserializationError error = deserializeJson(doc, data);
+    if (error)
+    {
+      Serial.println("Failed to parse command");
+    }
+    else
+    {
+      processCommand(doc);
+    }
   }
 }
 void notFound(AsyncWebServerRequest *request)
@@ -299,13 +455,16 @@ String processor(const String &var)
   return String();
 }
 
-void moveSlider(int dir)
+void moveSlider(int dir, int speed, int accel, int distance, int distanceTo)
 {
   if (dir == 1)
   {
-    stepperSlide->setSpeedInUs(1000); // the parameter is us/step !!!
-    stepperSlide->setAcceleration(10000);
-    stepperSlide->move(15000);
+    // stepperSlide->setSpeedInUs(1000); // the parameter is us/step !!!
+    // stepperSlide->setAcceleration(10000);
+    // stepperSlide->move(15000);
+    stepperSlide->setSpeedInUs(speed); // the parameter is us/step !!!
+    stepperSlide->setAcceleration(accel);
+    stepperSlide->move(distance);
   }
   else
   {
@@ -378,7 +537,7 @@ void setup()
   // }
   // tmcDriverSlide.push();
   // tmcDriverSlide.beginSerial(115200);
-  
+
   Wire.begin();
   Clock.begin();
 
@@ -404,8 +563,8 @@ void setup()
   tmcDriverSlide.I_scale_analog(false); // Use internal voltage reference
   tmcDriverSlide.rms_current(990);      // Set driver current 500mA
   tmcDriverSlide.toff(2);               // Enable driver in software
-  // tmcDriverSlide.en_pwm_mode(1);      // Enable extremely quiet stepping
-    tmcDriverSlide.pwm_autoscale(1);
+                                        // tmcDriverSlide.en_pwm_mode(1);      // Enable extremely quiet stepping
+  tmcDriverSlide.pwm_autoscale(1);
   tmcDriverSlide.microsteps(32);
   tmcDriverSlide.begin();
 
@@ -548,7 +707,7 @@ void setup()
   xTaskCreatePinnedToCore(core0_timing_task, "Core_0", 10000, NULL, 2, &CPU0_Timing_Task, 0);
   delay(100);
   disableCore0WDT();
-  moveSlider(1);
+  // moveSlider(1);
 }
 
 //***********************************************************
@@ -556,6 +715,10 @@ void setup()
 //                         Loop
 //
 //***********************************************************
+void loop1()
+{
+}
+bool direction = false;
 void loop()
 {
 
@@ -577,5 +740,5 @@ void loop()
   //  }
   // delay(4000);
 
-  delay(10);
+  // delay(10);
 }

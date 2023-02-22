@@ -2,6 +2,7 @@
                           Variables
   ****************************************************************
 */
+var DEBUG = true;
 let socket;
 let currentPage = 1;
 /* ***************************************************************
@@ -24,7 +25,12 @@ $(window).on("beforeunload", function () {
   ****************************************************************
 */
 function startWebsocket() {
-  socket = new WebSocket("ws://" + $("#ip").val() + "/ws");
+  if (DEBUG) {
+    socket = new WebSocket("ws://slider.local/ws");
+  } else {
+    socket = new WebSocket("ws://" + $("#ip").val() + "/ws");
+  }
+
 
   socket.onopen = function (e) {
     socket.send("CONNECTED");
@@ -58,6 +64,139 @@ function startWebsocket() {
     $("#status").text("Error");
   };
 }
+function sendCommand(command) {
+  socket.send(JSON.stringify(command));
+}
+/* ***************************************************************
+                       Joysticks Controls
+  ****************************************************************
+*/
+function joystickPanMove(data) {
+  // console.log("############### joystickPan value: " + data);
+  let speed = data;
+  let dir = 0;
+  if (data < 0) {
+    dir = -1;
+    data = Math.abs(data);
+  }
+  let command = {
+    command: "JOYSTICK_PAN_MOVE",
+    speed: data,
+    dir: dir,
+  };
+  sendCommand(command);
+}
+function joystickTiltMove(data) {
+  // console.log("############### joysticTilt value: " + data);
+  let speed = data;
+  let dir = 0;
+  if (data < 0) {
+    dir = -1;
+    data = Math.abs(data);
+  }
+  let command = {
+    command: "JOYSTICK_TILT_MOVE",
+    speed: data,
+    dir: dir,
+  };
+  sendCommand(command);
+}
+var joystickSlideMoveArray = [];
+var joystickSlideMoveCount = 0;
+var joystickSlideMovePreviousDir = -2;
+var joystickSlideMovePreviousAverage = 0;
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+function joystickSlideMove(data) {
+  
+  let speed = data;
+  let dir = 0;
+
+  if (data < 0) {
+    dir = -1;
+    data = Math.abs(data);
+  }
+  if (joystickSlideMoveCount === 20) {
+    console.log("############### MAX COUNT joystickSlide value: " + data);
+    var average = Avg.average(joystickSlideMoveArray);
+    if (average !== joystickSlideMovePreviousAverage ) {
+      joystickSlideMovePreviousAverage = average;
+      let command = {
+        command: "JOYSTICK_SLIDE_MOVE",
+        speed: Avg.average(joystickSlideMoveArray),
+        dir: dir,
+      };
+      sendCommand(command);
+    }
+    joystickSlideMovePreviousAverage = 0;
+    joystickSlideMoveArray = [];
+    joystickSlideMoveCount = 0;
+  } else {
+
+    
+    sleep(10).then(() => { 
+      
+      joystickSlideMoveArray.push(data);
+      joystickSlideMoveCount = joystickSlideMoveCount + 1;
+    });
+  }
+  if (dir !== joystickSlideMovePreviousDir) {
+    console.log("############### CHANGE DIR joystickSlide value: " + data);
+    let command = {
+      command: "JOYSTICK_SLIDE_MOVE",
+      speed: data,
+      dir: dir,
+    };
+    sendCommand(command);
+    joystickSlideMovePreviousDir = dir;
+  }
+  if (data === 0) {
+    console.log("############### STOP joystickSlide value: " + data);
+    let command = {
+      command: "JOYSTICK_SLIDE_MOVE",
+      speed: data,
+      dir: dir,
+    };
+    sendCommand(command);
+    joystickSlideMovePreviousDir = -2;
+  }
+}
+class Avg {
+  constructor() {}
+
+  static average(array) {
+    var total = 0.0;
+    var count = 0.0;
+
+    jQuery.each(array, function (index, value) {
+      total += value;
+      count++;
+    });
+
+    return total / count;
+  }
+}
+function joystickFocusMove(data) {
+  // console.log("############### joystickFocus value: " + data);
+  let speed = data;
+  let dir = 0;
+  if (data < 0) {
+    dir = -1;
+    data = Math.abs(data);
+  }
+  let command = {
+    command: "JOYSTICK_FOCUS_MOVE",
+    speed: data,
+    dir: dir,
+  };
+  sendCommand(command);
+}
+/* ***************************************************************
+                          Navigation
+  ****************************************************************
+*/
+
 function previousPage() {
   // navigation system
   if (currentPage !== 1) {
@@ -97,5 +236,9 @@ function switchPage() {
       break;
   }
 }
+/* ***************************************************************
+            initialization before starting the script
+  ****************************************************************
+*/
 // $("#intervalometer").toggle(false);
 $("#run").toggle(false);
