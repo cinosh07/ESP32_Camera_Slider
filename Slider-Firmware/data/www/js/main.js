@@ -2,9 +2,30 @@
                           Variables
   ****************************************************************
 */
-var DEBUG = true;
+var DEBUG = false;
 let socket;
 let currentPage = 1;
+
+const JOYSTICK_COMMAND = {
+  JOYSTICK_PAN_MOVE: 0,
+  JOYSTICK_TILT_MOVE: 1,
+  JOYSTICK_SLIDE_MOVE: 2,
+  JOYSTICK_FOCUS_MOVE: 3,
+};
+const COMMAND = {
+  COMMAND: 0,
+  SPEED: 1,
+  DIR: 2,
+  ACCEL: 3,
+  MULTIPLICATOR: 4,
+  SPEED_SCALING: 5,
+};
+
+var joystickSlideMoveArray = [];
+var joystickSlideMoveCount = 0;
+var joystickSlideMovePreviousDir = -2;
+var joystickSlideMovePreviousAverage = 0.0;
+
 /* ***************************************************************
                         Initialization
   ****************************************************************
@@ -31,13 +52,15 @@ function startWebsocket() {
     socket = new WebSocket("ws://" + $("#ip").val() + "/ws");
   }
 
-
   socket.onopen = function (e) {
     socket.send("CONNECTED");
     $("#status").removeClass("text-danger");
     $("#status").removeClass("text-muted");
     $("#status").addClass("text-success");
     $("#status").text("Connected");
+    var alertConnected = document.getElementById("alertConnected");
+    var toast = new bootstrap.Toast(alertConnected);
+    toast.show();
   };
 
   socket.onmessage = function (event) {
@@ -54,6 +77,9 @@ function startWebsocket() {
     $("#status").removeClass("text-muted");
     $("#status").addClass("text-danger");
     $("#status").text("Error");
+    var alertConnected = document.getElementById("alertConnectionClose");
+    var toast = new bootstrap.Toast(alertConnected);
+    toast.show();
   };
 
   socket.onerror = function (error) {
@@ -62,10 +88,31 @@ function startWebsocket() {
     $("#status").removeClass("text-muted");
     $("#status").addClass("text-danger");
     $("#status").text("Error");
+    var alertConnected = document.getElementById("alertConnectionError");
+    var toast = new bootstrap.Toast(alertConnected);
+    toast.show();
   };
 }
 function sendCommand(command) {
-  socket.send(JSON.stringify(command));
+  // socket.send(JSON.stringify(command));
+  command = "0::" + command;
+  try {
+    if (socket && socket.readyState !== 3) {
+      socket.send(command);
+    console.log("Command Sended : ", command);
+    } else {
+      var alertConnected = document.getElementById("alertConnectionError");
+    var toast = new bootstrap.Toast(alertConnected);
+    toast.show();
+    }
+    
+  } catch (e) {
+
+    var alertConnected = document.getElementById("alertConnectionError");
+    var toast = new bootstrap.Toast(alertConnected);
+    toast.show();
+
+  }
 }
 /* ***************************************************************
                        Joysticks Controls
@@ -84,7 +131,7 @@ function joystickPanMove(data) {
     speed: data,
     dir: dir,
   };
-  sendCommand(command);
+  // sendCommand(command);
 }
 function joystickTiltMove(data) {
   // console.log("############### joysticTilt value: " + data);
@@ -99,17 +146,10 @@ function joystickTiltMove(data) {
     speed: data,
     dir: dir,
   };
-  sendCommand(command);
+  // sendCommand(command);
 }
-var joystickSlideMoveArray = [];
-var joystickSlideMoveCount = 0;
-var joystickSlideMovePreviousDir = -2;
-var joystickSlideMovePreviousAverage = 0;
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+
 function joystickSlideMove(data) {
-  
   let speed = data;
   let dir = 0;
 
@@ -117,66 +157,122 @@ function joystickSlideMove(data) {
     dir = -1;
     data = Math.abs(data);
   }
-  if (joystickSlideMoveCount === 20) {
-    console.log("############### MAX COUNT joystickSlide value: " + data);
+  if (joystickSlideMoveCount === 10) {
     var average = Avg.average(joystickSlideMoveArray);
-    if (average !== joystickSlideMovePreviousAverage ) {
-      joystickSlideMovePreviousAverage = average;
-      let command = {
-        command: "JOYSTICK_SLIDE_MOVE",
-        speed: Avg.average(joystickSlideMoveArray),
-        dir: dir,
-      };
+    if (Math.round(average) !== joystickSlideMovePreviousAverage) {
+      console.log(
+        "############### MAX COUNT joystickSlide value: " + Math.round(average)
+      );
+      console.log("############### average value: " + Math.round(average));
+      console.log(
+        "############### joystickSlideMovePreviousAverage value: " +
+          joystickSlideMovePreviousAverage
+      );
+      joystickSlideMovePreviousAverage = Math.round(average);
+      // const COMMAND = {
+      //   COMMAND: 0,
+      //   SPEED: 1,
+      //   DIR: 2,
+      //   ACCEL: 3,
+      //   MULTIPLICATOR: 4,
+      //   SPEED_SCALING: 5
+      // };
+      var command;
+      command =
+        JOYSTICK_COMMAND.JOYSTICK_SLIDE_MOVE +
+        "::" +
+        Math.round(Avg.average(joystickSlideMoveArray)) +
+        "::" +
+        dir +
+        "::" +
+        0 +
+        "::" +
+        0 +
+        "::" +
+        0;
+
+      // let command = {
+      //   command: "JOYSTICK_SLIDE_MOVE",
+      //   speed: Avg.average(joystickSlideMoveArray),
+      //   dir: dir,
+      // };
+
       sendCommand(command);
     }
-    joystickSlideMovePreviousAverage = 0;
+    // joystickSlideMovePreviousAverage = 0;
     joystickSlideMoveArray = [];
     joystickSlideMoveCount = 0;
   } else {
-
-    
-    sleep(10).then(() => { 
-      
-      joystickSlideMoveArray.push(data);
-      joystickSlideMoveCount = joystickSlideMoveCount + 1;
-    });
+    // sleep(10).then(() => {
+    joystickSlideMoveArray.push(Math.round(data * 100));
+    joystickSlideMoveCount = joystickSlideMoveCount + 1;
+    // });
   }
   if (dir !== joystickSlideMovePreviousDir) {
-    console.log("############### CHANGE DIR joystickSlide value: " + data);
-    let command = {
-      command: "JOYSTICK_SLIDE_MOVE",
-      speed: data,
-      dir: dir,
-    };
+    console.log(
+      "############### CHANGE DIR joystickSlide value: " +
+        Math.round(data * 100)
+    );
+    // let command = {
+    //   command: "JOYSTICK_SLIDE_MOVE",
+    //   speed: data,
+    //   dir: dir,
+    // };
+    // var command = [];
+    // command[COMMAND.COMMAND] = JOYSTICK_COMMAND.JOYSTICK_SLIDE_MOVE;
+    // command[COMMAND.SPEED] = Math.round(data * 100);
+    // command[COMMAND.DIR] = dir;
+    // command[COMMAND.ACCEL] = 0;
+    // command[COMMAND.MULTIPLICATOR] = 0;
+    // command[COMMAND.SPEED_SCALING] = 0;
+
+    var command;
+    command =
+      JOYSTICK_COMMAND.JOYSTICK_SLIDE_MOVE +
+      "::" +
+      Math.round(data * 100) +
+      "::" +
+      dir +
+      "::" +
+      0 +
+      "::" +
+      0 +
+      "::" +
+      0;
+
     sendCommand(command);
     joystickSlideMovePreviousDir = dir;
   }
   if (data === 0) {
-    console.log("############### STOP joystickSlide value: " + data);
-    let command = {
-      command: "JOYSTICK_SLIDE_MOVE",
-      speed: data,
-      dir: dir,
-    };
+    console.log(
+      "############### STOP joystickSlide value: " + Math.round(data * 100)
+    );
+    // let command = {
+    //   command: "JOYSTICK_SLIDE_MOVE",
+    //   speed: data,
+    //   dir: dir,
+    // };
+
+    var command;
+    command =
+      JOYSTICK_COMMAND.JOYSTICK_SLIDE_MOVE +
+      "::" +
+      Math.round(data * 100) +
+      "::" +
+      dir +
+      "::" +
+      0 +
+      "::" +
+      0 +
+      "::" +
+      0;
+
     sendCommand(command);
+
     joystickSlideMovePreviousDir = -2;
   }
 }
-class Avg {
-  constructor() {}
 
-  static average(array) {
-    var total = 0.0;
-    var count = 0.0;
-
-    jQuery.each(array, function (index, value) {
-      total += value;
-      count++;
-    });
-
-    return total / count;
-  }
-}
 function joystickFocusMove(data) {
   // console.log("############### joystickFocus value: " + data);
   let speed = data;
@@ -190,7 +286,7 @@ function joystickFocusMove(data) {
     speed: data,
     dir: dir,
   };
-  sendCommand(command);
+  // sendCommand(command);
 }
 /* ***************************************************************
                           Navigation
@@ -242,3 +338,32 @@ function switchPage() {
 */
 // $("#intervalometer").toggle(false);
 $("#run").toggle(false);
+
+/* ***************************************************************
+                          Utils
+  ****************************************************************
+*/
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/* ***************************************************************
+                          Classes
+  ****************************************************************
+*/
+class Avg {
+  constructor() {}
+
+  static average(array) {
+    var total = 0.0;
+    var count = 0.0;
+
+    jQuery.each(array, function (index, value) {
+      total += value;
+      count++;
+    });
+
+    return total / count;
+  }
+}

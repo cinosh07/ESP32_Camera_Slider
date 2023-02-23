@@ -40,6 +40,7 @@
 #define SERIAL_PORT Serial2
 #define R_SENSE 0.11f
 #define DRIVER_ADDRESS 0b00
+#define COMMAND_SIZE 8
 
 IPAddress IP;
 struct Config
@@ -101,60 +102,44 @@ uint32_t clk = 0;
 DS3231_Simple Clock;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
-String ipToString(const IPAddress &address)
-{
-  return String() + address[0] + "." + address[1] + "." + address[2] + "." + address[3];
-}
-enum Command
+enum Joystick_Command
 {
   JOYSTICK_PAN_MOVE,
   JOYSTICK_TILT_MOVE,
   JOYSTICK_SLIDE_MOVE,
   JOYSTICK_FOCUS_MOVE
 };
-
-int getCommandEnum(String command)
+enum Command
 {
-  if (command == "JOYSTICK_PAN_MOVE")
-  {
-    return JOYSTICK_PAN_MOVE;
-  }
-  if (command == "JOYSTICK_TILT_MOVE")
-  {
-    return JOYSTICK_TILT_MOVE;
-  }
-  if (command == "JOYSTICK_SLIDE_MOVE")
-  {
-    return JOYSTICK_SLIDE_MOVE;
-  }
-  if (command == "JOYSTICK_FOCUS_MOVE")
-  {
-    return JOYSTICK_FOCUS_MOVE;
-  }
-}
+  COMMAND,
+  SPEED,
+  DIR,
+  ACCEL,
+  MULTIPLICATOR,
+  SPEED_SCALING
+
+};
 
 int previousSlideDir = -2;
 double previousSlideSpeed = -2.00;
-
-
 int SPEED_US = 100;
 int SPEED_MULTIPLICATOR = 10;
 int ACCELL = 10000;
 
-int getSpeedInUS(double speed) {
-  return round(((1.00-speed)+0.10)*SPEED_US*SPEED_MULTIPLICATOR);
+String ipToString(const IPAddress &address)
+{
+  return String() + address[0] + "." + address[1] + "." + address[2] + "." + address[3];
+};
+
+int getSpeedInUS(double speed)
+{
+  return round(((1 - (speed / 100)) + 0.1) * SPEED_US * SPEED_MULTIPLICATOR);
 }
 
-void processCommand(StaticJsonDocument<128> command)
+void processCommand(int command[COMMAND_SIZE])
 {
-  // Serial.println("Webscoket Command Received: ");
-  String commandString = command["command"];
-  // Serial.println(commandString);
-
-  int switchCommand = getCommandEnum(commandString);
-  double speed = command["speed"];
-  int dir = command["dir"];
-  switch (switchCommand)
+  double speed = command[SPEED];
+  switch (command[COMMAND])
   {
   case JOYSTICK_PAN_MOVE:
 
@@ -163,86 +148,122 @@ void processCommand(StaticJsonDocument<128> command)
 
     break;
   case JOYSTICK_SLIDE_MOVE:
-    // stepperSlide->setSpeedInUs(100); // the parameter is us/step !!!
-    // stepperSlide->setAcceleration(1000);
-    // stepperSlide->runForward();
-    // stepperSlide->runBackward();
-    // Serial.println("Webscoket Speed: " + (String) speed);
-    // Serial.println("Webscoket previousSlideSpeed: " + (String) previousSlideSpeed);
-    // Serial.println("Webscoket Dir: " + (String) dir);
-    // Serial.println("Webscoket previousSlideDir: " + (String) previousSlideDir);
-    // Serial.println("Webscoket getDirectionPin: " + (String) stepperSlide->getDirectionPin());
-    // if (speed != previousSlideSpeed)
-    // {
-      if (speed == 0.00)
-      {
-        Serial.println("Webscoket Command Received: stopMove()");
-        // stepperSlide->stopMove();
-        stepperSlide->setSpeedInUs(0);
-        // stepperSlide->setAcceleration(10);
-        stepperSlide->applySpeedAcceleration();
-        // stepperSlide->setAcceleration(1000);
-        // stepperSlide->applySpeedAcceleration();
-        stepperSlide->stopMove();
-        // stepperSlide->forceStop();
-        // stepperSlide->keepRunning();
-        // stepperSlide->
-        previousSlideSpeed = -2.00;
-        previousSlideDir = -2;
-      }
-      
-    // }
-    // if (dir != previousSlideDir)
-    // {
-      if (command["dir"] == 0 && speed > 0)
-      {
-        // double speed = command["speed"];
-        
-        Serial.println("Webscoket Command Received: runForward() Speed: " + (String) getSpeedInUS(speed));
-        stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
-        
-        // if (stepperSlide->isRunning()) {
-        //   // stepperSlide->applySpeedAcceleration();
-        // }
-        // if (!stepperSlide->isRunning()) {
-          stepperSlide->setAcceleration(ACCELL);
-          stepperSlide->runForward();
-        // }
-        // stepperSlide->applySpeedAcceleration();
-        // stepperSlide->move(100);
-        // stepperSlide->keepRunning();
-        // stepperSlide->runForward();
-        previousSlideDir = dir;
-        
-      }
-      else if (command["dir"] == -1 && speed > 0)
-      {
-        Serial.println("Webscoket Command Received: runBackward() Speed: " + (String) getSpeedInUS(speed));
-        stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
-        
-        // if (stepperSlide->isRunning()) {
-        //   // stepperSlide->applySpeedAcceleration();
-        // }
-        // if (stepperSlide->getDirectionPin() == 0){
-        //   stepperSlide->
-        // };
-        // stepperSlide->move(-100);
-        // stepperSlide->keepRunning();
-        // stepperSlide->applySpeedAcceleration();
-        // stepperSlide->runBackward();
-        // if (!stepperSlide->isRunning()) {
-          stepperSlide->setAcceleration(ACCELL);
-          stepperSlide->runBackward();
-        // }
-        previousSlideDir = dir;
-      }
-      
-    // }
+
+    if (speed == 0)
+    {
+      Serial.println("Webscoket Command Received: stopMove()");
+      stepperSlide->setSpeedInUs(0);
+      stepperSlide->applySpeedAcceleration();
+      stepperSlide->stopMove();
+      previousSlideSpeed = -2.00;
+      previousSlideDir = -2;
+    }
+
+    if (command[DIR] == 0 && speed > 0)
+    {
+
+      Serial.println("Webscoket Command Received: runForward() Speed: " + (String)getSpeedInUS(speed));
+      stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
+      stepperSlide->setAcceleration(ACCELL);
+      stepperSlide->runForward();
+      previousSlideDir = command[DIR];
+    }
+    else if (command[DIR] == -1 && speed > 0)
+    {
+      Serial.println("Webscoket Command Received: runBackward() Speed: " + (String)getSpeedInUS(speed));
+      stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
+      stepperSlide->setAcceleration(ACCELL);
+      stepperSlide->runBackward();
+      previousSlideDir = command[DIR];
+    }
 
     break;
   case JOYSTICK_FOCUS_MOVE:
 
     break;
+  }
+}
+
+void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
+{
+  AwsFrameInfo *info = (AwsFrameInfo *)arg;
+  if (info->final && info->index == 0 && info->len == len)
+  {
+    switch (info->opcode)
+    {
+
+      break;
+    case WS_TEXT:
+
+      String data_str;
+      int commandArray[COMMAND_SIZE];
+      data[len] = 0;
+      for (size_t i = 0; i < len; i++)
+      {
+        data_str = String((char *)data);
+      }
+      // Serial.print("String Data : ");
+      // Serial.println(data_str);
+      char stringData[32];
+      data_str.trim();
+      strcpy(stringData, data_str.c_str());
+
+      if ((strcmp((char *)data_str.c_str(), "CONNECTED") < -1 & strcmp((char *)data, "DISCONNECTED") < -1) | (strcmp((char *)data, "CONNECTED") == 1 & strcmp((char *)data, "DISCONNECTED") == 1))
+      {
+        const char *delimiter = "::";
+        char *ptr = NULL;
+        int index = 0;
+        ptr = strtok(stringData, delimiter);
+        while (ptr != NULL)
+        {
+
+          ptr = strtok(NULL, delimiter);
+          String value = ptr;
+          // Serial.print("Array Index : ");
+          // Serial.print(index);
+          // Serial.print(" ---- Array Value : ");
+          // Serial.println(value.toInt());
+          commandArray[index] = value.toInt();
+          index++;
+          delay(20); // TODO Check if necessary
+        }
+
+        // Serial.print("Array Data 0: ");
+        // Serial.println(&stringData[0]);
+        // Serial.print("Array Data 1: ");
+        // Serial.println(&stringData[1]);
+        // Serial.print("Array Data 2: ");
+        // Serial.println(&stringData[2]);
+        // Serial.print("Array Data 3: ");
+        // Serial.println(&stringData[3]);
+        // Serial.print("Array Data 4: ");
+        // Serial.println(&stringData[4]);
+        // Serial.print("Array Data 5: ");
+        // Serial.println(&stringData[5]);
+
+        if (commandArray[COMMAND] < 15)
+        {
+
+          // Serial.println("Begin of data ###############################");
+          int commandToSent[COMMAND_SIZE];
+          commandToSent[COMMAND] = commandArray[COMMAND];
+          commandToSent[SPEED] = commandArray[SPEED];
+          commandToSent[DIR] = commandArray[DIR];
+          commandToSent[ACCEL] = commandArray[ACCEL];
+          commandToSent[MULTIPLICATOR] = commandArray[MULTIPLICATOR];
+          commandToSent[SPEED_SCALING] = commandArray[SPEED_SCALING];
+          // for (int i = 0; i < 6; i++)
+          // {
+          //   Serial.println(commandArray[i]);
+          // }
+          processCommand(commandArray);
+          // Serial.print("Command to process: ");
+          // Serial.println(data_str);
+          // Serial.println("End of data ###############################");
+        }
+      }
+      break;
+    }
   }
 }
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
@@ -262,17 +283,11 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
   }
   else if (type == WS_EVT_DATA)
   {
-
-    StaticJsonDocument<64> doc;
-    DeserializationError error = deserializeJson(doc, data);
-    if (error)
-    {
-      Serial.println("Failed to parse command");
-    }
-    else
-    {
-      processCommand(doc);
-    }
+    handleWebSocketMessage(arg, data, len);
+  }
+  else if (type == WS_EVT_ERROR)
+  {
+    Serial.println("Websocket Error !!!!!!!!!!!!!!!!!!!!!!!!!");
   }
 }
 void notFound(AsyncWebServerRequest *request)
@@ -398,26 +413,36 @@ void readConfigFile()
         {
           String ssidap = doc["wifi"]["ssidap"];
           config.ssidap = ssidap;
-          Serial.println((String)config.ssidap);
+          Serial.println();
+
           String passwordap = doc["wifi"]["passwordap"];
-          Serial.println(passwordap);
           config.passwordap = passwordap;
           String ssid = doc["wifi"]["ssid"];
           config.ssid = ssid;
-          Serial.println((String)config.ssid);
+
           String password = doc["wifi"]["password"];
           config.password = password;
-          Serial.println((String)config.password);
+          // Serial.println((String)config.password);
           String access_point = doc["wifi"]["access_point"];
           config.access_point = doc["wifi"]["access_point"];
-
+          Serial.println("**********************************");
+          if (config.access_point == true)
+          {
+            
+            Serial.println("WIFI HOTSPOT MODE");
+            Serial.println("SSID: " + (String)config.ssidap);
+            Serial.println("SSID password: " + passwordap);
+          }
+          else
+          {
+            Serial.println("WIFI NETWORK CONNECTION MODE");
+            Serial.println("Connected Router SSID: " + (String)config.ssid);
+          }
+          Serial.println("**********************************");
           int tmc_uart_rx = doc["tmc_uart_rx"];
           config.tmc_uart_rx = tmc_uart_rx;
-          Serial.println((int)config.tmc_uart_rx);
-
           int tmc_uart_tx = doc["tmc_uart_tx"];
           config.tmc_uart_tx = tmc_uart_tx;
-          Serial.println((int)config.tmc_uart_tx);
         }
         Serial.println("");
       }
@@ -428,25 +453,11 @@ void readConfigFile()
   }
 }
 
-const int ledPin = 2;
-// Stores LED state
-String ledState;
-// Replaces placeholder with LED state value
 String processor(const String &var)
 {
-  Serial.println(var);
   if (var == "STATE")
   {
-    if (digitalRead(ledPin))
-    {
-      ledState = "RUNNING";
-    }
-    else
-    {
-      ledState = "IDLE";
-    }
-    Serial.print(ledState);
-    return ledState;
+    return "0";
   }
   if (var == "IP")
   {
@@ -459,9 +470,6 @@ void moveSlider(int dir, int speed, int accel, int distance, int distanceTo)
 {
   if (dir == 1)
   {
-    // stepperSlide->setSpeedInUs(1000); // the parameter is us/step !!!
-    // stepperSlide->setAcceleration(10000);
-    // stepperSlide->move(15000);
     stepperSlide->setSpeedInUs(speed); // the parameter is us/step !!!
     stepperSlide->setAcceleration(accel);
     stepperSlide->move(distance);
@@ -518,25 +526,6 @@ void setup()
 
   Serial.begin(115200);
   Serial2.begin(115200, SERIAL_8N1, 16, 17);
-  // uint8_t result = tmcDriverSlide.test_connection();
-  // if (result)
-  // {
-  //   Serial.println(F("failed!"));
-  //   Serial.print(F("Likely cause: "));
-  //   switch (result)
-  //   {
-  //   case 1:
-  //     Serial.println(F("loose connection"));
-  //     break;
-  //   case 2:
-  //     Serial.println(F("Likely cause: no power"));
-  //     break;
-  //   }
-  //   Serial.println(F("Fix the problem and reset board."));
-  //   // abort();
-  // }
-  // tmcDriverSlide.push();
-  // tmcDriverSlide.beginSerial(115200);
 
   Wire.begin();
   Clock.begin();
@@ -546,6 +535,18 @@ void setup()
 
   // First we will disable any existing alarms
   Clock.disableAlarms();
+  Serial.println("");
+  Serial.println("**********************************");
+  Serial.println("**********************************");
+  Serial.println("");
+  Serial.println(" Cinosh Camera Slider Controller  ");
+  Serial.println("           version 0.1            ");
+  Serial.println("");
+  Serial.println("   Copyright 2023 Carl Tremblay   ");
+  Serial.println("");
+  Serial.println("**********************************");
+  Serial.println("**********************************");
+  Serial.println("");
   Serial.print("Slider Init ...");
   readConfigFile();
   delay(2000);
@@ -568,18 +569,6 @@ void setup()
   tmcDriverSlide.microsteps(32);
   tmcDriverSlide.begin();
 
-  uint32_t data = 0;
-  Serial.println("DRV_STATUS = 0x");
-  // tmcDriverSlide.DRV_STATUS();
-  // tmcDriverSlide.DRV_STATUS()
-  // tmcDriverSlide.DRV_STATUS(&data);
-  //  tmcDriverSlide.DRV_STATUS(data);
-  // Serial.println(data, HEX);
-  // int ready = tmcDriverSlide.available()
-  // Serial.println(tmcDriverSlide.DRV_STATUS);
-
-  // Connect to Wi-Fi network with SSID and password
-
   // ACCESS_POINT
   String hostname = "slider";
   WiFi.setHostname(hostname.c_str());
@@ -594,6 +583,7 @@ void setup()
   }
   else
   {
+    Serial.println("**********************************");
     Serial.println("Setting Camera Slider Wifi Connection...");
     WiFi.begin((char *)config.ssid.c_str(), (char *)config.password.c_str());
     if (WiFi.waitForConnectResult() != WL_CONNECTED)
@@ -610,14 +600,15 @@ void setup()
     Serial.println("Error starting mDNS");
     return;
   }
-
+  Serial.println("**********************************");
   // Encoder
   as5600.begin(4);                        //  set direction pin.
   as5600.setDirection(AS5600_CLOCK_WISE); // default, just be explicit.
   int b = as5600.isConnected();
-  Serial.print("AS5600 Connected: ");
+  Serial.println("");
+  Serial.print("AS5600 Encoder Connected: ");
   Serial.println(b);
-
+  Serial.println("");
   // Get an initialized timestamp
   DateTime MyTimestamp = Clock.read();
 
@@ -642,6 +633,9 @@ void setup()
   {
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
+  } else {
+    Serial.println("");
+    Serial.println("Slider controller ready!");
   }
   // HTML Files
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -707,7 +701,6 @@ void setup()
   xTaskCreatePinnedToCore(core0_timing_task, "Core_0", 10000, NULL, 2, &CPU0_Timing_Task, 0);
   delay(100);
   disableCore0WDT();
-  // moveSlider(1);
 }
 
 //***********************************************************
