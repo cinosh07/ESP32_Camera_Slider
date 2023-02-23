@@ -282,8 +282,9 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
 
   if (type == WS_EVT_CONNECT)
   {
-
+    Serial.println("");
     Serial.println("Websocket client connection received");
+    Serial.println("");
     client->text("Timelapse Slider connection success");
     globalClient = client;
   }
@@ -645,6 +646,8 @@ void setup()
   {
     Serial.println("");
     Serial.println("Slider controller ready!");
+    Serial.println("**********************************");
+    Serial.println("");
   }
   // HTML Files
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
