@@ -37,6 +37,7 @@
 #include "ArduinoJson.h"
 #include <ESPmDNS.h>
 
+// #define DEBUG_COMMAND 1
 #define SERIAL_PORT Serial2
 #define R_SENSE 0.11f
 #define DRIVER_ADDRESS 0b00
@@ -202,8 +203,11 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
       {
         data_str = String((char *)data);
       }
-      // Serial.print("String Data : ");
-      // Serial.println(data_str);
+#ifdef DEBUG_COMMAND
+      Serial.print("String Data : ");
+      Serial.println(data_str);
+#endif
+
       char stringData[32];
       data_str.trim();
       strcpy(stringData, data_str.c_str());
@@ -219,32 +223,35 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
 
           ptr = strtok(NULL, delimiter);
           String value = ptr;
-          // Serial.print("Array Index : ");
-          // Serial.print(index);
-          // Serial.print(" ---- Array Value : ");
-          // Serial.println(value.toInt());
+#ifdef DEBUG_COMMAND
+          Serial.print("Array Index : ");
+          Serial.print(index);
+          Serial.print(" ---- Array Value : ");
+          Serial.println(value.toInt());
+#endif
           commandArray[index] = value.toInt();
           index++;
           delay(20); // TODO Check if necessary
         }
-
-        // Serial.print("Array Data 0: ");
-        // Serial.println(&stringData[0]);
-        // Serial.print("Array Data 1: ");
-        // Serial.println(&stringData[1]);
-        // Serial.print("Array Data 2: ");
-        // Serial.println(&stringData[2]);
-        // Serial.print("Array Data 3: ");
-        // Serial.println(&stringData[3]);
-        // Serial.print("Array Data 4: ");
-        // Serial.println(&stringData[4]);
-        // Serial.print("Array Data 5: ");
-        // Serial.println(&stringData[5]);
-
+#ifdef DEBUG_COMMAND
+        Serial.print("Array Data 0: ");
+        Serial.println(&stringData[0]);
+        Serial.print("Array Data 1: ");
+        Serial.println(&stringData[1]);
+        Serial.print("Array Data 2: ");
+        Serial.println(&stringData[2]);
+        Serial.print("Array Data 3: ");
+        Serial.println(&stringData[3]);
+        Serial.print("Array Data 4: ");
+        Serial.println(&stringData[4]);
+        Serial.print("Array Data 5: ");
+        Serial.println(&stringData[5]);
+#endif
         if (commandArray[COMMAND] < 15)
         {
-
-          // Serial.println("Begin of data ###############################");
+#ifdef DEBUG_COMMAND
+          Serial.println("Begin of data ###############################");
+#endif
           int commandToSent[COMMAND_SIZE];
           commandToSent[COMMAND] = commandArray[COMMAND];
           commandToSent[SPEED] = commandArray[SPEED];
@@ -252,14 +259,18 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
           commandToSent[ACCEL] = commandArray[ACCEL];
           commandToSent[MULTIPLICATOR] = commandArray[MULTIPLICATOR];
           commandToSent[SPEED_SCALING] = commandArray[SPEED_SCALING];
-          // for (int i = 0; i < 6; i++)
-          // {
-          //   Serial.println(commandArray[i]);
-          // }
+#ifdef DEBUG_COMMAND
+          for (int i = 0; i < 6; i++)
+          {
+            Serial.println(commandArray[i]);
+          }
+#endif
           processCommand(commandArray);
-          // Serial.print("Command to process: ");
-          // Serial.println(data_str);
-          // Serial.println("End of data ###############################");
+#ifdef DEBUG_COMMAND
+          Serial.print("Command to process: ");
+          Serial.println(data_str);
+          Serial.println("End of data ###############################");
+#endif
         }
       }
       break;
@@ -422,13 +433,12 @@ void readConfigFile()
 
           String password = doc["wifi"]["password"];
           config.password = password;
-          // Serial.println((String)config.password);
           String access_point = doc["wifi"]["access_point"];
           config.access_point = doc["wifi"]["access_point"];
           Serial.println("**********************************");
           if (config.access_point == true)
           {
-            
+
             Serial.println("WIFI HOTSPOT MODE");
             Serial.println("SSID: " + (String)config.ssidap);
             Serial.println("SSID password: " + passwordap);
@@ -630,7 +640,9 @@ void setup()
   {
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
-  } else {
+  }
+  else
+  {
     Serial.println("");
     Serial.println("Slider controller ready!");
   }
