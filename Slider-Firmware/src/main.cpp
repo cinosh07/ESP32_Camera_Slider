@@ -530,10 +530,7 @@ void setup()
   Wire.begin();
   Clock.begin();
 
-  // We will set 2 alarms, the first alarm will fire at the 30th second of every minute
-  //  and the second alarm will fire every minute (at the 0th second)
-
-  // First we will disable any existing alarms
+  // disable any existing alarms
   Clock.disableAlarms();
   Serial.println("");
   Serial.println("**********************************");
