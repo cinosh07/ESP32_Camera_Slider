@@ -152,7 +152,7 @@ void processCommand(int command[COMMAND_SIZE])
 
     if (speed == 0)
     {
-      Serial.println("Webscoket Command Received: stopMove()");
+      Serial.println("Webscoket Command : stopMove()");
       stepperSlide->setSpeedInUs(0);
       stepperSlide->applySpeedAcceleration();
       stepperSlide->stopMove();
@@ -163,7 +163,7 @@ void processCommand(int command[COMMAND_SIZE])
     if (command[DIR] == 0 && speed > 0)
     {
 
-      Serial.println("Webscoket Command Received: runForward() Speed: " + (String)getSpeedInUS(speed));
+      Serial.println("Webscoket Command : runForward() Speed: " + (String)getSpeedInUS(speed));
       stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
       stepperSlide->setAcceleration(ACCELL);
       stepperSlide->runForward();
@@ -171,7 +171,7 @@ void processCommand(int command[COMMAND_SIZE])
     }
     else if (command[DIR] == -1 && speed > 0)
     {
-      Serial.println("Webscoket Command Received: runBackward() Speed: " + (String)getSpeedInUS(speed));
+      Serial.println("Webscoket Command : runBackward() Speed: " + (String)getSpeedInUS(speed));
       stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
       stepperSlide->setAcceleration(ACCELL);
       stepperSlide->runBackward();
