@@ -33,14 +33,6 @@ void initMotors()
     stepperSlide = engine.stepperConnectToPin(slider_Motor.step_pin);
 
     initStepperDriver();
-    // // tmcDriverSlide.pdn_disable(true);     // Use PDN/UART pin for communication
-    // tmcDriverSlide.I_scale_analog(false); // Use internal voltage reference
-    // tmcDriverSlide.rms_current(990);      // Set driver current 500mA
-    // tmcDriverSlide.toff(2);               // Enable driver in software
-    //                                       // tmcDriverSlide.en_pwm_mode(1);      // Enable extremely quiet stepping
-    // tmcDriverSlide.pwm_autoscale(1);
-    // tmcDriverSlide.microsteps(32);
-    // tmcDriverSlide.begin();
 
     if (stepperSlide)
     {
