@@ -15,3 +15,6 @@
 #define R_SENSE 0.11f
 #define DRIVER_ADDRESS 0b00
 #define COMMAND_SIZE 8
+
+
+// #define DEBUG_COMMAND 1
