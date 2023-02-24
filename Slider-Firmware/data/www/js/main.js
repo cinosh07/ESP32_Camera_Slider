@@ -1,8 +1,44 @@
+/**********************************************************************
+ *                  Author: Carl Tremblay
+ *
+ *                Cinosh Camera Slider Controller
+ *                        version 0.1
+ *
+ *                  Copyright 2023 Carl Tremblay
+ *
+ *                            License
+ *    Attribution-NonCommercial-NoDerivatives 4.0 International
+ *                      (CC BY-NC-ND 4.0)
+ *        https://creativecommons.org/licenses/by-nc-nd/4.0/
+ *********************************************************************/
+
+// To debug web application without uploading to ESP32 SPIFFS we need to put the app in debug mode.
+// and having http-server node js application.
+//
+// to install http-server using npm
+// npm install --global http-server
+//
+// To launch the server type this line in the console with path to the www folder
+// > http-server D:/Timelapse_Slider/ESP32_Camera_Slider/Slider-Firmware/data/www
+//
+// navigate to http://127.0.0.1:8080/ for testing the web app.
+// ESP32 is needed to be open and same network connected
+//
+// For this to work set DEBUG=true
+var DEBUG = true;
+
+// The nav bar background color will now appear RED to clearly show that we are now in debug mode.
+
+// In normal operation mode (DEBUG=false) websocket ip address is provided by the ESP32 that serve those files by inserting it.
+// For debbugging externally to the ESP32 served files, we need to tell the app what is this address manually.
+
+// Set ESP32 ip address or mDNS address.
+var DEBUG_ESP32_WEBSOCKET_ADDRESS = "slider.local";
+
 /* ***************************************************************
                           Variables
   ****************************************************************
 */
-var DEBUG = false;
 let socket;
 let currentPage = 1;
 
@@ -25,17 +61,45 @@ var joystickSlideMoveArray = [];
 var joystickSlideMoveCount = 0;
 var joystickSlideMovePreviousDir = -2;
 var joystickSlideMovePreviousAverage = 0.0;
+/* ***************************************************************
+               Lock mobile Screen from Sleeping
+  ****************************************************************
+*/
+const canWakeLock = () => "wakeLock" in navigator;
+let wakelock;
+async function lockWakeState() {
+  if (!canWakeLock()) return;
+  try {
+    wakelock = await navigator.wakeLock.request();
+    wakelock.addEventListener("release", () => {
+      console.log("Screen Wake State Locked:", !wakelock.released);
+    });
+    console.log("Screen Wake State Locked:", !wakelock.released);
+  } catch (e) {
+    console.error("Failed to lock wake state with reason:", e.message);
+  }
+}
+function releaseWakeState() {
+  if (wakelock) wakelock.release();
+  wakelock = null;
+}
 
 /* ***************************************************************
                         Initialization
   ****************************************************************
 */
-$(document).ready(function () {
+$(document).ready(async function () {
   $("#intervalometer").load("interval.html");
   $("#intervalometer").toggle(false);
   $("#run").toggle(false);
   $("#about-mockup").load("about.html");
   $("#settings-mockup").load("settings.html");
+  if (DEBUG) {
+    $("#navBar").removeClass("bg-darker");
+    $("#navBar").addClass("bg-danger");
+  }
+  await lockWakeState();
+  // setTimeout(releaseWakeState, 5000);
   startWebsocket();
 });
 $(window).on("beforeunload", function () {
@@ -47,7 +111,7 @@ $(window).on("beforeunload", function () {
 */
 function startWebsocket() {
   if (DEBUG) {
-    socket = new WebSocket("ws://slider.local/ws");
+    socket = new WebSocket("ws://" + DEBUG_ESP32_WEBSOCKET_ADDRESS + "/ws");
   } else {
     socket = new WebSocket("ws://" + $("#ip").val() + "/ws");
   }
@@ -83,7 +147,7 @@ function startWebsocket() {
   };
 
   socket.onerror = function (error) {
-    //TODO ALERT ERROR
+    //ALERT ERROR
     $("#status").removeClass("text-success");
     $("#status").removeClass("text-muted");
     $("#status").addClass("text-danger");
@@ -94,24 +158,20 @@ function startWebsocket() {
   };
 }
 function sendCommand(command) {
-  // socket.send(JSON.stringify(command));
   command = "0::" + command;
   try {
     if (socket && socket.readyState !== 3) {
       socket.send(command);
-    console.log("Command Sended : ", command);
+      console.log("Command Sended : ", command);
     } else {
       var alertConnected = document.getElementById("alertConnectionError");
-    var toast = new bootstrap.Toast(alertConnected);
-    toast.show();
+      var toast = new bootstrap.Toast(alertConnected);
+      toast.show();
     }
-    
   } catch (e) {
-
     var alertConnected = document.getElementById("alertConnectionError");
     var toast = new bootstrap.Toast(alertConnected);
     toast.show();
-
   }
 }
 /* ***************************************************************
@@ -367,3 +427,305 @@ class Avg {
     return total / count;
   }
 }
+//<!--
+// **************************************************************
+//                    Pan Tilt Joystick -->
+class JoystickPanTiltController {
+  // stickID: ID of HTML element (representing joystick) that will be dragged
+  // maxDistance: maximum amount joystick can move in any direction
+  // deadzone: joystick must move at least this amount from origin to register value change
+  constructor(stickID, maxDistance, deadzone) {
+    this.id = stickID;
+    let stick = document.getElementById(stickID);
+
+    // location from which drag begins, used to calculate offsets
+    this.dragStart = null;
+
+    // track touch identifier in case multiple joysticks present
+    this.touchId = null;
+
+    this.active = false;
+    this.value = {
+      x: 0,
+      y: 0,
+    };
+
+    let self = this;
+
+    function handleDown(event) {
+      self.active = true;
+
+      // all drag movements are instantaneous
+      stick.style.transition = "0s";
+
+      // touch event fired before mouse event; prevent redundant mouse event from firing
+      event.preventDefault();
+
+      if (event.changedTouches)
+        self.dragStart = {
+          x: event.changedTouches[0].clientX,
+          y: event.changedTouches[0].clientY,
+        };
+      else
+        self.dragStart = {
+          x: event.clientX,
+          y: event.clientY,
+        };
+
+      // if this is a touch event, keep track of which one
+      if (event.changedTouches)
+        self.touchId = event.changedTouches[0].identifier;
+    }
+
+    function handleMove(event) {
+      if (!self.active) return;
+
+      // if this is a touch event, make sure it is the right one
+      // also handle multiple simultaneous touchmove events
+      let touchmoveId = null;
+      if (event.changedTouches) {
+        for (let i = 0; i < event.changedTouches.length; i++) {
+          if (self.touchId == event.changedTouches[i].identifier) {
+            touchmoveId = i;
+            event.clientX = event.changedTouches[i].clientX;
+            event.clientY = event.changedTouches[i].clientY;
+          }
+        }
+
+        if (touchmoveId == null) return;
+      }
+
+      const xDiff = event.clientX - self.dragStart.x;
+      const yDiff = event.clientY - self.dragStart.y;
+      const angle = Math.atan2(yDiff, xDiff);
+      const distance = Math.min(maxDistance, Math.hypot(xDiff, yDiff));
+      const xPosition = distance * Math.cos(angle);
+      const yPosition = distance * Math.sin(angle);
+
+      // move stick image to new position
+      stick.style.transform = `translate3d(${xPosition}px, ${yPosition}px, 0px)`;
+
+      // deadzone adjustment
+      const distance2 =
+        distance < deadzone
+          ? 0
+          : (maxDistance / (maxDistance - deadzone)) * (distance - deadzone);
+      const xPosition2 = distance2 * Math.cos(angle);
+      const yPosition2 = distance2 * Math.sin(angle);
+      const xPercent = parseFloat((xPosition2 / maxDistance).toFixed(4));
+      const yPercent = parseFloat((yPosition2 / maxDistance).toFixed(4));
+
+      self.value = {
+        x: xPercent,
+        y: yPercent,
+      };
+    }
+    function getId() {
+      return self.id;
+    }
+    function handleUp(event) {
+      if (!self.active) return;
+
+      // if this is a touch event, make sure it is the right one
+      if (
+        event.changedTouches &&
+        self.touchId != event.changedTouches[0].identifier
+      )
+        return;
+
+      // transition the joystick position back to center
+      stick.style.transition = ".2s";
+      stick.style.transform = `translate3d(0px, 0px, 0px)`;
+
+      // reset everything
+      self.value = {
+        x: 0,
+        y: 0,
+      };
+      self.touchId = null;
+      self.active = false;
+
+      joystickPanMove(0.0);
+      joystickTiltMove(0.0);
+    }
+
+    stick.addEventListener("mousedown", handleDown);
+    stick.addEventListener("touchstart", handleDown);
+    document.addEventListener("mousemove", handleMove, {
+      passive: false,
+    });
+    document.addEventListener("touchmove", handleMove, {
+      passive: false,
+    });
+    document.addEventListener("mouseup", handleUp);
+    document.addEventListener("touchend", handleUp);
+  }
+}
+//<!--
+// **************************************************************
+//                    Slide Focus Joystick -->
+class JoystickSlideFocusController {
+  // stickID: ID of HTML element (representing joystick) that will be dragged
+  // maxDistance: maximum amount joystick can move in any direction
+  // deadzone: joystick must move at least this amount from origin to register value change
+  constructor(stickID, maxDistance, deadzone) {
+    this.id = stickID;
+    let stick = document.getElementById(stickID);
+
+    // location from which drag begins, used to calculate offsets
+    this.dragStart = null;
+
+    // track touch identifier in case multiple joysticks present
+    this.touchId = null;
+
+    this.active = false;
+    this.value = {
+      x: 0,
+      y: 0,
+    };
+
+    let self = this;
+
+    function handleDown(event) {
+      self.active = true;
+
+      // all drag movements are instantaneous
+      stick.style.transition = "0s";
+
+      // touch event fired before mouse event; prevent redundant mouse event from firing
+      event.preventDefault();
+
+      if (event.changedTouches)
+        self.dragStart = {
+          x: event.changedTouches[0].clientX,
+          y: event.changedTouches[0].clientY,
+        };
+      else
+        self.dragStart = {
+          x: event.clientX,
+          y: event.clientY,
+        };
+
+      // if this is a touch event, keep track of which one
+      if (event.changedTouches)
+        self.touchId = event.changedTouches[0].identifier;
+    }
+
+    function handleMove(event) {
+      if (!self.active) return;
+
+      // if this is a touch event, make sure it is the right one
+      // also handle multiple simultaneous touchmove events
+      let touchmoveId = null;
+      if (event.changedTouches) {
+        for (let i = 0; i < event.changedTouches.length; i++) {
+          if (self.touchId == event.changedTouches[i].identifier) {
+            touchmoveId = i;
+            event.clientX = event.changedTouches[i].clientX;
+            event.clientY = event.changedTouches[i].clientY;
+          }
+        }
+
+        if (touchmoveId == null) return;
+      }
+
+      const xDiff = event.clientX - self.dragStart.x;
+      const yDiff = event.clientY - self.dragStart.y;
+      const angle = Math.atan2(yDiff, xDiff);
+      const distance = Math.min(maxDistance, Math.hypot(xDiff, yDiff));
+      const xPosition = distance * Math.cos(angle);
+      const yPosition = distance * Math.sin(angle);
+
+      // move stick image to new position
+      stick.style.transform = `translate3d(${xPosition}px, ${yPosition}px, 0px)`;
+
+      // deadzone adjustment
+      const distance2 =
+        distance < deadzone
+          ? 0
+          : (maxDistance / (maxDistance - deadzone)) * (distance - deadzone);
+      const xPosition2 = distance2 * Math.cos(angle);
+      const yPosition2 = distance2 * Math.sin(angle);
+      const xPercent = parseFloat((xPosition2 / maxDistance).toFixed(4));
+      const yPercent = parseFloat((yPosition2 / maxDistance).toFixed(4));
+
+      self.value = {
+        x: xPercent,
+        y: yPercent,
+      };
+    }
+    function getId() {
+      return self.id;
+    }
+    function handleUp(event) {
+      if (!self.active) return;
+
+      // if this is a touch event, make sure it is the right one
+      if (
+        event.changedTouches &&
+        self.touchId != event.changedTouches[0].identifier
+      )
+        return;
+
+      // transition the joystick position back to center
+      stick.style.transition = ".2s";
+      stick.style.transform = `translate3d(0px, 0px, 0px)`;
+
+      // reset everything
+      self.value = {
+        x: 0,
+        y: 0,
+      };
+      self.touchId = null;
+      self.active = false;
+
+      joystickSlideMove(0.0);
+      joystickFocusMove(0.0);
+    }
+
+    stick.addEventListener("mousedown", handleDown);
+    stick.addEventListener("touchstart", handleDown);
+    document.addEventListener("mousemove", handleMove, {
+      passive: false,
+    });
+    document.addEventListener("touchmove", handleMove, {
+      passive: false,
+    });
+    document.addEventListener("mouseup", handleUp);
+    document.addEventListener("touchend", handleUp);
+  }
+}
+
+let joystickPanTilt = new JoystickPanTiltController("stick1", 64, 8);
+let joystickSlideFocus = new JoystickSlideFocusController("stick2", 64, 8);
+var joystickPanTiltPrevVal = { x: 0, y: 0 };
+var joystickSlideFocusPrevVal = { x: 0, y: 0 };
+
+function updatePanTilt() {
+  if (joystickPanTilt.value.x !== joystickPanTiltPrevVal.x) {
+    joystickPanMove(joystickPanTilt.value.x);
+    joystickPanTiltPrevVal.x = joystickPanTilt.value.x;
+  }
+  if (joystickPanTilt.value.y !== joystickPanTiltPrevVal.y) {
+    joystickTiltMove(joystickPanTilt.value.y);
+    joystickPanTiltPrevVal.y = joystickPanTilt.value.y;
+  }
+}
+function updateSlideFocus() {
+  if (joystickSlideFocus.value.x !== joystickSlideFocusPrevVal.x) {
+    joystickSlideMove(joystickSlideFocus.value.x);
+    joystickPanTiltPrevVal.x = joystickSlideFocus.value.x;
+  }
+  if (joystickSlideFocus.value.y !== joystickSlideFocusPrevVal.y) {
+    joystickFocusMove(joystickSlideFocus.value.y);
+    joystickPanTiltPrevVal.y = joystickSlideFocus.value.y;
+  }
+}
+
+function loop() {
+  requestAnimationFrame(loop);
+  updatePanTilt();
+  updateSlideFocus();
+}
+
+loop();

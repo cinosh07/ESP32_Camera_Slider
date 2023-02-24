@@ -1,9 +1,43 @@
+<!-- /**********************************************************************
+ *                  Author: Carl Tremblay
+ *
+ *                Cinosh Camera Slider Controller
+ *                        version 0.1           
+ *
+ *                  Copyright 2023 Carl Tremblay  
+ * 
+ *                            License
+ *    Attribution-NonCommercial-NoDerivatives 4.0 International 
+ *                      (CC BY-NC-ND 4.0)
+ *        https://creativecommons.org/licenses/by-nc-nd/4.0/
+ *********************************************************************/ -->
+
+
+<!-- 
+// To debug web application without uploading to ESP32 SPIFFS we need to put the app in debug mode.
+// and having http-server node js application. 
+//
+// to install http-server using npm
+// npm install --global http-server
+//
+// To launch the server type this line in the console with path to the www folder
+// > http-server D:/Timelapse_Slider/ESP32_Camera_Slider/Slider-Firmware/data/www
+//
+// navigate to http://127.0.0.1:8080/ for testing the web app. 
+// ESP32 is needed to be open and same network connected
+//
+// Check main.js file for more details
+// -->
+
 <!DOCTYPE html>
 <html data-bs-theme="dark">
 
 <head>
   <title>Intervalometer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="css/style.css">
@@ -21,7 +55,8 @@
   -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-darker">
     <div class="container-fluid">
-      <a class="navbar-brand text-white-50 " href="#"><img class="header-icon" src="./images/icon-32.png" /> INTERVALOMETER</a>
+      <a class="navbar-brand text-white-50 " href="#"><img class="header-icon" src="./images/icon-32.png" />
+        INTERVALOMETER</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -44,14 +79,14 @@
                               Content
     **************************************************************
   -->
-   
 
-  <!-- 
+
+    <!-- 
     **************************************************************
                        Intervalometer
   -->
 
-  <div id="intervalometer" class="container content">
+    <div id="intervalometer" class="container content">
       <!-- Intervalometer html file is imported by javascript load function.
             This allow to use the intervalometer as a component
           to be used in a standalone intervalometer device.
@@ -59,27 +94,27 @@
           (Without the slider controls if firmware is in 
       intervalometer mode -> "interval-mode" : true in config.json,) 
       -->
-  </div>
- 
+    </div>
 
-  <!-- 
+
+    <!-- 
     **************************************************************
                               Modals
     **************************************************************
   -->
-  <!-- 
+    <!-- 
     **************************************************************
                       About dynamic Container
   -->
-  <div id="about-mockup"></div>
-  <!-- 
+    <div id="about-mockup"></div>
+    <!-- 
     **************************************************************
                       Settings dynamic Container
   -->
-  <div id="settings-mockup"></div>
- 
+    <div id="settings-mockup"></div>
 
-  <!-- 
+
+    <!-- 
     **************************************************************
     **************************************************************
                               Footer 
@@ -87,60 +122,61 @@
     **************************************************************                       
                             -->
 
-  <footer id="sticky-footer" class="card-footer fixed-bottom app-footer bg-darker text-white-50">
-    <div class="container text-end app-footer-content">
-      <div class="copyright-container">
-        <smaller>Copyright &copy; Carl Tremblay - 2023</smaller>
+    <footer id="sticky-footer" class="card-footer fixed-bottom app-footer bg-darker text-white-50">
+      <div class="container text-end app-footer-content">
+        <div class="copyright-container">
+          <smaller>Copyright &copy; Carl Tremblay - 2023</smaller>
+        </div>
+
+
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+
+            <li id="next-button-container" class="page-item">
+              <div class="page-link bg-primary text-light border-primary" onclick="runIntervalometer();"
+                aria-label="Next">
+                <span id="next-button" aria-hidden="true">RUN</span>
+              </div>
+            </li>
+          </ul>
+        </nav>
+
+
       </div>
-
-      
-      <nav aria-label="Page navigation">
-        <ul class="pagination">
-
-          <li id="next-button-container" class="page-item" >
-            <div class="page-link bg-primary text-light border-primary" onclick="runIntervalometer();" aria-label="Next">
-              <span id="next-button" aria-hidden="true">RUN</span>
-            </div>
-          </li>
-        </ul>
-      </nav>
-
-
-    </div>
-  </footer>
-  <!-- 
+    </footer>
+    <!-- 
     **************************************************************
                               Scripts
     **************************************************************
   -->
-  <!-- 
+    <!-- 
     **************************************************************
                               Chart -->
-  <script>
-    const ctx = document.getElementById('myChart');
+    <script>
+      const ctx = document.getElementById('myChart');
 
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Start', 'Ease-in', '', '', '', 'Ease-out', 'Stop'],
-        datasets: [{
-          label: 'Speed',
-          data: [0, 10, null, null, null, 10, 0],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Start', 'Ease-in', '', '', '', 'Ease-out', 'Stop'],
+          datasets: [{
+            label: 'Speed',
+            data: [0, 10, null, null, null, 10, 0],
+            borderWidth: 1
+          }]
         },
-        spanGaps: true,
-        tension: 0.5
-      }
-    });
-  </script>
-  
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          },
+          spanGaps: true,
+          tension: 0.5
+        }
+      });
+    </script>
+
 </body>
 
 </html>

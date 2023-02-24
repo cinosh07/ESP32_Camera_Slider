@@ -1,15 +1,49 @@
+<!-- /**********************************************************************
+ *                  Author: Carl Tremblay
+ *
+ *                Cinosh Camera Slider Controller
+ *                        version 0.1           
+ *
+ *                  Copyright 2023 Carl Tremblay  
+ * 
+ *                            License
+ *    Attribution-NonCommercial-NoDerivatives 4.0 International 
+ *                      (CC BY-NC-ND 4.0)
+ *        https://creativecommons.org/licenses/by-nc-nd/4.0/
+ *********************************************************************/ -->
+
+
+<!-- 
+// To debug web application without uploading to ESP32 SPIFFS we need to put the app in debug mode.
+// and having http-server node js application. 
+//
+// to install http-server using npm
+// npm install --global http-server
+//
+// To launch the server type this line in the console with path to the www folder
+// > http-server D:/Timelapse_Slider/ESP32_Camera_Slider/Slider-Firmware/data/www
+//
+// navigate to http://127.0.0.1:8080/ for testing the web app. 
+// ESP32 is needed to be open and same network connected
+//
+// Check main.js file for more details
+// -->
+
 <!DOCTYPE html>
 <html data-bs-theme="dark">
 
 <head>
   <title>Slider Controller</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="css/style.css">
-  <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
-  <script src="js/main.js"></script>
+  <script defer src="js/jquery.min.js"></script>
+  <script defer src="js/bootstrap.min.js"></script>
+  <script defer src="js/main.js"></script>
   <script src="js/chart.js"></script>
 </head>
 
@@ -19,7 +53,7 @@
                        Navigation Bar
     **************************************************************
   -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-darker">
+  <nav id="navBar" class="navbar navbar-expand-lg navbar-dark bg-darker">
     <div class="container-fluid">
       <a class="navbar-brand text-white-50 " href="#"><img class="header-icon" src="./images/icon-32.png" /> SLIDER
         CONTROLLER</a>
@@ -90,10 +124,7 @@
     </div>
     <p><a href="#"><button class="btn btn-primary">IN</button></a> <a href="#"><button
           class="btn btn-success">OUT</button></a> <a href="#"><button class="btn btn-secondary">+</button></a></p>
-
-
     <hr>
-
     <!-- 
     **************************************************************
                               Joystick
@@ -239,31 +270,29 @@
     **************************************************************
                         alertConnected Toast
   -->
-  
-
-<div class="position-fixed top-50 start-50 translate-middle" style="z-index: 11">
-  <div id="alertConnected" class="toast alert-success hide" data-bs-delay="10000" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header bg-darker alert-success">
-      <img src="./images/icon-32.png"" class="rounded me-2" alt="...">
-      <strong class="me-auto">Websocket</strong>
-      <small>success</small>
-      <button type="button" class="btn-close btn-success" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-    <div class="toast-body alert-success">
-      Successfully Connected to slider !
+  <div class="position-fixed top-50 start-50 translate-middle" style="z-index: 11">
+    <div id="alertConnected" class="toast alert-success hide" data-bs-delay="10000" role="alert" aria-live="assertive"
+      aria-atomic="true">
+      <div class="toast-header bg-darker alert-success">
+        <img src="./images/icon-32.png"" class=" rounded me-2" alt="...">
+        <strong class="me-auto">Websocket</strong>
+        <small>success</small>
+        <button type="button" class="btn-close btn-success" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body alert-success">
+        Successfully Connected to slider !
+      </div>
     </div>
   </div>
-</div>
-<!-- 
+  <!-- 
     **************************************************************
                         alert Connection Error Toast
   -->
-  
-
   <div class="position-fixed top-50 start-50 translate-middle" style="z-index: 11">
-    <div id="alertConnectionError" class="toast alert-danger hide" data-bs-delay="10000" role="alert" aria-live="assertive" aria-atomic="true">
+    <div id="alertConnectionError" class="toast alert-danger hide" data-bs-delay="10000" role="alert"
+      aria-live="assertive" aria-atomic="true">
       <div class="toast-header bg-darker alert-danger">
-        <img src="./images/icon-32.png"" class="rounded me-2" alt="...">
+        <img src="./images/icon-32.png"" class=" rounded me-2" alt="...">
         <strong class="me-auto">Websocket</strong>
         <small>Warning</small>
         <button type="button" class="btn-close btn-danger" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -277,12 +306,11 @@
     **************************************************************
                         alertConnectionClose Toast
   -->
-  
-
   <div class="position-fixed top-50 start-50 translate-middle" style="z-index: 11">
-    <div id="alertConnectionClose" class="toast alert-warning hide" data-bs-delay="10000" role="alert" aria-live="assertive" aria-atomic="true">
+    <div id="alertConnectionClose" class="toast alert-warning hide" data-bs-delay="10000" role="alert"
+      aria-live="assertive" aria-atomic="true">
       <div class="toast-header bg-darker alert-warning">
-        <img src="./images/icon-32.png"" class="rounded me-2" alt="...">
+        <img src="./images/icon-32.png"" class=" rounded me-2" alt="...">
         <strong class="me-auto">Websocket</strong>
         <small>Error</small>
         <button type="button" class="btn-close btn-warning" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -299,7 +327,6 @@
     **************************************************************
     **************************************************************                       
                             -->
-
   <footer id="sticky-footer" class="card-footer fixed-bottom app-footer bg-darker text-white-50">
     <div class="container text-end app-footer-content">
       <div class="copyright-container">
@@ -327,6 +354,7 @@
                               Scripts
     **************************************************************
   -->
+
   <!-- 
     **************************************************************
                               Chart -->
@@ -354,185 +382,5 @@
       }
     });
   </script>
-  <!-- 
-    **************************************************************
-                              Joystick -->
-  <script>
-    class JoystickController {
-      // stickID: ID of HTML element (representing joystick) that will be dragged
-      // maxDistance: maximum amount joystick can move in any direction
-      // deadzone: joystick must move at least this amount from origin to register value change
-      constructor(stickID, maxDistance, deadzone) {
-        this.id = stickID;
-        let stick = document.getElementById(stickID);
-
-        // location from which drag begins, used to calculate offsets
-        this.dragStart = null;
-
-        // track touch identifier in case multiple joysticks present
-        this.touchId = null;
-
-        this.active = false;
-        this.value = {
-          x: 0,
-          y: 0
-        };
-
-        let self = this;
-
-        function handleDown(event) {
-          self.active = true;
-
-          // all drag movements are instantaneous
-          stick.style.transition = '0s';
-
-          // touch event fired before mouse event; prevent redundant mouse event from firing
-          event.preventDefault();
-
-          if (event.changedTouches)
-            self.dragStart = {
-              x: event.changedTouches[0].clientX,
-              y: event.changedTouches[0].clientY
-            };
-          else
-            self.dragStart = {
-              x: event.clientX,
-              y: event.clientY
-            };
-
-          // if this is a touch event, keep track of which one
-          if (event.changedTouches)
-            self.touchId = event.changedTouches[0].identifier;
-        }
-
-        function handleMove(event) {
-          if (!self.active) return;
-
-          // if this is a touch event, make sure it is the right one
-          // also handle multiple simultaneous touchmove events
-          let touchmoveId = null;
-          if (event.changedTouches) {
-            for (let i = 0; i < event.changedTouches.length; i++) {
-              if (self.touchId == event.changedTouches[i].identifier) {
-                touchmoveId = i;
-                event.clientX = event.changedTouches[i].clientX;
-                event.clientY = event.changedTouches[i].clientY;
-              }
-            }
-
-            if (touchmoveId == null) return;
-          }
-
-          const xDiff = event.clientX - self.dragStart.x;
-          const yDiff = event.clientY - self.dragStart.y;
-          const angle = Math.atan2(yDiff, xDiff);
-          const distance = Math.min(maxDistance, Math.hypot(xDiff, yDiff));
-          const xPosition = distance * Math.cos(angle);
-          const yPosition = distance * Math.sin(angle);
-
-          // move stick image to new position
-          stick.style.transform = `translate3d(${xPosition}px, ${yPosition}px, 0px)`;
-
-          // deadzone adjustment
-          const distance2 = (distance < deadzone) ? 0 : maxDistance / (maxDistance - deadzone) * (distance -
-            deadzone);
-          const xPosition2 = distance2 * Math.cos(angle);
-          const yPosition2 = distance2 * Math.sin(angle);
-          const xPercent = parseFloat((xPosition2 / maxDistance).toFixed(4));
-          const yPercent = parseFloat((yPosition2 / maxDistance).toFixed(4));
-
-          self.value = {
-            x: xPercent,
-            y: yPercent
-          };
-        }
-
-        function handleUp(event) {
-          console.log(event);
-          if (!self.active) return;
-
-          // if this is a touch event, make sure it is the right one
-          if (event.changedTouches && self.touchId != event.changedTouches[0].identifier) return;
-
-          // transition the joystick position back to center
-          stick.style.transition = '.2s';
-          stick.style.transform = `translate3d(0px, 0px, 0px)`;
-
-          // reset everything
-          self.value = {
-            x: 0,
-            y: 0
-          };
-          self.touchId = null;
-          self.active = false;
-          // if (event.target.id === )
-          var nodeValueId = event.target.attributes.id;
-          var nodeValue;
-          if (nodeValueId === undefined) {
-            //TODO fix this problem when we devent.target.attributes.id is undefined
-            nodeValue = "stick2IMG";
-          } else {
-            nodeValue =  event.target.attributes.id.nodeValue
-          }
-          switch (nodeValue) {
-            case "stick1IMG":
-              joystickPanMove(0.00);
-              joystickTiltMove(0.00);
-              break;
-            case "stick2IMG":
-              joystickSlideMove(0.00);
-              joystickFocusMove(0.00);
-              break;
-          }
-        }
-
-        stick.addEventListener('mousedown', handleDown);
-        stick.addEventListener('touchstart', handleDown);
-        document.addEventListener('mousemove', handleMove, {
-          passive: false
-        });
-        document.addEventListener('touchmove', handleMove, {
-          passive: false
-        });
-        document.addEventListener('mouseup', handleUp);
-        document.addEventListener('touchend', handleUp);
-      }
-    }
-
-    let joystickPanTilt = new JoystickController("stick1", 64, 8);
-    let joystickSlideFocus = new JoystickController("stick2", 64, 8);
-    var joystickPanTiltPrevVal = { x: 0, y: 0 };
-    var joystickSlideFocusPrevVal = { x: 0, y: 0 };
-
-    function update() {
-
-      if (joystickPanTilt.value.x !== joystickPanTiltPrevVal.x) {
-        joystickPanMove(joystickPanTilt.value.x);
-        joystickPanTiltPrevVal.x = joystickPanTilt.value.x;
-      }
-      if (joystickPanTilt.value.y !== joystickPanTiltPrevVal.y) {
-        joystickTiltMove(joystickPanTilt.value.y);
-        joystickPanTiltPrevVal.y = joystickPanTilt.value.y;
-      }
-      if (joystickSlideFocus.value.x !== joystickSlideFocusPrevVal.x) {
-        joystickSlideMove(joystickSlideFocus.value.x);
-        joystickPanTiltPrevVal.x = joystickSlideFocus.value.x;
-      }
-      if (joystickSlideFocus.value.y !== joystickSlideFocusPrevVal.y) {
-        joystickFocusMove(joystickSlideFocus.value.y);
-        joystickPanTiltPrevVal.y = joystickSlideFocus.value.y;
-      }
-
-
-    }
-
-    function loop() {
-      requestAnimationFrame(loop);
-      update();
-    }
-
-    loop();
-  </script>
 </body>
-
 </html>
