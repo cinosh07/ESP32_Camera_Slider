@@ -32,12 +32,13 @@
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <script src="js/jquery.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
-  <script src="js/main.js"></script>
   <script src="js/chart.js"></script>
+  <script src="js/main.js"></script>
+  
 </head>
 
 <body class="bg-dark user-select-none">
-  <!-- 
+   <!-- 
     **************************************************************
                        Navigation Bar
     **************************************************************
@@ -133,39 +134,7 @@
 
       </div>
     </footer>
-    <!-- 
-    **************************************************************
-                              Scripts
-    **************************************************************
-  -->
-    <!-- 
-    **************************************************************
-                              Chart -->
-    <script>
-      const ctx = document.getElementById('myChart');
 
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Start', 'Ease-in', '', '', '', 'Ease-out', 'Stop'],
-          datasets: [{
-            label: 'Speed',
-            data: [0, 10, null, null, null, 10, 0],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          },
-          spanGaps: true,
-          tension: 0.5
-        }
-      });
-    </script>
 
 </body>
-
 </html>
