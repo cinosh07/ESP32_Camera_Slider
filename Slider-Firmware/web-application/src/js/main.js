@@ -1,5 +1,5 @@
 /**********************************************************************
- *                  Author: Carl Tremblay
+ *               Author: Carl Tremblay
  *
  *                Cinosh Camera Slider Controller
  *                        version 0.1
@@ -7,9 +7,10 @@
  *                  Copyright 2023 Carl Tremblay
  *
  *                            License
- *    Attribution-NonCommercial-NoDerivatives 4.0 International
+ *     Attribution-NonCommercial-NoDerivatives 4.0 International
  *                      (CC BY-NC-ND 4.0)
  *        https://creativecommons.org/licenses/by-nc-nd/4.0/
+ * 
  *********************************************************************/
 
 // To debug web application without uploading to ESP32 SPIFFS we need to put the app in debug mode.
@@ -19,12 +20,18 @@
 // npm install --global http-server
 //
 // To launch the server type this line in the console with path to the www folder
+//
+// To test the compiled version
 // > http-server D:/Timelapse_Slider/ESP32_Camera_Slider/Slider-Firmware/data/www
+// 
+// To test the original files
+// > http-server D:/Timelapse_Slider/ESP32_Camera_Slider/Slider-Firmware/web-application/src
 //
 // navigate to http://127.0.0.1:8080/ for testing the web app.
 // ESP32 is needed to be open and same network connected
 //
 // For this to work set DEBUG=true
+
 var DEBUG = true;
 
 // The nav bar background color will now appear RED to clearly show that we are now in debug mode.
@@ -33,6 +40,8 @@ var DEBUG = true;
 // For debbugging externally to the ESP32 served files, we need to tell the app what is this address manually.
 
 // Set ESP32 ip address or mDNS address.
+// Please note that mDNS address resolution don't work on most of Android devices. Use IP address instead.
+
 var DEBUG_ESP32_WEBSOCKET_ADDRESS = "slider.local";
 
 /* ***************************************************************
@@ -83,12 +92,11 @@ function releaseWakeState() {
   if (wakelock) wakelock.release();
   wakelock = null;
 }
-
 /* ***************************************************************
                         Initialization
   ****************************************************************
 */
-$(document).ready(async function () {
+$(async function () {
   $("#intervalometer").load("interval.html");
   $("#intervalometer").toggle(false);
   $("#run").toggle(false);
@@ -99,7 +107,36 @@ $(document).ready(async function () {
     $("#navBar").addClass("bg-danger");
   }
   await lockWakeState();
-  // setTimeout(releaseWakeState, 5000);
+
+  const ctx = document.getElementById("myChart");
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["Start", "Ease-in", "", "", "", "Ease-out", "Stop"],
+      datasets: [
+        {
+          label: "Speed",
+          data: [0, 10, null, null, null, 10, 0],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+      spanGaps: true,
+      tension: 0.5,
+    },
+  });
+  $("#previousPage").on("click", function () {
+    previousPage();
+  });
+  $("#nextPage").on("click", function () {
+    nextPage();
+  });
   startWebsocket();
 });
 $(window).on("beforeunload", function () {

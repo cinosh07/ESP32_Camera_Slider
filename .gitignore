@@ -11,3 +11,4 @@ Slider-Firmware/output/libraries/FastAccelStepper/FastAccelStepper.a
 Slider-Firmware/output/preproc/ctags_target_for_gcc_minus_e.cpp
 Slider-Firmware/output/sketch/data/config.json
 Slider-Firmware/output/build.options.json
+Slider-Firmware/node_modules/.bin/acorn

@@ -47,6 +47,9 @@
 
 // https://forum.arduino.cc/t/can-a-sketch-modify-a-defined-symbol-in-a-library/90432
 
+// https://github.com/jantimon/html-webpack-plugin
+  // https://github.com/Jaid/inject-body-webpack-plugin
+
 #include <Arduino.h>
 #include "esp_task_wdt.h"
 #include "FastAccelStepper.h"

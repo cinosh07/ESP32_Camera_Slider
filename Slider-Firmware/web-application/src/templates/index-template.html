@@ -11,11 +11,23 @@
  *                      (CC BY-NC-ND 4.0)
  *        https://creativecommons.org/licenses/by-nc-nd/4.0/
  *********************************************************************/ -->
-<div class="intervalometer">
-    <p class="kinematic-title">INTERVALOMETER</p>
-    <div class="btn-group" role="group" aria-label="Choose Axis">
-        <button type="button" class="btn btn-outline-primary active">RAMP</button>
-        <button type="button" class="btn btn-outline-primary">DELAY</button>
-        <button type="button" class="btn btn-outline-primary">BULB MODE</button>
-    </div>
-</div>
+
+
+<!-- 
+// To debug web application without uploading to ESP32 SPIFFS we need to put the app in debug mode.
+// and having http-server node js application. 
+//
+// Check main.js file for more details
+// -->
+
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+
+<head>
+  <title>Slider Controller</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <script defer src="/index.min.js"></script>
+</head>
+
+<body class="bg-dark user-select-none">
