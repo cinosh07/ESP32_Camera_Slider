@@ -58,6 +58,7 @@ module.exports = {
         { from: "./web-application/src/about.html", to: "./about.html" },
         { from: "./web-application/src/interval.html", to: "./interval.html" },
         { from: "./web-application/src/settings.html", to: "./settings.html" },
+        { from: "./web-application/src/favicon.ico", to: "./favicon.ico" },
         { from: "./web-application/src/images", to: "./images" },
         { from: "./web-application/src/license.txt", to: "./license.txt" },
         { from: "./web-application/src/css", to: "./css" },

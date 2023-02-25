@@ -32,7 +32,7 @@
 //
 // For this to work set DEBUG=true
 
-var DEBUG = true;
+var DEBUG = false;
 
 // The nav bar background color will now appear RED to clearly show that we are now in debug mode.
 
