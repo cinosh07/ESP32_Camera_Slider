@@ -50,6 +50,9 @@
 // https://github.com/jantimon/html-webpack-plugin
   // https://github.com/Jaid/inject-body-webpack-plugin
 
+  //https://whatwebcando.today/articles/handling-service-worker-updates/
+  // https://web.dev/learn/pwa/service-workers/#registration_and_scope
+
 #include <Arduino.h>
 #include "esp_task_wdt.h"
 #include "FastAccelStepper.h"

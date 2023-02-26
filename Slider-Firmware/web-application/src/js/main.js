@@ -10,7 +10,7 @@
  *     Attribution-NonCommercial-NoDerivatives 4.0 International
  *                      (CC BY-NC-ND 4.0)
  *        https://creativecommons.org/licenses/by-nc-nd/4.0/
- * 
+ *
  *********************************************************************/
 
 // To debug web application without uploading to ESP32 SPIFFS we need to put the app in debug mode.
@@ -23,7 +23,7 @@
 //
 // To test the compiled version
 // > http-server D:/Timelapse_Slider/ESP32_Camera_Slider/Slider-Firmware/data/www
-// 
+//
 // To test the original files
 // > http-server D:/Timelapse_Slider/ESP32_Camera_Slider/Slider-Firmware/web-application/src
 //
@@ -40,7 +40,7 @@ var DEBUG = true;
 // For debbugging externally to the ESP32 served files, we need to tell the app what is this address manually.
 
 // Set ESP32 ip address or mDNS address.
-// Please note that mDNS address resolution don't work on most of Android devices. Use IP address instead.
+// Please note that mDNS address resolution don't work on some of Android devices. Use IP address instead.
 
 var DEBUG_ESP32_WEBSOCKET_ADDRESS = "slider.local";
 
@@ -48,6 +48,7 @@ var DEBUG_ESP32_WEBSOCKET_ADDRESS = "slider.local";
                           Variables
   ****************************************************************
 */
+let SLIDER_MODE = true;
 let socket;
 let currentPage = 1;
 
@@ -106,6 +107,17 @@ $(async function () {
     $("#navBar").removeClass("bg-darker");
     $("#navBar").addClass("bg-danger");
   }
+  if ("serviceWorker" in navigator && !DEBUG) {
+    if (SLIDER_MODE) {
+      try {
+        navigator.serviceWorker.register("/serviceworker.js");
+      } catch (e) {}
+    } else {
+      try {
+        navigator.serviceWorker.register("/serviceworker-i.js");
+      } catch (e) {}
+    }
+  }
   await lockWakeState();
 
   const ctx = document.getElementById("myChart");
@@ -138,6 +150,17 @@ $(async function () {
     nextPage();
   });
   startWebsocket();
+  // if ("serviceWorker" in navigator) {
+  //   if (SLIDER_MODE) {
+  //     try {
+  //       navigator.serviceWorker.register("/serviceworker.js");
+  //     } catch (e) {}
+  //   } else {
+  //     try {
+  //       navigator.serviceWorker.register("/serviceworker-i.js");
+  //     } catch (e) {}
+  //   }
+  // }
 });
 $(window).on("beforeunload", function () {
   socket.close();

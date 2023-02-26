@@ -83,6 +83,8 @@ void initServer()
             { request->send(SPIFFS, "/www/images/icon-64.png", "image/png"); });
   server.on("/images/icon-32.png", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/icon-32.png", "image/png"); });
+  server.on("/images/icon-144.png", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/images/icon-144.png", "image/png"); });
   server.on("/images/splash.jpg", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/splash.jpg", "image/jpeg"); });
   // License
@@ -92,6 +94,17 @@ void initServer()
             { request->send(SPIFFS, "/www/license.txt", "text/text"); });
   server.on("/LICENSE.txt", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/license.txt", "text/text"); });
+  // Manifest
+  server.on("/slider.webmanifest", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/slider.webmanifest", "text/json"); });
+  server.on("/interval.webmanifest", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/interval.webmanifest", "text/json"); });
+  // Services worker
+  server.on("/serviceworker.js", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/serviceworker.js", "text/javascript"); });
+  server.on("/serviceworker-i.js", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/serviceworker-i.js", "text/javascript"); });
+
   server.onNotFound(notFound);
   server.addHandler(&ws);
   server.begin();
