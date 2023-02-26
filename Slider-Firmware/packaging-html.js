@@ -24,6 +24,8 @@ function start() {
           });
           mergeFiles  (inputPathListIndexnterval, outputPathIndexInterval).then((status) => {
             console.log('Concat index-interv completed');
+            console.log('');
+            console.log('Waiting for Webpack to complete its task ...');
           });
     } catch(e) {
         console.error('Error concatenate files ', e);

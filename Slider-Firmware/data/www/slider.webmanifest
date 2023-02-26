@@ -2,7 +2,7 @@
     "id": "/index.html",
     "name": "Cinosh Camera Slider Controller",
     "short_name": "Slider Controller",
-    "description": "ESP32 Camera Slider Controller is a universal video / timelapse slider control system compatible with virtually any camera sliders. It is designed by Carl Tremblay (aka Cinosh07 and VA2SAJ) with astrophotography timelapse and video production in mind.",
+    "description": "ESP32 Camera Slider Controller is a universal video / timelapse slider control system compatible with virtually any camera sliders. It is designed by Carl Tremblay (aka Cinosh07 and VA2SAJ) with astrophotography timelapse and video production in mind. It include a stand alone ESP32 based intervalometer.",
     "icons": [
       {
         "src": "images/icon-32.png",

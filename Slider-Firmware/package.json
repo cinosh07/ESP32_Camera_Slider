@@ -4,7 +4,7 @@
   "description": "",
   "main": "web-application/src/index.js",
   "scripts": {
-    "webpack": "node .\\packaging-html.js && node .\\packaging-html-local.js && webpack",
+    "webpack": "node .\\packaging-html-local.js && node .\\packaging-html.js && webpack",
     "webpack-local": "node .\\packaging-html-local.js",
     "server": "http-server D:/Timelapse_Slider/ESP32_Camera_Slider/Slider-Firmware/data/www",
     "dev-server": "http-server D:/Timelapse_Slider/ESP32_Camera_Slider/Slider-Firmware/web-application/src"
