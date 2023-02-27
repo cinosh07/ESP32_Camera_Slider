@@ -66,14 +66,14 @@ void getClockTime()
 void setClockTime()
 {
   // https://github.com/sleemanj/DS3231_Simple/blob/master/examples/z1_TimeAndDate/SetDateTime/SetDateTime.ino
+  
   // Create a variable to hold the data
   DateTime MyTimestamp;
 
-  // Load it with the date and time you want to set, for example
-  //   Saturday the 3rd of October 2020 at 14:17 and 33 Seconds...
-  MyTimestamp.Day = 3;
-  MyTimestamp.Month = 10;
-  MyTimestamp.Year = 20;
+  // Load it with the date and time you want to set
+  MyTimestamp.Day = 28;
+  MyTimestamp.Month = 2;
+  MyTimestamp.Year = 23;
   MyTimestamp.Hour = 14;
   MyTimestamp.Minute = 17;
   MyTimestamp.Second = 33;

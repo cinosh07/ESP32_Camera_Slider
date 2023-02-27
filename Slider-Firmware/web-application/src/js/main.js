@@ -73,11 +73,11 @@ const COMMAND_TYPE_JOYSTICK = {
 const COMMAND_TYPE_CLOCK = {
   COMMAND_TYPE: 0,
   COMMAND: 1,
-  TIMESTAMP: 2
+  TIMESTAMP: 2,
 };
 const CLOCK_COMMAND = {
   SET_CLOCK_TIME: 0,
-  GET_CLOCK_TIME: 1
+  GET_CLOCK_TIME: 1,
 };
 var joystickSlideMoveArray = [];
 var joystickSlideMoveCount = 0;
@@ -229,6 +229,23 @@ function startWebsocket() {
     toast.show();
   };
 }
+
+function sendTimeStamp() {
+  // https://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object
+  var today = new Date();
+  today.toISOString().substring(0, 10);
+  var timestampToSend =
+    "00-" +
+    today.toISOString().substring(0, 10).slice(2) +
+    "-" +
+    today.getHours() +
+    "-" +
+    today.getMinutes() +
+    "-" +
+    today.getSeconds();
+  console.log("Timestamp to send : " + timestampToSend);
+}
+
 function sendCommand(command) {
   command = "0::" + command;
   try {
@@ -363,7 +380,7 @@ function joystickSlideMove(data) {
 
     var command;
     command =
-    COMMAND_TYPE.JOYSTICK +
+      COMMAND_TYPE.JOYSTICK +
       "::" +
       JOYSTICK_COMMAND.JOYSTICK_SLIDE_MOVE +
       "::" +

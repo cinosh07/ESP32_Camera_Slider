@@ -36,6 +36,7 @@ enum Command_Type_Joystick
   SPEED_SCALING
 
 };
+// https://stackoverflow.com/questions/41198049/passing-null-to-enum-type-input-parameter-c
 enum Command_Type_Clock
 {
   COMMAND_TYPE_1,
