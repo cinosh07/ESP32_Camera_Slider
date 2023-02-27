@@ -85,6 +85,8 @@ void initServer()
             { request->send(SPIFFS, "/www/images/icon-32.png", "image/png"); });
   server.on("/images/icon-144.png", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/icon-144.png", "image/png"); });
+  server.on("/images/icon-512.png", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/www/images/icon-512.png", "image/png"); });
   server.on("/images/splash.jpg", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/images/splash.jpg", "image/jpeg"); });
   // License

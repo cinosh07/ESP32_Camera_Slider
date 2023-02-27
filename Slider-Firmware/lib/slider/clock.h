@@ -11,7 +11,7 @@
  *                      (CC BY-NC-ND 4.0)
  *        https://creativecommons.org/licenses/by-nc-nd/4.0/
  *********************************************************************/
-
+// https://github.com/sleemanj/DS3231_Simple/blob/master/examples/z2_Alarms/Alarm/Alarm.ino
 #include <Arduino.h>
 #include <DS3231_Simple.h>
 
@@ -21,15 +21,17 @@ TaskHandle_t CPU0_Timing_Task;
 
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
-DateTime initClock() {
+DateTime initClock()
+{
   Clock.begin();
 
   // disable any existing alarms
   Clock.disableAlarms();
-    DateTime timestamp = Clock.read();
-    return timestamp = Clock.read();
+  DateTime timestamp = Clock.read();
+  return timestamp = Clock.read();
 }
-void displayTimestampsMessage(DateTime timestamp) {
+void displayTimestampsMessage(DateTime timestamp)
+{
   Serial.print(timestamp.Year);
   Serial.print("-");
   Serial.print(timestamp.Month);
@@ -54,6 +56,33 @@ void core0_timing_task(void *pvParameters)
   }
 }
 
-void initTimingCoreTask() {
-   xTaskCreatePinnedToCore(core0_timing_task, "Core_0", 10000, NULL, 2, &CPU0_Timing_Task, 0);
+void initTimingCoreTask()
+{
+  xTaskCreatePinnedToCore(core0_timing_task, "Core_0", 10000, NULL, 2, &CPU0_Timing_Task, 0);
+}
+void getClockTime()
+{
+}
+void setClockTime()
+{
+  // https://github.com/sleemanj/DS3231_Simple/blob/master/examples/z1_TimeAndDate/SetDateTime/SetDateTime.ino
+  // Create a variable to hold the data
+  DateTime MyTimestamp;
+
+  // Load it with the date and time you want to set, for example
+  //   Saturday the 3rd of October 2020 at 14:17 and 33 Seconds...
+  MyTimestamp.Day = 3;
+  MyTimestamp.Month = 10;
+  MyTimestamp.Year = 20;
+  MyTimestamp.Hour = 14;
+  MyTimestamp.Minute = 17;
+  MyTimestamp.Second = 33;
+
+  // Then write it to the clock
+  Clock.write(MyTimestamp);
+
+  // And use it, we will read it back for example...
+  Serial.print("The time has been set to: ");
+  Clock.printTo(Serial);
+  Serial.println();
 }

@@ -2,20 +2,19 @@
  *                  Author: Carl Tremblay
  *
  *                Cinosh Camera Slider Controller
- *                        version 0.1           
+ *                        version 0.1
  *
- *                  Copyright 2023 Carl Tremblay  
- * 
+ *                  Copyright 2023 Carl Tremblay
+ *
  *                            License
- *    Attribution-NonCommercial-NoDerivatives 4.0 International 
+ *    Attribution-NonCommercial-NoDerivatives 4.0 International
  *                      (CC BY-NC-ND 4.0)
  *        https://creativecommons.org/licenses/by-nc-nd/4.0/
  *********************************************************************/
 
 #include <Arduino.h>
 #include "motors.h"
-
-
+#include "clock.h"
 int previousSlideDir = -2;
 double previousSlideSpeed = -2.00;
 int ACCELL = 10000;
@@ -26,8 +25,9 @@ enum Joystick_Command
   JOYSTICK_SLIDE_MOVE,
   JOYSTICK_FOCUS_MOVE
 };
-enum Command
+enum Command_Type_Joystick
 {
+  COMMAND_TYPE,
   COMMAND,
   SPEED,
   DIR,
@@ -35,6 +35,27 @@ enum Command
   MULTIPLICATOR,
   SPEED_SCALING
 
+};
+enum Command_Type_Clock
+{
+  COMMAND_TYPE_1,
+  COMMAND_1,
+  TIMESTAMP
+};
+enum Clock_Command {
+  SET_CLOCK_TIME,
+  GET_CLOCK_TIME
+};
+enum Command_Type
+{
+  JOYSTICK,
+  CLOCK
+};
+
+enum State
+{
+  IDLE,
+  JOYSTICK_MOVE
 };
 
 int SPEED_US = 100;
@@ -46,7 +67,19 @@ int getSpeedInUS(double speed)
 {
   return round(((1 - (speed / 100)) + 0.1) * SPEED_US * SPEED_MULTIPLICATOR);
 }
-void processCommand(int command[COMMAND_SIZE])
+void processSetClockTime ( int command[COMMAND_SIZE]) {
+  switch(command[COMMAND]) {
+    case SET_CLOCK_TIME:
+        setClockTime();
+    break;
+    case GET_CLOCK_TIME: 
+        getClockTime();
+    break;
+
+  }
+  
+}
+void processJoystickCommand(int command[COMMAND_SIZE])
 {
   double speed = command[SPEED];
   switch (command[COMMAND])
@@ -90,6 +123,18 @@ void processCommand(int command[COMMAND_SIZE])
     break;
   case JOYSTICK_FOCUS_MOVE:
 
+    break;
+  }
+}
+void processCommand(int command[COMMAND_SIZE])
+{
+  switch (command[COMMAND_TYPE])
+  {
+  case JOYSTICK:
+    processJoystickCommand(command);
+    break;
+  case CLOCK:
+    processSetClockTime(command);
     break;
   }
 }
@@ -162,6 +207,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
           Serial.println("Begin of data ###############################");
 #endif
           int commandToSent[COMMAND_SIZE];
+          commandToSent[COMMAND_TYPE] = commandArray[COMMAND_TYPE];
           commandToSent[COMMAND] = commandArray[COMMAND];
           commandToSent[SPEED] = commandArray[SPEED];
           commandToSent[DIR] = commandArray[DIR];
@@ -209,6 +255,7 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
     Serial.println("Websocket Error !!!!!!!!!!!!!!!!!!!!!!!!!");
   }
 }
-void initWebsocket() {
-    ws.onEvent(onWsEvent);
+void initWebsocket()
+{
+  ws.onEvent(onWsEvent);
 }

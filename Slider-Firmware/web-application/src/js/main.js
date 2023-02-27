@@ -51,22 +51,34 @@ var DEBUG_ESP32_WEBSOCKET_ADDRESS = "slider.local";
 let SLIDER_MODE = true;
 let socket;
 let currentPage = 1;
-
+const COMMAND_TYPE = {
+  JOYSTICK: 0,
+  CLOCK: 1,
+};
 const JOYSTICK_COMMAND = {
   JOYSTICK_PAN_MOVE: 0,
   JOYSTICK_TILT_MOVE: 1,
   JOYSTICK_SLIDE_MOVE: 2,
   JOYSTICK_FOCUS_MOVE: 3,
 };
-const COMMAND = {
-  COMMAND: 0,
-  SPEED: 1,
-  DIR: 2,
-  ACCEL: 3,
-  MULTIPLICATOR: 4,
-  SPEED_SCALING: 5,
+const COMMAND_TYPE_JOYSTICK = {
+  COMMAND_TYPE: 0,
+  COMMAND: 1,
+  SPEED: 2,
+  DIR: 3,
+  ACCEL: 4,
+  MULTIPLICATOR: 5,
+  SPEED_SCALING: 6,
 };
-
+const COMMAND_TYPE_CLOCK = {
+  COMMAND_TYPE: 0,
+  COMMAND: 1,
+  TIMESTAMP: 2
+};
+const CLOCK_COMMAND = {
+  SET_CLOCK_TIME: 0,
+  GET_CLOCK_TIME: 1
+};
 var joystickSlideMoveArray = [];
 var joystickSlideMoveCount = 0;
 var joystickSlideMovePreviousDir = -2;
@@ -289,16 +301,19 @@ function joystickSlideMove(data) {
           joystickSlideMovePreviousAverage
       );
       joystickSlideMovePreviousAverage = Math.round(average);
-      // const COMMAND = {
-      //   COMMAND: 0,
-      //   SPEED: 1,
-      //   DIR: 2,
-      //   ACCEL: 3,
-      //   MULTIPLICATOR: 4,
-      //   SPEED_SCALING: 5
+      // const COMMAND_TYPE_JOYSTICK = {
+      //   COMMAND_TYPE: 0,
+      //   COMMAND: 1,
+      //   SPEED: 2,
+      //   DIR: 3,
+      //   ACCEL: 4,
+      //   MULTIPLICATOR: 5,
+      //   SPEED_SCALING: 6,
       // };
       var command;
       command =
+        COMMAND_TYPE.JOYSTICK +
+        "::" +
         JOYSTICK_COMMAND.JOYSTICK_SLIDE_MOVE +
         "::" +
         Math.round(Avg.average(joystickSlideMoveArray)) +
@@ -348,6 +363,8 @@ function joystickSlideMove(data) {
 
     var command;
     command =
+    COMMAND_TYPE.JOYSTICK +
+      "::" +
       JOYSTICK_COMMAND.JOYSTICK_SLIDE_MOVE +
       "::" +
       Math.round(data * 100) +
@@ -375,6 +392,8 @@ function joystickSlideMove(data) {
 
     var command;
     command =
+      COMMAND_TYPE.JOYSTICK +
+      "::" +
       JOYSTICK_COMMAND.JOYSTICK_SLIDE_MOVE +
       "::" +
       Math.round(data * 100) +

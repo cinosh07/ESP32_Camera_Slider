@@ -29,6 +29,7 @@ const PRECACHE_URLS = [
   './images/icon-32.png',
   './images/icon-64.png',
   './images/icon-144.png',
+  './images/icon-512.png',
   './images/joystick-base.png',
   './images/joystick-blue.png',
   './images/joystick-red.png',

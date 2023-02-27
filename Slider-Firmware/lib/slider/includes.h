@@ -53,6 +53,11 @@
   //https://whatwebcando.today/articles/handling-service-worker-updates/
   // https://web.dev/learn/pwa/service-workers/#registration_and_scope
 
+
+// https://forum.arduino.cc/t/multi-arduino-serial-communication-with-max232/211474
+
+// https://github.com/sleemanj/DS3231_Simple/blob/master/examples/z1_TimeAndDate/SetDateTime/SetDateTime.ino
+
 #include <Arduino.h>
 #include "esp_task_wdt.h"
 #include "FastAccelStepper.h"
@@ -64,5 +69,5 @@
 #include "web_server.h"
 #include "spiffs_files.h"
 #include "networking.h"
-#include "clock.h"
+// #include "clock.h"
 
