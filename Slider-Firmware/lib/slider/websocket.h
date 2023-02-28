@@ -13,45 +13,13 @@
  *********************************************************************/
 
 #include <Arduino.h>
-#include "motors.h"
+// #include "motors.h"
 #include "clock.h"
-int previousSlideDir = -2;
-double previousSlideSpeed = -2.00;
-int ACCELL = 10000;
-enum Joystick_Command
-{
-  JOYSTICK_PAN_MOVE,
-  JOYSTICK_TILT_MOVE,
-  JOYSTICK_SLIDE_MOVE,
-  JOYSTICK_FOCUS_MOVE
-};
-enum Command_Type_Joystick
-{
-  COMMAND_TYPE,
-  COMMAND,
-  SPEED,
-  DIR,
-  ACCEL,
-  MULTIPLICATOR,
-  SPEED_SCALING
 
-};
-// https://stackoverflow.com/questions/41198049/passing-null-to-enum-type-input-parameter-c
-enum Command_Type_Clock
-{
-  COMMAND_TYPE_1,
-  COMMAND_1,
-  TIMESTAMP
-};
-enum Clock_Command {
-  SET_CLOCK_TIME,
-  GET_CLOCK_TIME
-};
-enum Command_Type
-{
-  JOYSTICK,
-  CLOCK
-};
+
+// int previousSlideDir = -2;
+// double previousSlideSpeed = -2.00;
+// int ACCELL = 10000;
 
 enum State
 {
@@ -59,83 +27,40 @@ enum State
   JOYSTICK_MOVE
 };
 
-int SPEED_US = 100;
-int SPEED_MULTIPLICATOR = 10;
+// int SPEED_US = 100;
+// int SPEED_MULTIPLICATOR = 10;
 AsyncWebSocket ws("/ws");
 AsyncWebSocketClient *globalClient = NULL;
 
-int getSpeedInUS(double speed)
-{
-  return round(((1 - (speed / 100)) + 0.1) * SPEED_US * SPEED_MULTIPLICATOR);
-}
+// int getSpeedInUS(double speed)
+// {
+//   return round(((1 - (speed / 100)) + 0.1) * SPEED_US * SPEED_MULTIPLICATOR);
+// }
 void processSetClockTime ( int command[COMMAND_SIZE]) {
-  switch(command[COMMAND]) {
-    case SET_CLOCK_TIME:
-        setClockTime();
+  switch(command[ClockCommandType::COMMAND]) {
+    case ClockCommand::SET_CLOCK_TIME:
+        setClockTime(command);
+        
     break;
-    case GET_CLOCK_TIME: 
+    case ClockCommand::GET_CLOCK_TIME: 
         getClockTime();
     break;
 
   }
-  
 }
-void processJoystickCommand(int command[COMMAND_SIZE])
-{
-  double speed = command[SPEED];
-  switch (command[COMMAND])
-  {
-  case JOYSTICK_PAN_MOVE:
 
-    break;
-  case JOYSTICK_TILT_MOVE:
-
-    break;
-  case JOYSTICK_SLIDE_MOVE:
-
-    if (speed == 0)
-    {
-      Serial.println("Webscoket Command : stopMove()");
-      stepperSlide->setSpeedInUs(0);
-      stepperSlide->applySpeedAcceleration();
-      stepperSlide->stopMove();
-      previousSlideSpeed = -2.00;
-      previousSlideDir = -2;
-    }
-
-    if (command[DIR] == 0 && speed > 0)
-    {
-
-      Serial.println("Webscoket Command : runForward() Speed: " + (String)getSpeedInUS(speed));
-      stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
-      stepperSlide->setAcceleration(ACCELL);
-      stepperSlide->runForward();
-      previousSlideDir = command[DIR];
-    }
-    else if (command[DIR] == -1 && speed > 0)
-    {
-      Serial.println("Webscoket Command : runBackward() Speed: " + (String)getSpeedInUS(speed));
-      stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
-      stepperSlide->setAcceleration(ACCELL);
-      stepperSlide->runBackward();
-      previousSlideDir = command[DIR];
-    }
-
-    break;
-  case JOYSTICK_FOCUS_MOVE:
-
-    break;
-  }
-}
 void processCommand(int command[COMMAND_SIZE])
 {
-  switch (command[COMMAND_TYPE])
+  switch (command[CommandType::COMMAND_TYPE])
   {
-  case JOYSTICK:
+  case CommandType::JOYSTICK:
     processJoystickCommand(command);
     break;
-  case CLOCK:
+  case CommandType::CLOCK:
     processSetClockTime(command);
+    break;
+  case CommandType::HOME:
+    homeStepper();
     break;
   }
 }
@@ -202,19 +127,19 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
         Serial.print("Array Data 5: ");
         Serial.println(&stringData[5]);
 #endif
-        if (commandArray[COMMAND] < 15)
+        if (commandArray[CommandType::COMMAND] < 15)
         {
 #ifdef DEBUG_COMMAND
           Serial.println("Begin of data ###############################");
 #endif
-          int commandToSent[COMMAND_SIZE];
-          commandToSent[COMMAND_TYPE] = commandArray[COMMAND_TYPE];
-          commandToSent[COMMAND] = commandArray[COMMAND];
-          commandToSent[SPEED] = commandArray[SPEED];
-          commandToSent[DIR] = commandArray[DIR];
-          commandToSent[ACCEL] = commandArray[ACCEL];
-          commandToSent[MULTIPLICATOR] = commandArray[MULTIPLICATOR];
-          commandToSent[SPEED_SCALING] = commandArray[SPEED_SCALING];
+          // int commandToSent[COMMAND_SIZE];
+          // commandToSent[COMMAND_TYPE] = commandArray[COMMAND_TYPE];
+          // commandToSent[COMMAND] = commandArray[COMMAND];
+          // commandToSent[SPEED] = commandArray[SPEED];
+          // commandToSent[DIR] = commandArray[DIR];
+          // commandToSent[ACCEL] = commandArray[ACCEL];
+          // commandToSent[MULTIPLICATOR] = commandArray[MULTIPLICATOR];
+          // commandToSent[SPEED_SCALING] = commandArray[SPEED_SCALING];
 #ifdef DEBUG_COMMAND
           for (int i = 0; i < 6; i++)
           {

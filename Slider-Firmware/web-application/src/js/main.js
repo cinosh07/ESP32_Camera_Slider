@@ -32,7 +32,7 @@
 //
 // For this to work set DEBUG=true
 
-var DEBUG = true;
+var DEBUG = false;
 
 // The nav bar background color will now appear RED to clearly show that we are now in debug mode.
 
@@ -48,12 +48,29 @@ var DEBUG_ESP32_WEBSOCKET_ADDRESS = "slider.local";
                           Variables
   ****************************************************************
 */
+let retryConnectWebsocketTimeout = null;
+
 let SLIDER_MODE = true;
 let socket;
 let currentPage = 1;
 const COMMAND_TYPE = {
   JOYSTICK: 0,
   CLOCK: 1,
+  HOME: 2,
+  GOTO_IN: 3,
+  GOTO_OUT: 4,
+  GOTO_KEYFRAME: 5,
+  MARK_IN: 6,
+  MARK_OUT: 7,
+  MARK_KEYFRAME: 8,
+  DEL_KEYFRAME: 9,
+  ADD_KEYFRAME: 10,
+  SET_SLAVE_MODE: 11,
+  SET_TIMELAPSE_MODE: 12,
+  SET_SLIDE_KINEMATIC: 13,
+  SET_PAN_KINEMATIC: 14,
+  SET_TILT_KINEMATIC: 15,
+  SET_FOCUS_KINEMATIC: 16,
 };
 const JOYSTICK_COMMAND = {
   JOYSTICK_PAN_MOVE: 0,
@@ -69,11 +86,17 @@ const COMMAND_TYPE_JOYSTICK = {
   ACCEL: 4,
   MULTIPLICATOR: 5,
   SPEED_SCALING: 6,
+  NOT_USE_ENTRY_7: 7,
 };
 const COMMAND_TYPE_CLOCK = {
   COMMAND_TYPE: 0,
   COMMAND: 1,
-  TIMESTAMP: 2,
+  YEAR: 2,
+  MONTH: 3,
+  DAY: 4,
+  HOUR: 5,
+  MINUTE: 6,
+  SECOND: 7,
 };
 const CLOCK_COMMAND = {
   SET_CLOCK_TIME: 0,
@@ -89,6 +112,12 @@ var joystickSlideMovePreviousAverage = 0.0;
 */
 const canWakeLock = () => "wakeLock" in navigator;
 let wakelock;
+
+function tryReconnect() {
+  retryConnectWebsocketTimeout = null;
+  startWebsocket();
+}
+
 async function lockWakeState() {
   if (!canWakeLock()) return;
   try {
@@ -161,18 +190,10 @@ $(async function () {
   $("#nextPage").on("click", function () {
     nextPage();
   });
+  $("#home").on("click", function () {
+    sendHomeSlider();
+  });
   startWebsocket();
-  // if ("serviceWorker" in navigator) {
-  //   if (SLIDER_MODE) {
-  //     try {
-  //       navigator.serviceWorker.register("/serviceworker.js");
-  //     } catch (e) {}
-  //   } else {
-  //     try {
-  //       navigator.serviceWorker.register("/serviceworker-i.js");
-  //     } catch (e) {}
-  //   }
-  // }
 });
 $(window).on("beforeunload", function () {
   socket.close();
@@ -185,9 +206,8 @@ function startWebsocket() {
   if (DEBUG) {
     socket = new WebSocket("ws://" + DEBUG_ESP32_WEBSOCKET_ADDRESS + "/ws");
   } else {
-    socket = new WebSocket("ws://" + $("#ip").val() + "/ws");
+    socket = new WebSocket("ws://" + window.location.hostname + "/ws");
   }
-
   socket.onopen = function (e) {
     socket.send("CONNECTED");
     $("#status").removeClass("text-danger");
@@ -197,6 +217,7 @@ function startWebsocket() {
     var alertConnected = document.getElementById("alertConnected");
     var toast = new bootstrap.Toast(alertConnected);
     toast.show();
+    sendTimeStamp();
   };
 
   socket.onmessage = function (event) {
@@ -208,6 +229,7 @@ function startWebsocket() {
       //  Connection closed cleanly
     } else {
       // e.g. server process killed or network down
+      retryConnectWebsocketTimeout = setTimeout(tryReconnect, 10000);
     }
     $("#status").removeClass("text-success");
     $("#status").removeClass("text-muted");
@@ -227,23 +249,61 @@ function startWebsocket() {
     var alertConnected = document.getElementById("alertConnectionError");
     var toast = new bootstrap.Toast(alertConnected);
     toast.show();
+    retryConnectWebsocketTimeout = setTimeout(tryReconnect, 10000);
   };
 }
-
+function sendHomeSlider() {
+  var command;
+  command =
+    COMMAND_TYPE.HOME +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0;
+  sendCommand(command);
+}
 function sendTimeStamp() {
-  // https://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object
-  var today = new Date();
-  today.toISOString().substring(0, 10);
+  var now = new Date();
   var timestampToSend =
     "00-" +
-    today.toISOString().substring(0, 10).slice(2) +
+    now.toISOString().substring(0, 10).slice(2) +
     "-" +
-    today.getHours() +
+    now.getHours() +
     "-" +
-    today.getMinutes() +
+    now.getMinutes() +
     "-" +
-    today.getSeconds();
-  console.log("Timestamp to send : " + timestampToSend);
+    now.getSeconds();
+  var fullDate = now.toISOString().substring(0, 10).slice(2).split("-");
+
+  var command;
+  command =
+    COMMAND_TYPE.CLOCK +
+    "::" +
+    CLOCK_COMMAND.SET_CLOCK_TIME +
+    "::" +
+    fullDate[0] + // Year
+    "::" +
+    fullDate[1] + // Month
+    "::" +
+    fullDate[2] + // Day
+    "::" +
+    now.getHours() +
+    "::" +
+    now.getMinutes() +
+    "::" +
+    now.getSeconds();
+  sendCommand(command);
+  console.log("Set ESP32 RTC time : " + timestampToSend);
 }
 
 function sendCommand(command) {
@@ -341,7 +401,8 @@ function joystickSlideMove(data) {
         "::" +
         0 +
         "::" +
-        0;
+        0 +
+        "::0";
 
       // let command = {
       //   command: "JOYSTICK_SLIDE_MOVE",

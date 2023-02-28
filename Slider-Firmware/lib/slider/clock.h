@@ -52,6 +52,7 @@ void core0_timing_task(void *pvParameters)
   {
     readEncoders();
     vTaskDelay(10);
+    checkLimitSwitch();
     // BatCheck();
   }
 }
@@ -63,26 +64,20 @@ void initTimingCoreTask()
 void getClockTime()
 {
 }
-void setClockTime()
+void setClockTime(int _timestamp[COMMAND_SIZE])
 {
-  // https://github.com/sleemanj/DS3231_Simple/blob/master/examples/z1_TimeAndDate/SetDateTime/SetDateTime.ino
-  
-  // Create a variable to hold the data
-  DateTime MyTimestamp;
 
-  // Load it with the date and time you want to set
-  MyTimestamp.Day = 28;
-  MyTimestamp.Month = 2;
-  MyTimestamp.Year = 23;
-  MyTimestamp.Hour = 14;
-  MyTimestamp.Minute = 17;
-  MyTimestamp.Second = 33;
+  DateTime timestamp;
 
-  // Then write it to the clock
-  Clock.write(MyTimestamp);
+  timestamp.Day = _timestamp[ClockCommandType::DAY];
+  timestamp.Month = _timestamp[ClockCommandType::MONTH];
+  timestamp.Year = _timestamp[ClockCommandType::YEAR];
+  timestamp.Hour = _timestamp[ClockCommandType::HOUR];
+  timestamp.Minute = _timestamp[ClockCommandType::MINUTE];
+  timestamp.Second = _timestamp[ClockCommandType::SECOND];
 
-  // And use it, we will read it back for example...
-  Serial.print("The time has been set to: ");
+  Clock.write(timestamp);
+  Serial.print("RTC Clock has been set to: ");
   Clock.printTo(Serial);
   Serial.println();
 }

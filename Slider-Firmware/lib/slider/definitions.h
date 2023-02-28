@@ -14,7 +14,7 @@
 #define SERIAL_PORT Serial2
 #define R_SENSE 0.11f
 #define DRIVER_ADDRESS 0b00
-#define COMMAND_SIZE 9
+#define COMMAND_SIZE 10
 
 
 // #define DEBUG_COMMAND 1

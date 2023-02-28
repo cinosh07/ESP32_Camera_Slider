@@ -1,4 +1,3 @@
-
 html {
   font-family: Helvetica;
   display: inline-block;
@@ -125,6 +124,13 @@ body {
   filter: drop-shadow(10px 10px 10px black);
 }
 
+.in-out-button-container {
+  display: flex ;
+  flex-direction: row;
+}
+.in-ou-button {
+  display: inline-flex;
+}
 .kinematic-title {
   margin-bottom: 0px;
   margin-top: -10px;
@@ -199,9 +205,11 @@ body {
 .content {
   margin-bottom: 50px !important;
 }
+
 .content-hidden {
   display: none;
 }
+
 .responsive-iframe {
   position: absolute;
   top: 0;
@@ -211,12 +219,14 @@ body {
   width: 100%;
   height: 100%;
 }
+
 .iframe-container {
   position: relative;
   width: 100%;
   height: 300px;
   margin-top: -5px;
 }
+
 .app-footer {
   height: 55px;
 }

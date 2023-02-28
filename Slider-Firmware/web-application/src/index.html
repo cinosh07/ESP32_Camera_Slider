@@ -34,7 +34,7 @@
   <link href="css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <script defer src="js/jquery.min.js"></script>
-  <script defer src="js/bootstrap.min.js"></script>
+  <script defer src="js/bootstrap.bundle.min.js"></script>
   <script src="js/chart.js"></script>
   <script defer src="/js/main.js"></script>
   
@@ -86,7 +86,7 @@
   </div>
 </nav>
 <div id="control-panel" class="container content">
-  
+
   <input id="ip" type="hidden" value="%IP%" />
 
   <div class="mode-container">
@@ -99,8 +99,32 @@
       <label class="form-check-label checkContainerLabel" for="flexSwitchCheckDefault"> TIMELAPSE MODE</label>
     </div>
   </div>
-  <p><a href="#"><button class="btn btn-primary">IN</button></a> <a href="#"><button
-        class="btn btn-success">OUT</button></a> <a href="#"><button class="btn btn-secondary">+</button></a></p>
+
+  <div class="in-ou-button-container">
+    <div class="dropdown in-ou-button">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownInButton" data-bs-toggle="dropdown"
+        aria-expanded="false">
+        IN
+      </button>
+      <ul class="dropdown-menu bg-darker" aria-labelledby="dropdownInButton">
+        <li><button class="dropdown-item text-light" id="mark-in">Mark-IN</button></li>
+        <li><button class="dropdown-item text-light" id="goto-in">Goto-IN</button></li>
+        <li><button class="dropdown-item text-light" id="home">Home</button></li>
+      </ul>
+    </div>
+    <div class="dropdown in-ou-button">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownOutButton" data-bs-toggle="dropdown"
+        aria-expanded="false">
+        OUT
+      </button>
+      <ul class="dropdown-menu bg-darker" aria-labelledby="dropdownOutButton">
+        <li><button class="dropdown-item text-light" id="mark-out">Mark-OUT</button></li>
+        <li><button class="dropdown-item text-light" id="goto-out">Goto-OUT</button></li>
+      </ul>
+    </div>
+    <p class="in-ou-button"><button class="btn btn-secondary" id="add-keyframe">+</button></p>
+  </div>
+
   <hr>
 
   <div class="control-container">

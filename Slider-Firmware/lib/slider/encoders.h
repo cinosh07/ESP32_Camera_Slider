@@ -84,12 +84,20 @@ int SEQmoves = 2;
 int Last_key;
 int SEQ = 0;
 
+bool forceStop = false;
+
 int initEncoder()
 {
     // sliderEncoder.begin(4);                        //  set direction pin.
     // sliderEncoder.setDirection(AS5600_CLOCK_WISE); // default, just be explicit.
     // int b = sliderEncoder.isConnected();
     return 1;
+}
+void checkLimitSwitch() {
+  if (digitalRead(slider_Motor.limit_switch) == LOW) {
+    //TODO Change Status to Force Stop Motor
+    forceStop = true;
+  }
 }
 void readEncoders()
 {
@@ -115,6 +123,6 @@ void readEncoders()
     E_outputPos = E_position;
 
     S_position = ((E_position / 2.56));               //Ajust encoder to stepper values the number of steps eqiv
-    Serial.println(S_position);
+    // Serial.println(S_position);
 }
 

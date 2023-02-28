@@ -17,7 +17,6 @@
 
 #include "includes.h"
 
-
 //***********************************************************
 //
 //                         Setup
@@ -67,6 +66,11 @@ void setup()
   initTimingCoreTask();
   delay(100);
   disableCore0WDT();
+  motorsBegin();
+  // homeStepper();
+  // output = encoder.getPosition();
+  // lastOutput = output;
+  // E_position = output;
 }
 
 //***********************************************************
@@ -95,6 +99,9 @@ void loop()
   //     globalClient->text(randomNumber);
   //  }
   // delay(4000);
-
-  // delay(10);
+  if (forceStop == true)
+  {
+    forceMotorsLimitTrigered();
+  }
+  delay(10);
 }
