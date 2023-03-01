@@ -27,6 +27,7 @@ struct Stepper_Motor
   String tmc_driver_address; // "tmc_driver_address": "0b00"
 };
 
+int COMMAND_STATUS = 0;
 // Config config;
 Stepper_Motor slider_Motor;
 Stepper_Motor pan_Motor;

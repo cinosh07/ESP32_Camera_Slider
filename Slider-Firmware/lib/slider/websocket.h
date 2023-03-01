@@ -62,6 +62,18 @@ void processCommand(int command[COMMAND_SIZE])
   case CommandType::HOME:
     homeStepper();
     break;
+  case CommandType::MARK_IN:
+    COMMAND_STATUS = CommandStatus::MARK_IN;
+    break;
+  case CommandType::MARK_OUT:
+    COMMAND_STATUS = CommandStatus::MARK_OUT;
+    break;
+    case CommandType::GOTO_IN:
+    COMMAND_STATUS = CommandStatus::GOTO_IN;
+    break;
+    case CommandType::GOTO_OUT:
+    COMMAND_STATUS = CommandStatus::GOTO_OUT;
+    break;
   }
 }
 

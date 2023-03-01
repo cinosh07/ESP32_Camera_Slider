@@ -57,20 +57,15 @@ void setup()
   }
   else
   {
+    initServer();
+    initWebsocket();
+    initMotors();
+    initTimingCoreTask();
+    delay(100);
+    disableCore0WDT();
+    motorsBegin();
     sendControllerReadyMessage();
   }
-  initServer();
-  initWebsocket();
-  initMotors();
-
-  initTimingCoreTask();
-  delay(100);
-  disableCore0WDT();
-  motorsBegin();
-  // homeStepper();
-  // output = encoder.getPosition();
-  // lastOutput = output;
-  // E_position = output;
 }
 
 //***********************************************************
@@ -81,27 +76,29 @@ void setup()
 
 void loop()
 {
-
-  //    clk += 100000;
-  //  if (clk > 800000) clk = 100000;
-  //  Wire.setClock(clk);
-  //
-  //  Serial.print(clk);
-  //  Serial.print("\t");
-  //  Serial.print(as5600.readAngle());
-  //  Serial.print("\t");
-  //  Serial.println(as5600.rawAngle() * AS5600_RAW_TO_DEGREES);
-  //
-  //  delay(1000);
-
   // if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
   //     String randomNumber = String(random(0,20));
   //     globalClient->text(randomNumber);
   //  }
   // delay(4000);
-  if (forceStop == true)
+
+  switch (COMMAND_STATUS)
   {
+  case CommandStatus::FORCE_STOP:
     forceMotorsLimitTrigered();
+    break;
+  case CommandStatus::MARK_IN:
+    markIn();
+    break;
+  case CommandStatus::MARK_OUT:
+    markOut();
+    break;
+  case CommandStatus::GOTO_IN:
+    gotoIn();
+    break;
+  case CommandStatus::GOTO_OUT:
+    gotoOut();
+    break;
   }
   delay(10);
 }

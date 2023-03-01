@@ -26,6 +26,6 @@ void initStepperDriver() {
     tmcDriverSlide.toff(2);               // Enable driver in software
                                           // tmcDriverSlide.en_pwm_mode(1);      // Enable extremely quiet stepping
     tmcDriverSlide.pwm_autoscale(1);
-    tmcDriverSlide.microsteps(32);
+    tmcDriverSlide.microsteps(MICROSTEP);
     tmcDriverSlide.begin();
 }

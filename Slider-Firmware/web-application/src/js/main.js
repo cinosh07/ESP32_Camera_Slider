@@ -32,7 +32,7 @@
 //
 // For this to work set DEBUG=true
 
-var DEBUG = false;
+var DEBUG = true;
 
 // The nav bar background color will now appear RED to clearly show that we are now in debug mode.
 
@@ -115,6 +115,7 @@ let wakelock;
 
 function tryReconnect() {
   retryConnectWebsocketTimeout = null;
+  socket = null;
   startWebsocket();
 }
 
@@ -193,6 +194,22 @@ $(async function () {
   $("#home").on("click", function () {
     sendHomeSlider();
   });
+
+  $("#mark-in").on("click", function () {
+    markIn();
+  });
+  $("#goto-in").on("click", function () {
+    gotoIn();
+  });
+  $("#mark-out").on("click", function () {
+    markOut();
+  });
+  $("#goto-out").on("click", function () {
+    gotoOut();
+  });
+
+
+
   startWebsocket();
 });
 $(window).on("beforeunload", function () {
@@ -251,6 +268,88 @@ function startWebsocket() {
     toast.show();
     retryConnectWebsocketTimeout = setTimeout(tryReconnect, 10000);
   };
+}
+function markIn() {
+
+  var command;
+  command =
+    COMMAND_TYPE.MARK_IN +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0;
+  sendCommand(command);
+
+}
+function markOut() {
+  var command;
+  command =
+    COMMAND_TYPE.MARK_OUT +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0;
+  sendCommand(command);
+}
+function gotoIn() {
+  var command;
+  command =
+    COMMAND_TYPE.GOTO_IN +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0;
+  sendCommand(command);
+}
+function gotoOut() {
+  var command;
+  command =
+    COMMAND_TYPE.GOTO_OUT +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0 +
+    "::" +
+    0;
+  sendCommand(command);
 }
 function sendHomeSlider() {
   var command;

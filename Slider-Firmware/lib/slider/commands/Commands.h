@@ -11,6 +11,26 @@
  *                      (CC BY-NC-ND 4.0)
  *        https://creativecommons.org/licenses/by-nc-nd/4.0/
  *********************************************************************/
+class CommandStatus
+{
+public:
+    enum status
+    {
+        IDLE,
+        HOMING,
+        JOG,
+        RUNNING,
+        MARK_IN,
+        MARK_OUT,
+        GOTO_IN,
+        GOTO_OUT,
+        TIMELAPSE,
+        VIDEO,
+        FORCE_STOP
+
+    };
+};
+
 class CommandType
 {
 public:
@@ -69,7 +89,7 @@ public:
         ACCEL,
         MULTIPLICATOR,
         SPEED_SCALING,
-        N_A  // Not Availlable
+        N_A // Not Availlable
 
     };
 
