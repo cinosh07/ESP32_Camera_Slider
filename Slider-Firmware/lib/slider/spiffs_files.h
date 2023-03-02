@@ -13,6 +13,11 @@
  *        https://creativecommons.org/licenses/by-nc-nd/4.0/
  *********************************************************************/
 
+// To Save during execution
+// enableCore0WDT();
+// disableCore0WDT();
+// disableLoopWDT();
+
 #include <Arduino.h>
 #include "ArduinoJson.h"
 

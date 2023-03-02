@@ -23,17 +23,7 @@
 
 // Set web server port number to 80
 AsyncWebServer server(80);
-// int SPEED_US = 100;
-// int SPEED_MULTIPLICATOR = 10;
 
-// int previousSlideDir = -2;
-// double previousSlideSpeed = -2.00;
-// int ACCELL = 10000;
-
-// int getSpeedInUS(double speed)
-// {
-//   return round(((1 - (speed / 100)) + 0.1) * SPEED_US * SPEED_MULTIPLICATOR);
-// }
 String ipToString(const IPAddress &address)
 {
   return String() + address[0] + "." + address[1] + "." + address[2] + "." + address[3];

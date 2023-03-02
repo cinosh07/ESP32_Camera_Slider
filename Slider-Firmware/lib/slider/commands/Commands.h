@@ -124,3 +124,15 @@ public:
 
 private:
 };
+
+class Axis {
+    public:
+    enum type
+    {
+        SLIDE,
+        PAN,
+        TILT,
+        FOCUS
+    };
+    private:
+};

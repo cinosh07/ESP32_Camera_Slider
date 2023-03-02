@@ -38,19 +38,17 @@ void processJoystickCommand(int command[COMMAND_SIZE])
       {
         delay(10); // wait until finish
       }
-      // Serial.print("Step Position: "); // Ajust encoder to stepper values the number of steps eqiv 2.56
+      // Serial.print("Step Position: "); 
       // Serial.println(Step_position);
 
-      disableMotors();
+      // disableMotors();
     }
 
     if (command[JoystickCommandType::DIR] == 0 && speed > 0)
     {
 
       Serial.println("Webscoket Command : runForward() Speed: " + (String)getSpeedInUS(speed));
-      enableMotors();
-      stepperSlide->setCurrentPosition(Step_position);
-      delay(10);
+      prepareMotors();
       stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
       stepperSlide->setAcceleration(ACCELL);
       stepperSlide->runForward();
@@ -58,9 +56,7 @@ void processJoystickCommand(int command[COMMAND_SIZE])
     }
     else if (command[JoystickCommandType::DIR] == -1 && speed > 0)
     {
-      enableMotors();
-      stepperSlide->setCurrentPosition(Step_position);
-      delay(10);
+      prepareMotors();
       Serial.println("Webscoket Command : runBackward() Speed: " + (String)getSpeedInUS(speed));
       stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
       stepperSlide->setAcceleration(ACCELL);

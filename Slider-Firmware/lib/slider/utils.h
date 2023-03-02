@@ -35,3 +35,32 @@ int getSpeedInUS(double speed)
 {
   return round(((1 - (speed / 100)) + 0.1) * SPEED_US * SPEED_MULTIPLICATOR);
 }
+
+// ----------- HELPER METHODS -------------------------------------
+
+/**
+   Fill in leading zero to numbers in order to always have 2 digits
+*/
+String fillZero( int input ) {
+
+  String sInput = String( input );
+  if ( sInput.length() < 2 ) {
+    sInput = "0";
+    sInput.concat( String( input ));
+  }
+  return sInput;
+}
+
+String printFloat(float f, int total, int dec) {
+
+  static char dtostrfbuffer[8];
+  String s = dtostrf(f, total, dec, dtostrfbuffer);
+  return s;
+}
+
+String printInt( int i, int total) {
+  float f = i;
+  static char dtostrfbuffer[8];
+  String s = dtostrf(f, total, 0, dtostrfbuffer);
+  return s;
+}

@@ -65,6 +65,11 @@ void setup()
     disableCore0WDT();
     motorsBegin();
     sendControllerReadyMessage();
+
+    // releaseTime = 5;
+    // maxNoOfShots = 30;
+    // // mode = MODE_BULB;
+    // firstShutter();
   }
 }
 
@@ -81,6 +86,19 @@ void loop()
   //     globalClient->text(randomNumber);
   //  }
   // delay(4000);
+
+  if (interruptCounter > 0)
+  {
+
+    portENTER_CRITICAL(&secondsTimerMux);
+    interruptCounter--;
+    portEXIT_CRITICAL(&secondsTimerMux);
+
+    // TODO Set last millis of last second
+
+    // Serial.print("An interrupt as occurred. Total number: ");
+    // Serial.println(totalInterruptCounter);
+  }
 
   switch (COMMAND_STATUS)
   {
@@ -99,6 +117,17 @@ void loop()
   case CommandStatus::GOTO_OUT:
     gotoOut();
     break;
+  case CommandStatus::TIMELAPSE:
+    // intervalometerLoop();
+    break;
   }
+  intervalometerLoop();
+  if (imageCount != 0 & lastimageCount != imageCount)
+  {
+    lastimageCount = imageCount;
+    Serial.print("Camera shots: ");
+    Serial.println(imageCount);
+  }
+
   delay(10);
 }

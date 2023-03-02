@@ -13,14 +13,27 @@
     },
     "bat_pin": 39,
     "profile": "profile-1",
-    "interval-mode" : false,
-    "profiles_name" : {
-        "profile-1" : "Cinosh - 1 axis slider",
-        "profile-2" : "Dynamic Perception - 3 axis slider",
-        "profile-3" : "none",
-        "profile-4" : "none",
-        "profile-5" : "none"
-    }, 
+    "interval-mode": false,
+    "profiles_name": {
+        "profile-1": "Cinosh - 1 axis slider",
+        "profile-2": "Dynamic Perception - 3 axis slider",
+        "profile-3": "none",
+        "profile-4": "none",
+        "profile-5": "none"
+    },
     "tmc_uart_rx": 16,
-    "tmc_uart_tx": 17
+    "tmc_uart_tx": 17,
+    "intervalometer": [
+        {
+            "name": "default",
+            "interval": 4.0,
+            "maxNoOfShots": 0,
+            "mode": 0,
+            "RELEASE_TIME_DEFAULT": 0.1,
+            "MIN_DARK_TIME": 0.5,
+            "rampDuration": 10,
+            "decoupleTime": 1000
+
+        }
+    ]
 }

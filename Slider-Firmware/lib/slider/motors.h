@@ -16,92 +16,102 @@
 #include <encoders.h>
 #include <stepper_driver.h>
 
+
 FastAccelStepperEngine engine = FastAccelStepperEngine();
 FastAccelStepper *stepperSlide = NULL;
+FastAccelStepper *stepperPan = NULL;
+FastAccelStepper *stepperTilt = NULL;
+FastAccelStepper *stepperFocus = NULL;
 
-void enableMotors()
+void prepareMotors()
 {
-  // digitalWrite(slider_Motor.enable_pin, LOW);
-  // delay(100);
-  // stepperSlide->setCurrentPosition(Step_position);
-  // delay(10);
-}
-void disableMotors()
-{
-  // digitalWrite(slider_Motor.enable_pin, HIGH);
-  // delay(50);
+  if(stepperSlide) {
+    stepperSlide->setCurrentPosition(current_position[Axis::SLIDE]);
+  }
+  if(stepperPan) {
+    stepperPan->setCurrentPosition(current_position[Axis::PAN]);
+  }
+  if(stepperTilt) {
+    stepperTilt->setCurrentPosition(current_position[Axis::TILT]);
+  }
+  if(stepperFocus) {
+    stepperFocus->setCurrentPosition(current_position[Axis::FOCUS]);
+  }
+  delay(10);
 }
 
 #include "./commands/JoystickCommand.h"
 
 void markIn()
 {
-  in_position = (Step_position);
-  stepperSlide->setCurrentPosition(round(in_position));
+  in_position[Axis::SLIDE] = current_position[Axis::SLIDE];
+  in_position[Axis::PAN] = current_position[Axis::PAN];
+  in_position[Axis::TILT] = current_position[Axis::TILT];
+  in_position[Axis::FOCUS] = current_position[Axis::FOCUS];
+
+  stepperSlide->setCurrentPosition(round(in_position[Axis::SLIDE]));
   delay(50);
   COMMAND_STATUS = CommandStatus::IDLE;
   Serial.print("Mark-In: ");
-  Serial.println(in_position);
+  Serial.println(in_position[Axis::SLIDE]);
   // Serial.print("Step Position: "); // Ajust encoder to stepper values the number of steps eqiv 2.56
   // Serial.println(Step_position);
 }
 void markOut()
 {
-  out_position = (Step_position);
-  stepperSlide->setCurrentPosition(round(out_position)); // Make sure the stepper knows where it is
+  out_position[Axis::SLIDE] = current_position[Axis::SLIDE];
+  out_position[Axis::PAN] = current_position[Axis::PAN];
+  out_position[Axis::TILT] = current_position[Axis::TILT];
+  out_position[Axis::FOCUS] = current_position[Axis::FOCUS];
+
+  stepperSlide->setCurrentPosition(round(out_position[Axis::SLIDE])); // Make sure the stepper knows where it is
   delay(50);
   COMMAND_STATUS = CommandStatus::IDLE;
   Serial.print("Mark-Out: ");
-  Serial.println(out_position);
+  Serial.println(out_position[Axis::SLIDE]);
   // Serial.print("Step Position: "); // Ajust encoder to stepper values the number of steps eqiv 2.56
   // Serial.println(Step_position);
 }
 void gotoIn()
 {
 
-  enableMotors();
-  delay(100);
-  stepperSlide->setCurrentPosition(Step_position);
-  delay(10);
+  prepareMotors();
   Serial.print("Goto In position: ");
-  Serial.println(in_position);
-  if (Step_position != (in_position))
+  Serial.println(in_position[Axis::SLIDE]);
+  if (current_position[Axis::SLIDE] != (in_position[Axis::SLIDE]))
   // if (stepperSlide->getCurrentPosition() != (in_position))
-  { // Run to Out position
+  { 
     stepperSlide->setSpeedInUs(FAST_SPEED);
     stepperSlide->setAcceleration(ACCELL);
-    stepperSlide->moveTo(in_position);
+    stepperSlide->moveTo(in_position[Axis::SLIDE]);
     while (stepperSlide->isRunning())
-    { // delay until move complete
-      delay(10);
+    {
+      delay(10);  // wait until finish
     }
   }
   COMMAND_STATUS = CommandStatus::IDLE;
-  disableMotors();
+  // disableMotors();
 }
 void gotoOut()
 {
 
-  enableMotors();
-  delay(100);
-  stepperSlide->setCurrentPosition(Step_position);
-  delay(10);
+  prepareMotors();
   Serial.print("Goto Out position: ");
-  Serial.println(out_position);
-  if (Step_position != (out_position))
+  Serial.println(out_position[Axis::SLIDE]);
+  if (current_position[Axis::SLIDE] != (out_position[Axis::SLIDE]))
   // if (stepperSlide->getCurrentPosition() != (out_position))
 
-  { // Run to Out position
+  {
     stepperSlide->setSpeedInUs(FAST_SPEED);
     stepperSlide->setAcceleration(ACCELL);
-    stepperSlide->moveTo(out_position);
+    stepperSlide->moveTo(out_position[Axis::SLIDE]);
     while (stepperSlide->isRunning())
-    { // delay until move complete
-      delay(10);
+    { 
+      delay(10);  // wait until finish
     }
   }
   COMMAND_STATUS = CommandStatus::IDLE;
-  disableMotors();
+  // disableMotors();
 }
 void forceMotorsLimitTrigered()
 {
@@ -110,16 +120,16 @@ void forceMotorsLimitTrigered()
   stepperSlide->setSpeedInUs(SAFE_SPEED);
   stepperSlide->move(MOVE_AFTER_HOME_DISTANCE);
   while (stepperSlide->isRunning())
-  { // delay until move complete
-    delay(10);
+  { 
+    delay(10);  // wait until finish
   }
   COMMAND_STATUS = CommandStatus::IDLE;
-  disableMotors();
+  // disableMotors();
 }
 void homeStepper()
 {
   COMMAND_STATUS = CommandStatus::HOMING;
-  enableMotors();
+  prepareMotors();
   Serial.println("Homing Slider ...");
   stepperSlide->setSpeedInUs(SAFE_SPEED); // the parameter is us/step larger values are slower!!!
   stepperSlide->setAcceleration(ACCELL);
@@ -130,53 +140,53 @@ void homeStepper()
   }
 
   while (digitalRead(slider_Motor.limit_switch) == HIGH)
-  {                                         // Make the Stepper move CCW until the switch is activated
+  {                                         
     stepperSlide->setSpeedInUs(HOME_SPEED); // the parameter is us/step larger values are slower!!!
     stepperSlide->setAcceleration(ACCELL);
-    stepperSlide->moveTo(HOMING_DISTANCE); //"MoveTo" move to a position and stop,
+    stepperSlide->moveTo(HOMING_DISTANCE); 
   }
   if (digitalRead(slider_Motor.limit_switch) == LOW)
   {
-    stepperSlide->forceStopAndNewPosition(5); // Stops dead
+    stepperSlide->forceStopAndNewPosition(5); 
     delay(10);
     stepperSlide->move(MOVE_AFTER_HOME_DISTANCE);
     while (stepperSlide->isRunning())
-    { // delay until move complete
-      delay(10);
+    { 
+      delay(10);  // wait until finish
     }
     readEncoders();
     vTaskDelay(10);
-    Step_position = 0;
-    stepperSlide->setCurrentPosition(0); // Set this position as home 0
+    current_position[Axis::SLIDE] = 0;
+    stepperSlide->setCurrentPosition(0); // homing values
     delay(100);
-    resetEncoder();
+    resetSliderEncoder();
     delay(100);
 
-    if (out_position < in_position)
+    if (out_position[Axis::SLIDE] < in_position[Axis::SLIDE])
     {
-      out_position = out_position + SAFE_DISTANCE_RECOVERY; // In the event that the system is reovering from an error and the gantry for out is hard against the switch
+      out_position[Axis::SLIDE] = out_position[Axis::SLIDE] + SAFE_DISTANCE_RECOVERY; // protection
     }
     // Serial.print("Step Position: "); // Ajust encoder to stepper values the number of steps eqiv 2.56
     // Serial.println(Step_position);
-    disableMotors();
+    // disableMotors();
     COMMAND_STATUS = CommandStatus::IDLE;
   }
   return;
 }
 void gotoMiddle()
 {
-  enableMotors();
+  prepareMotors();
 
   stepperSlide->setSpeedInUs(FAST_SPEED);
   stepperSlide->moveTo(MIDDLE_POSITION);
   while (stepperSlide->isRunning())
-  { // delay until move complete
-    delay(10);
+  { 
+    delay(10);  // wait until finish
   }
   // Serial.print("Step Position: ");
   // Serial.println(Step_position);
 
-  disableMotors();
+  // disableMotors();
 }
 void motorsBegin()
 {
@@ -223,28 +233,26 @@ void initMotors()
 void Start_1()
 {
 
-  //  Arm the slider to start point ready for second play press
-  enableMotors();
-  delay(100);
+  prepareMotors();
 
   stepperSlide->setSpeedInHz(2000);
   stepperSlide->setAcceleration(ACCELL);
 
-  if (SEQ == 0)
-  {
-    stepperSlide->moveTo(in_position);
-    delay(10);
-  }
-  if (SEQ == 1)
-  {
-    stepperSlide->moveTo(k1_position);
-    delay(10);
-  }
+  // if (SEQ == 0)
+  // {
+  //   stepperSlide->moveTo(in_position);
+  //   delay(10);
+  // }
+  // if (SEQ == 1)
+  // {
+  //   stepperSlide->moveTo(k1_position);
+  //   delay(10);
+  // }
   while (stepperSlide->isRunning())
-  { // delay until move complete (block)
+  { 
     if (digitalRead(slider_Motor.limit_switch) == LOW)
     {
-      stepperSlide->forceStopAndNewPosition(5); // Stop if the home switch is triggered
+      stepperSlide->forceStopAndNewPosition(5); // Force stop if limit switch is triggered
     }
     delay(10);
   }

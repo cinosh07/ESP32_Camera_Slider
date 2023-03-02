@@ -13,13 +13,8 @@
  *********************************************************************/
 
 #include <Arduino.h>
-// #include "motors.h"
 #include "clock.h"
 
-
-// int previousSlideDir = -2;
-// double previousSlideSpeed = -2.00;
-// int ACCELL = 10000;
 
 enum State
 {
@@ -27,15 +22,9 @@ enum State
   JOYSTICK_MOVE
 };
 
-// int SPEED_US = 100;
-// int SPEED_MULTIPLICATOR = 10;
 AsyncWebSocket ws("/ws");
 AsyncWebSocketClient *globalClient = NULL;
 
-// int getSpeedInUS(double speed)
-// {
-//   return round(((1 - (speed / 100)) + 0.1) * SPEED_US * SPEED_MULTIPLICATOR);
-// }
 void processSetClockTime ( int command[COMMAND_SIZE]) {
   switch(command[ClockCommandType::COMMAND]) {
     case ClockCommand::SET_CLOCK_TIME:
