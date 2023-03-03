@@ -14,204 +14,189 @@
 
 #include <Arduino.h>
 
+struct Intervalometer_Cfg
+{
+    const float DEFAULT_RELEASE_TIME = 0.1;
+    const float MIN_DARK_TIME = 0.5;
+    const int MANUAL_MODE = 0;
+    const int BULB_MODE = 1;
+    const int SINGLE_SHOOTING_DELAY = 1000; // time in ms to wait before starting shooting
+    const byte SHOOTING_STARTED = 1;
+    const byte SHOOTING_STOPPED = 0;
 
-//Delay Time ??????
-//Start Interval ??????
-//Pre Focus Time
-//Cam wake up interval
+    float releaseTime = DEFAULT_RELEASE_TIME;
+    unsigned long previousMillis = 0;
+    unsigned long runningTime = 0;
+    float interval = 4.0;
+    long shotsTotal = 0;
+    int isRunning = 0;
+    unsigned long bulbStopTime = 0;
+    int shotsCount = 0; // Shots count since start of session
+    int lastShotsCount = -1;
+    unsigned long rampDuration = 10;    // ramping duration
+    float rampTo = 0.0;                 // ramping interval
+    unsigned long rampingStartTime = 0; // ramping start time
+    unsigned long rampingEndTime = 0;   // ramping end time
+    float intervalBeforeRamping = 0;    // interval before ramping
+    int mode = MANUAL_MODE;             // MANUAL_MODE or BULB_MODE
+    // Timer Interrupt
+    byte cameraTriggerStop = SHOOTING_STOPPED;
+    int exposureTriggerTime = 0; // Time to keep the camera trigger on in Timer Interrupt duration - 10 ms
+    int COMMAND_STATUS = TimelapseCommand::IDLE;
+    int STATUS = TimelapseStatus::IDLE;
+};
 
+Intervalometer_Cfg intervalometer;
 
-// Commands
-// file:///D:/Timelapse_Slider/LRTimelpase%20Pro%20Timer%20free%201.10%20Manual_en.pdf
-
-
-const float RELEASE_TIME_DEFAULT = 0.1; // default shutter release time for camera
-const float MIN_DARK_TIME = 0.5;
-
-const int decoupleTime = 1000; // time in milliseconds to wait before doing a single bulb exposure
-
-float releaseTime = RELEASE_TIME_DEFAULT; // Shutter release time for camera
-unsigned long previousMillis = 0;         // Timestamp of last shutter release
-unsigned long runningTime = 0;
-
-float interval = 4.0; // the current interval
-long maxNoOfShots = 0;
-int isRunning = 0; // flag indicates intervalometer is running
-unsigned long bulbReleasedAt = 0;
-
-int imageCount = 0; // Image count since start of intervalometer
-int lastimageCount = -1;
-
-unsigned long rampDuration = 10;    // ramping duration
-float rampTo = 0.0;                 // ramping interval
-unsigned long rampingStartTime = 0; // ramping start time
-unsigned long rampingEndTime = 0;   // ramping end time
-float intervalBeforeRamping = 0;    // interval before ramping
-
-const int MODE_M = 0;
-const int MODE_BULB = 1;
-// the currently selected settings option
-int mode = MODE_M; // mode: M or Bulb
-
-// HV Timer Interrupt Definitions
-const byte shooting = 1;
-const byte notshooting = 0;
-byte cam_Release = notshooting;
-
-int exposureTime = 0; // Time for exposure in Timer Interrupt (10 msec)
+long getMillis()
+{
+    if (systemClock.intervalometerRTCClock)
+    {
+        
+        // Synch System Clock to the last passed millis to obtain 1/1000th seconds timing accuracy
+        return ((systemClock.currentUnixTimestamp - systemClock.startUnixTimeStamp) * 1000) + (millis() - systemClock.lastMillis);
+    }
+    else
+    {
+        return millis();
+    }
+};
 
 void stopShooting()
 {
-
-    isRunning = 0;
-    imageCount = 0;
-    runningTime = 0;
-    bulbReleasedAt = 0;
+    intervalometer.isRunning = 0;
+    intervalometer.shotsCount = 0;
+    intervalometer.runningTime = 0;
+    intervalometer.bulbStopTime = 0;
+    intervalometer.STATUS = TimelapseStatus::IDLE;
 }
-/**
-   If ramping was enabled do the ramping
-*/
-void possiblyRampInterval()
+
+void checkRampInterval()
 {
-
-    if ((millis() < rampingEndTime) && (millis() >= rampingStartTime))
+    if ((getMillis() < intervalometer.rampingEndTime) && (getMillis() >= intervalometer.rampingStartTime))
     {
-        interval = intervalBeforeRamping + ((float)(millis() - rampingStartTime) / (float)(rampingEndTime - rampingStartTime) * (rampTo - intervalBeforeRamping));
+        intervalometer.interval = intervalometer.intervalBeforeRamping + ((float)(getMillis() - intervalometer.rampingStartTime) / (float)(intervalometer.rampingEndTime - intervalometer.rampingStartTime) * (intervalometer.rampTo - intervalometer.intervalBeforeRamping));
 
-        if (releaseTime > interval - MIN_DARK_TIME)
+        if (intervalometer.releaseTime > intervalometer.interval - intervalometer.MIN_DARK_TIME)
         { // if ramping makes the interval too short for the exposure time in bulb mode, adjust the exposure time
-            releaseTime = interval - MIN_DARK_TIME;
+            intervalometer.releaseTime = intervalometer.interval - intervalometer.MIN_DARK_TIME;
         }
     }
     else
     {
-        rampingStartTime = 0;
-        rampingEndTime = 0;
+        intervalometer.rampingStartTime = 0;
+        intervalometer.rampingEndTime = 0;
     }
 }
 
-/**
-   Actually release the camera
-*/
 void releaseCamera()
 {
-
-    // short trigger in M-Mode
-    if (releaseTime < 1)
+    // short trigger in MANUAL_MODE
+    if (intervalometer.releaseTime < 1)
     {
 
-        // HV changes für Interrupt Cam release and Display indicator handling
-        if (releaseTime < 0.2)
+        if (intervalometer.releaseTime < 0.2)
         {
-            exposureTime = releaseTime * 150; // for better viewability
+            intervalometer.exposureTriggerTime = intervalometer.releaseTime * 150;
         }
         else
         {
-            exposureTime = releaseTime * 100;
+            intervalometer.exposureTriggerTime = intervalometer.releaseTime * 100;
         }
-        cam_Release = shooting;
+        intervalometer.cameraTriggerStop = intervalometer.SHOOTING_STARTED;
 
         digitalWrite(2, HIGH);
     }
     else
-    { // releaseTime > 1 sec
-        // Serial.print("Realease Camera bulbReleasedAt: ");
-        // Serial.println(bulbReleasedAt);
+    {
+        // releaseTime > 1 sec
+        // Serial.print("Realease Camera bulbStopTime: ");
+        // Serial.println(bulbStopTime);
         // Serial.print("Millis(): ");
-        // Serial.println(millis());
+        // Serial.println(getMillis());
         // long trigger in Bulb-Mode for longer exposures
-        if (bulbReleasedAt == 0)
+        if (intervalometer.bulbStopTime == 0)
         {
-            bulbReleasedAt = millis();
-            // HV changes für Interrupt Cam release and Display indicator handling
-
-            exposureTime = releaseTime * 100;
-            cam_Release = shooting;
+            intervalometer.bulbStopTime = getMillis();
+            intervalometer.exposureTriggerTime = intervalometer.releaseTime * 100;
+            intervalometer.cameraTriggerStop = intervalometer.SHOOTING_STARTED;
             digitalWrite(2, HIGH);
         }
     }
 }
 
-/**
-   Running, releasing Camera
-*/
-void running()
+void run()
 {
-
-    // do this every interval only
-    if ((millis() - previousMillis) >= ((interval * 1000)))
+    if ((getMillis() - intervalometer.previousMillis) >= ((intervalometer.interval * 1000)))
     {
-
-        if ((maxNoOfShots != 0) && (imageCount >= maxNoOfShots))
-        { // sequence is finished
+        if ((intervalometer.shotsTotal != 0) && (intervalometer.shotsCount >= intervalometer.shotsTotal))
+        {
             // stop shooting
-            isRunning = 0;
-            // invoke manually
+            intervalometer.isRunning = 0;
             stopShooting();
         }
         else
-        { // is running
-            runningTime += (millis() - previousMillis);
-            previousMillis = millis();
+        {
+            // Session in started
+            intervalometer.runningTime += (getMillis() - intervalometer.previousMillis);
+            intervalometer.previousMillis = getMillis();
             releaseCamera();
-            imageCount++;
+            // intervalometer.shotsCount++;
         }
     }
-
-    // do this always (multiple times per interval)
-    possiblyRampInterval();
+    checkRampInterval();
 }
-/**
-  Will be called by the loop and check if a bulb exposure has to end. If so, it will stop the exposure.
-*/
-void possiblyEndLongExposure()
+
+void checkEndBulbExposure()
 {
     // Serial.print("Check if release is needed: ");
-    // Serial.println(bulbReleasedAt + releaseTime * 1000);
-    // Serial.print("bulbReleasedAt: ");
-    // Serial.println(bulbReleasedAt);
+    // Serial.println(bulbStopTime + releaseTime * 1000);
+    // Serial.print("bulbStopTime: ");
+    // Serial.println(bulbStopTime);
     // Serial.print("releaseTime: ");
     // Serial.println(releaseTime);
-    // if ((bulbReleasedAt != 0) && (millis() >= (bulbReleasedAt + releaseTime * 1000)))
-    if ((bulbReleasedAt != 0) && (millis() >= (bulbReleasedAt + (releaseTime * 1000))))
+
+    if ((intervalometer.bulbStopTime != 0) && (getMillis() >= (intervalometer.bulbStopTime + (intervalometer.releaseTime * 1000))))
     {
-        bulbReleasedAt = 0;
-        // digitalWrite(12, LOW);
+        intervalometer.bulbStopTime = 0;
     }
 }
 void intervalometerLoop()
 {
-    portENTER_CRITICAL_ISR(&shootingTimerMux);
-    // HV Interrupt Cam release and Display indicator handling
-    if (cam_Release == shooting)
+    portENTER_CRITICAL_ISR(&systemClock.shootingTimerMux);
+    if (intervalometer.cameraTriggerStop == intervalometer.SHOOTING_STARTED)
     {
-
-        if (exposureTime == 0) // End of exposure
+        if (intervalometer.exposureTriggerTime == 0)
         {
-            cam_Release = notshooting;
+            // Camera Trigger released
+            intervalometer.cameraTriggerStop = intervalometer.SHOOTING_STOPPED;
+            intervalometer.shotsCount++;
             digitalWrite(2, LOW);
         }
     }
-    if (isRunning)
-    { // release camera, do ramping if running
-        possiblyEndLongExposure();
-        running();
+    if (intervalometer.isRunning)
+    {
+        checkEndBulbExposure();
+        run();
     }
-    portEXIT_CRITICAL_ISR(&shootingTimerMux);
+    portEXIT_CRITICAL_ISR(&systemClock.shootingTimerMux);
 }
-
-void firstShutter()
+void setStartTime()
 {
-
-    delay(decoupleTime);
-    // lcd.display();
-
-    previousMillis = millis();
-    runningTime = 0;
-    isRunning = 1;
-
-    // do the first release instantly, the subsequent ones will happen in the loop
-    releaseCamera();
-    imageCount++;
+  DateTime timestamp = Clock.read();
+  time_t unixTimestamp = getUnixTimeStamp(timestamp);
+  systemClock.startUnixTimeStamp = (long)unixTimestamp;
 }
-
+void startShooting(bool singleShot = false)
+{
+    if (singleShot)
+    {
+        delay(intervalometer.SINGLE_SHOOTING_DELAY);
+    }
+    setStartTime();
+    intervalometer.previousMillis = getMillis();
+    intervalometer.runningTime = 0;
+    intervalometer.isRunning = 1;
+    releaseCamera();
+    // intervalometer.shotsCount++;
+}

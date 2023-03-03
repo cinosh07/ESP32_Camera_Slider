@@ -32,7 +32,7 @@
             "RELEASE_TIME_DEFAULT": 0.1,
             "MIN_DARK_TIME": 0.5,
             "rampDuration": 10,
-            "decoupleTime": 1000
+            "externalClock": true
 
         }
     ]

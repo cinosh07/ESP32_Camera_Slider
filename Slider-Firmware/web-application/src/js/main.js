@@ -208,8 +208,6 @@ $(async function () {
     gotoOut();
   });
 
-
-
   startWebsocket();
 });
 $(window).on("beforeunload", function () {
@@ -239,6 +237,24 @@ function startWebsocket() {
 
   socket.onmessage = function (event) {
     // TODO
+    try {
+      var object = JSON.parse(event.data);
+      if (object.SHOTS) {
+        var callback = {
+          SHOTS: object.SHOTS,
+        };
+        console.log(callback);
+      }
+      if (object.COMMAND_STATUS) {
+        var callback = {
+          COMMAND_STATUS: object.COMMAND_STATUS,
+        };
+        console.log(callback);
+      }
+
+    } catch (e) {
+      // Callback not to be proccessed here. Do nothing
+    }
   };
 
   socket.onclose = function (event) {
@@ -246,6 +262,7 @@ function startWebsocket() {
       //  Connection closed cleanly
     } else {
       // e.g. server process killed or network down
+      retryConnectWebsocketTimeout = null;
       retryConnectWebsocketTimeout = setTimeout(tryReconnect, 10000);
     }
     $("#status").removeClass("text-success");
@@ -266,11 +283,13 @@ function startWebsocket() {
     var alertConnected = document.getElementById("alertConnectionError");
     var toast = new bootstrap.Toast(alertConnected);
     toast.show();
+    retryConnectWebsocketTimeout = null;
     retryConnectWebsocketTimeout = setTimeout(tryReconnect, 10000);
+    socket.close();
+    socket = null;
   };
 }
 function markIn() {
-
   var command;
   command =
     COMMAND_TYPE.MARK_IN +
@@ -289,7 +308,6 @@ function markIn() {
     "::" +
     0;
   sendCommand(command);
-
 }
 function markOut() {
   var command;

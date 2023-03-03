@@ -28,6 +28,7 @@ struct Stepper_Motor
 };
 
 int COMMAND_STATUS = 0;
+int PREVIOUS_COMMAND_STATUS = -1;
 Stepper_Motor slider_Motor;
 Stepper_Motor pan_Motor;
 Stepper_Motor tilt_Motor;

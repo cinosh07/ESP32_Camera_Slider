@@ -17,7 +17,8 @@
 
 // to get exact latest millis() after the last second of RTC.
 // https://circuitdigest.com/microcontroller-projects/esp32-timers-and-timer-interrupts
-// https://circuitdigest.com/microcontroller-projects/esp32-timers-and-timer-interrupts
+
+// https://www.unixtimestamp.com/
 
 #include <Arduino.h>
 #include <DS3231_Simple.h>
@@ -27,35 +28,19 @@
 DS3231_Simple Clock;
 TaskHandle_t CPU0_Timing_Task;
 
-time_t currentUnixTimestamp; // a time stamp
-time_t startUnixTimeStamp;
-
-volatile int interruptCounter;
-
-hw_timer_t *shootingTimer = NULL;
-hw_timer_t *secondsTimer = NULL;
-portMUX_TYPE shootingTimerMux = portMUX_INITIALIZER_UNLOCKED;
-portMUX_TYPE secondsTimerMux = portMUX_INITIALIZER_UNLOCKED;
-
-#include "intervalometer.h"
-
-void IRAM_ATTR onShootingTimer()
+struct SystemClock
 {
-  portENTER_CRITICAL_ISR(&shootingTimerMux);
-  if (exposureTime > 0)
-  {
-    exposureTime--;
-  }
-  portEXIT_CRITICAL_ISR(&shootingTimerMux);
-}
-void IRAM_ATTR onSecondsTimer()
-{
-  portENTER_CRITICAL_ISR(&secondsTimerMux);
-  interruptCounter++;
-  portEXIT_CRITICAL_ISR(&secondsTimerMux);
-}
+  long currentUnixTimestamp = 0;
+  long startUnixTimeStamp;
+  uint8_t alarmsFired;
+  hw_timer_t *shootingTimer = NULL;
+  portMUX_TYPE shootingTimerMux = portMUX_INITIALIZER_UNLOCKED;
+  long lastMillis = 0;
+  bool intervalometerRTCClock = true;
+};
 
-time_t getUnixTimeStamp(DateTime timestamp)
+SystemClock systemClock;
+time_t getUnixTimeStamp(DateTime timestamp, bool init = false)
 {
   tmElements_t te; // Time elements structure
   te.Second = timestamp.Second;
@@ -65,10 +50,28 @@ time_t getUnixTimeStamp(DateTime timestamp)
   te.Month = timestamp.Month;
   char yearBeginning = 20;
   char year = yearBeginning + (char)timestamp.Year;
-  te.Year = (uint8_t)year; // Y2K, in seconds = 946684800UL
-  currentUnixTimestamp = makeTime(te);
-  return currentUnixTimestamp;
+  te.Year = (uint8_t)year;
+  time_t unixTimestamp = makeTime(te);
+  if (init)
+  {
+    systemClock.startUnixTimeStamp = (long)unixTimestamp * 1000;
+    systemClock.currentUnixTimestamp = (long)unixTimestamp * 1000;
+  }
+  return unixTimestamp;
 }
+#include "intervalometer.h"
+
+void IRAM_ATTR onShootingTimer()
+{
+  portENTER_CRITICAL_ISR(&systemClock.shootingTimerMux);
+  if (intervalometer.exposureTriggerTime > 0)
+  {
+    intervalometer.exposureTriggerTime--;
+  }
+  portEXIT_CRITICAL_ISR(&systemClock.shootingTimerMux);
+}
+
+
 
 DateTime initClock()
 {
@@ -76,34 +79,23 @@ DateTime initClock()
   // disable any existing alarms
   Clock.disableAlarms();
 
-  //Camera trigger pins
+  Clock.setAlarm(DS3231_Simple::ALARM_EVERY_SECOND);
+  // Camera trigger pins
   pinMode(2, OUTPUT);
   digitalWrite(2, LOW);
 
-  shootingTimer = timerBegin(0, 80, true);
-  timerAttachInterrupt(shootingTimer, &onShootingTimer, true);
-  timerAlarmWrite(shootingTimer, 10000, true); // Example we assume that we want  an interrupt each second, and thus we pass the value of 1 000 000 microseconds, which is equal to 1 second
-  timerAlarmEnable(shootingTimer);
-
-  secondsTimer = timerBegin(1, 80, true);
-  timerAttachInterrupt(secondsTimer, &onSecondsTimer, true);
-  timerAlarmWrite(secondsTimer, 1000000, true); // Example we assume that we want  an interrupt each second, and thus we pass the value of 1 000 000 microseconds, which is equal to 1 second
-  timerAlarmEnable(secondsTimer);
+  systemClock.shootingTimer = timerBegin(0, 80, true);
+  timerAttachInterrupt(systemClock.shootingTimer, &onShootingTimer, true);
+  timerAlarmWrite(systemClock.shootingTimer, 10000, true); // Example we assume that we want  an interrupt each second, and thus we pass the value of 1 000 000 microseconds, which is equal to 1 second
+  timerAlarmEnable(systemClock.shootingTimer);
 
   DateTime timestamp = Clock.read();
-  currentUnixTimestamp = getUnixTimeStamp(timestamp);
-  startUnixTimeStamp = currentUnixTimestamp;
+  systemClock.startUnixTimeStamp = (long)getUnixTimeStamp(timestamp, true);
+  systemClock.currentUnixTimestamp = systemClock.startUnixTimeStamp;
+  millis();
   return timestamp;
 }
-long getLastMillis()
-{
-  // TODO get the millis() elapse since the last timestamp second + buffer time to calibrate
-  return 0;
-}
-long getMillis()
-{
-  return currentUnixTimestamp + getLastMillis() - startUnixTimeStamp;
-};
+
 void displayTimestampsMessage(DateTime timestamp)
 {
   Serial.print(timestamp.Year);
@@ -142,9 +134,7 @@ void getClockTime()
 }
 void setClockTime(int _timestamp[COMMAND_SIZE])
 {
-
   DateTime timestamp;
-
   timestamp.Day = _timestamp[ClockCommandType::DAY];
   timestamp.Month = _timestamp[ClockCommandType::MONTH];
   timestamp.Year = _timestamp[ClockCommandType::YEAR];

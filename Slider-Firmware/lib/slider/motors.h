@@ -75,6 +75,7 @@ void markOut()
 void gotoIn()
 {
 
+  COMMAND_STATUS = CommandStatus::RUNNING;
   prepareMotors();
   Serial.print("Goto In position: ");
   Serial.println(in_position[Axis::SLIDE]);
@@ -95,6 +96,7 @@ void gotoIn()
 void gotoOut()
 {
 
+COMMAND_STATUS = CommandStatus::RUNNING;
   prepareMotors();
   Serial.print("Goto Out position: ");
   Serial.println(out_position[Axis::SLIDE]);
@@ -129,6 +131,7 @@ void forceMotorsLimitTrigered()
 void homeStepper()
 {
   COMMAND_STATUS = CommandStatus::HOMING;
+  
   prepareMotors();
   Serial.println("Homing Slider ...");
   stepperSlide->setSpeedInUs(SAFE_SPEED); // the parameter is us/step larger values are slower!!!
@@ -170,6 +173,7 @@ void homeStepper()
     // Serial.println(Step_position);
     // disableMotors();
     COMMAND_STATUS = CommandStatus::IDLE;
+    
   }
   return;
 }

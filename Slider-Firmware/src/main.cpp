@@ -66,10 +66,10 @@ void setup()
     motorsBegin();
     sendControllerReadyMessage();
 
-    // releaseTime = 5;
-    // maxNoOfShots = 30;
-    // // mode = MODE_BULB;
-    // firstShutter();
+    intervalometer.releaseTime = 5;
+    intervalometer.shotsTotal = 10;
+    // intervalometer.mode = BULB_MODE;
+    startShooting();
   }
 }
 
@@ -87,17 +87,19 @@ void loop()
   //  }
   // delay(4000);
 
-  if (interruptCounter > 0)
+  systemClock.alarmsFired = Clock.checkAlarms();
+
+  if (systemClock.alarmsFired & 1)
   {
+    DateTime timestamp = Clock.read();
+    time_t unixTimestamp = getUnixTimeStamp(timestamp);
+    systemClock.currentUnixTimestamp = (long)unixTimestamp;
+    systemClock.lastMillis = millis();
+  }
 
-    portENTER_CRITICAL(&secondsTimerMux);
-    interruptCounter--;
-    portEXIT_CRITICAL(&secondsTimerMux);
-
-    // TODO Set last millis of last second
-
-    // Serial.print("An interrupt as occurred. Total number: ");
-    // Serial.println(totalInterruptCounter);
+  if (systemClock.alarmsFired & 2)
+  {
+    // TODO Start the shooting session at Alarm 2 fired
   }
 
   switch (COMMAND_STATUS)
@@ -118,15 +120,43 @@ void loop()
     gotoOut();
     break;
   case CommandStatus::TIMELAPSE:
-    // intervalometerLoop();
+
+    switch (intervalometer.COMMAND_STATUS)
+    {
+    case TimelapseCommand::START:
+      intervalometer.COMMAND_STATUS = TimelapseCommand::IDLE;
+      intervalometer.STATUS = TimelapseStatus::RUNNING;
+      startShooting();
+      break;
+    case TimelapseCommand::TAKE_SINGLE_SHOT:
+      startShooting(true);
+      break;
+    case TimelapseCommand::STOP:
+      intervalometer.STATUS = TimelapseStatus::IDLE;
+      stopShooting();
+      break;
+    }
+
     break;
   }
   intervalometerLoop();
-  if (imageCount != 0 & lastimageCount != imageCount)
+  if (intervalometer.shotsCount != 0 & intervalometer.lastShotsCount != intervalometer.shotsCount)
   {
-    lastimageCount = imageCount;
-    Serial.print("Camera shots: ");
-    Serial.println(imageCount);
+    intervalometer.lastShotsCount = intervalometer.shotsCount;
+    if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
+    {
+      globalClient->text("{\"SHOTS\":" + (String)intervalometer.shotsCount + "}");
+    }
+  }
+  if (COMMAND_STATUS != PREVIOUS_COMMAND_STATUS)
+  {
+    
+    if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
+    {
+      
+      globalClient->text("{\"COMMAND_STATUS\":" + (String)COMMAND_STATUS + "}");
+      PREVIOUS_COMMAND_STATUS = COMMAND_STATUS;
+    }
   }
 
   delay(10);
