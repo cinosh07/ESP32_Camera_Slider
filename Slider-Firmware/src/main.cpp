@@ -102,7 +102,7 @@ void loop()
     // TODO Start the shooting session at Alarm 2 fired
   }
 
-  switch (COMMAND_STATUS)
+  switch (commandStatus)
   {
   case CommandStatus::FORCE_STOP:
     forceMotorsLimitTrigered();
@@ -114,9 +114,31 @@ void loop()
     markOut();
     break;
   case CommandStatus::GOTO_IN:
+    commandStatus = CommandStatus::RUNNING;
+
+    if (commandStatus != prevCommandStatus)
+    {
+      if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
+      {
+
+        globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
+        prevCommandStatus = commandStatus;
+      }
+    }
     gotoIn();
     break;
   case CommandStatus::GOTO_OUT:
+    commandStatus = CommandStatus::RUNNING;
+
+    if (commandStatus != prevCommandStatus)
+    {
+      if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
+      {
+
+        globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
+        prevCommandStatus = commandStatus;
+      }
+    }
     gotoOut();
     break;
   case CommandStatus::TIMELAPSE:
@@ -126,6 +148,7 @@ void loop()
     case TimelapseCommand::START:
       intervalometer.COMMAND_STATUS = TimelapseCommand::IDLE;
       intervalometer.STATUS = TimelapseStatus::RUNNING;
+
       startShooting();
       break;
     case TimelapseCommand::TAKE_SINGLE_SHOT:
@@ -138,6 +161,16 @@ void loop()
     }
 
     break;
+  default:
+    commandStatus = CommandStatus::IDLE;
+    if (commandStatus != prevCommandStatus)
+    {
+      if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
+      {
+        prevCommandStatus = commandStatus;
+        globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
+      }
+    }
   }
   intervalometerLoop();
   if (intervalometer.shotsCount != 0 & intervalometer.lastShotsCount != intervalometer.shotsCount)
@@ -148,16 +181,16 @@ void loop()
       globalClient->text("{\"SHOTS\":" + (String)intervalometer.shotsCount + "}");
     }
   }
-  if (COMMAND_STATUS != PREVIOUS_COMMAND_STATUS)
-  {
-    
-    if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
-    {
-      
-      globalClient->text("{\"COMMAND_STATUS\":" + (String)COMMAND_STATUS + "}");
-      PREVIOUS_COMMAND_STATUS = COMMAND_STATUS;
-    }
-  }
+  // if (commandStatus != prevCommandStatus)
+  // {
+
+  //   if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
+  //   {
+
+  //     globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
+  //     prevCommandStatus = COMMAND_STATUS;
+  //   }
+  // }
 
   delay(10);
 }

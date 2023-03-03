@@ -52,16 +52,16 @@ void processCommand(int command[COMMAND_SIZE])
     homeStepper();
     break;
   case CommandType::MARK_IN:
-    COMMAND_STATUS = CommandStatus::MARK_IN;
+    commandStatus = CommandStatus::MARK_IN;
     break;
   case CommandType::MARK_OUT:
-    COMMAND_STATUS = CommandStatus::MARK_OUT;
+    commandStatus = CommandStatus::MARK_OUT;
     break;
     case CommandType::GOTO_IN:
-    COMMAND_STATUS = CommandStatus::GOTO_IN;
+    commandStatus = CommandStatus::GOTO_IN;
     break;
     case CommandType::GOTO_OUT:
-    COMMAND_STATUS = CommandStatus::GOTO_OUT;
+    commandStatus = CommandStatus::GOTO_OUT;
     break;
   }
 }

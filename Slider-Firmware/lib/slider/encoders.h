@@ -43,10 +43,10 @@ int initEncoder()
 }
 void checkLimitSwitch()
 {
-  if (digitalRead(slider_Motor.limit_switch) == LOW & COMMAND_STATUS != CommandStatus::HOMING)
+  if (digitalRead(slider_Motor.limit_switch) == LOW & commandStatus != CommandStatus::HOMING)
   {
     // Change Status to Force Stop Motor
-    COMMAND_STATUS = CommandStatus::FORCE_STOP;
+    commandStatus = CommandStatus::FORCE_STOP;
   }
 }
 void resetSliderEncoder()

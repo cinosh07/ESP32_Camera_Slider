@@ -27,8 +27,10 @@ struct Stepper_Motor
   String tmc_driver_address; // "tmc_driver_address": "0b00"
 };
 
-int COMMAND_STATUS = 0;
-int PREVIOUS_COMMAND_STATUS = -1;
+// int COMMAND_STATUS = 0;
+// int PREVIOUS_COMMAND_STATUS = -1;
+int commandStatus = 0;
+int prevCommandStatus = -1;
 Stepper_Motor slider_Motor;
 Stepper_Motor pan_Motor;
 Stepper_Motor tilt_Motor;

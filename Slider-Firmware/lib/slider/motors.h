@@ -51,7 +51,7 @@ void markIn()
 
   stepperSlide->setCurrentPosition(round(in_position[Axis::SLIDE]));
   delay(50);
-  COMMAND_STATUS = CommandStatus::IDLE;
+  commandStatus = CommandStatus::IDLE;
   Serial.print("Mark-In: ");
   Serial.println(in_position[Axis::SLIDE]);
   // Serial.print("Step Position: "); // Ajust encoder to stepper values the number of steps eqiv 2.56
@@ -66,7 +66,7 @@ void markOut()
 
   stepperSlide->setCurrentPosition(round(out_position[Axis::SLIDE])); // Make sure the stepper knows where it is
   delay(50);
-  COMMAND_STATUS = CommandStatus::IDLE;
+  commandStatus = CommandStatus::IDLE;
   Serial.print("Mark-Out: ");
   Serial.println(out_position[Axis::SLIDE]);
   // Serial.print("Step Position: "); // Ajust encoder to stepper values the number of steps eqiv 2.56
@@ -75,7 +75,7 @@ void markOut()
 void gotoIn()
 {
 
-  COMMAND_STATUS = CommandStatus::RUNNING;
+  commandStatus = CommandStatus::RUNNING;
   prepareMotors();
   Serial.print("Goto In position: ");
   Serial.println(in_position[Axis::SLIDE]);
@@ -90,13 +90,13 @@ void gotoIn()
       delay(10);  // wait until finish
     }
   }
-  COMMAND_STATUS = CommandStatus::IDLE;
+  commandStatus = CommandStatus::IDLE;
   // disableMotors();
 }
 void gotoOut()
 {
 
-COMMAND_STATUS = CommandStatus::RUNNING;
+commandStatus = CommandStatus::RUNNING;
   prepareMotors();
   Serial.print("Goto Out position: ");
   Serial.println(out_position[Axis::SLIDE]);
@@ -112,7 +112,7 @@ COMMAND_STATUS = CommandStatus::RUNNING;
       delay(10);  // wait until finish
     }
   }
-  COMMAND_STATUS = CommandStatus::IDLE;
+  commandStatus = CommandStatus::IDLE;
   // disableMotors();
 }
 void forceMotorsLimitTrigered()
@@ -125,12 +125,12 @@ void forceMotorsLimitTrigered()
   { 
     delay(10);  // wait until finish
   }
-  COMMAND_STATUS = CommandStatus::IDLE;
+  commandStatus = CommandStatus::IDLE;
   // disableMotors();
 }
 void homeStepper()
 {
-  COMMAND_STATUS = CommandStatus::HOMING;
+  commandStatus = CommandStatus::HOMING;
   
   prepareMotors();
   Serial.println("Homing Slider ...");
@@ -172,7 +172,7 @@ void homeStepper()
     // Serial.print("Step Position: "); // Ajust encoder to stepper values the number of steps eqiv 2.56
     // Serial.println(Step_position);
     // disableMotors();
-    COMMAND_STATUS = CommandStatus::IDLE;
+    commandStatus = CommandStatus::IDLE;
     
   }
   return;
