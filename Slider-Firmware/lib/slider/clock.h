@@ -11,14 +11,6 @@
  *                      (CC BY-NC-ND 4.0)
  *        https://creativecommons.org/licenses/by-nc-nd/4.0/
  *********************************************************************/
-// https://github.com/sleemanj/DS3231_Simple/blob/master/examples/z2_Alarms/Alarm/Alarm.ino
-// https://forum.arduino.cc/t/using-millis-for-timing-a-beginners-guide/483573
-// https://www.arduino.cc/reference/en/language/functions/time/millis/
-
-// to get exact latest millis() after the last second of RTC.
-// https://circuitdigest.com/microcontroller-projects/esp32-timers-and-timer-interrupts
-
-// https://www.unixtimestamp.com/
 
 #include <Arduino.h>
 #include <DS3231_Simple.h>
@@ -71,14 +63,12 @@ void IRAM_ATTR onShootingTimer()
   portEXIT_CRITICAL_ISR(&systemClock.shootingTimerMux);
 }
 
-
-
 DateTime initClock()
 {
   Clock.begin();
   // disable any existing alarms
   Clock.disableAlarms();
-
+  
   Clock.setAlarm(DS3231_Simple::ALARM_EVERY_SECOND);
   // Camera trigger pins
   pinMode(2, OUTPUT);
@@ -131,6 +121,25 @@ void initTimingCoreTask()
 }
 void getClockTime()
 {
+
+  // https://gist.github.com/ClemRz/1e6c3acaef3c3b8a41dd3b5aeefb0b11
+
+  // bool myCallback(int value)
+  // {
+  //   // here your custom logic
+  //   return status;
+  // }
+
+  // void myFunction(bool (*callback)(int))
+  // {
+  //   // here your custom logic
+  //   bool status = callback(3);
+  // }
+
+  // void loop(void)
+  // {
+  //   myFunction(&myCallback);
+  // }
 }
 void setClockTime(int _timestamp[COMMAND_SIZE])
 {

@@ -2,16 +2,15 @@
  *                  Author: Carl Tremblay
  *
  *                Cinosh Camera Slider Controller
- *                        version 0.1           
+ *                        version 0.1
  *
- *                  Copyright 2023 Carl Tremblay  
- * 
+ *                  Copyright 2023 Carl Tremblay
+ *
  *                            License
- *    Attribution-NonCommercial-NoDerivatives 4.0 International 
+ *    Attribution-NonCommercial-NoDerivatives 4.0 International
  *                      (CC BY-NC-ND 4.0)
  *        https://creativecommons.org/licenses/by-nc-nd/4.0/
  *********************************************************************/
-
 
 // *********************************************************************
 // References
@@ -48,15 +47,23 @@
 // https://forum.arduino.cc/t/can-a-sketch-modify-a-defined-symbol-in-a-library/90432
 
 // https://github.com/jantimon/html-webpack-plugin
-  // https://github.com/Jaid/inject-body-webpack-plugin
+// https://github.com/Jaid/inject-body-webpack-plugin
 
-  //https://whatwebcando.today/articles/handling-service-worker-updates/
-  // https://web.dev/learn/pwa/service-workers/#registration_and_scope
-
+// https://whatwebcando.today/articles/handling-service-worker-updates/
+//  https://web.dev/learn/pwa/service-workers/#registration_and_scope
 
 // https://forum.arduino.cc/t/multi-arduino-serial-communication-with-max232/211474
 
 // https://github.com/sleemanj/DS3231_Simple/blob/master/examples/z1_TimeAndDate/SetDateTime/SetDateTime.ino
+
+// https://github.com/sleemanj/DS3231_Simple/blob/master/examples/z2_Alarms/Alarm/Alarm.ino
+// https://forum.arduino.cc/t/using-millis-for-timing-a-beginners-guide/483573
+// https://www.arduino.cc/reference/en/language/functions/time/millis/
+
+
+// https://circuitdigest.com/microcontroller-projects/esp32-timers-and-timer-interrupts
+
+// https://www.unixtimestamp.com/
 
 #include <Arduino.h>
 #include "esp_task_wdt.h"
@@ -69,4 +76,3 @@
 #include "web_server.h"
 #include "spiffs_files.h"
 #include "networking.h"
-

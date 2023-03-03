@@ -52,12 +52,15 @@ long getMillis()
 {
     if (systemClock.intervalometerRTCClock)
     {
-        
+        // RTC System Clock
+
+        // to get exact latest millis() after the last second of RTC.
         // Synch System Clock to the last passed millis to obtain 1/1000th seconds timing accuracy
         return ((systemClock.currentUnixTimestamp - systemClock.startUnixTimeStamp) * 1000) + (millis() - systemClock.lastMillis);
     }
     else
     {
+        // Internal System Clock
         return millis();
     }
 };
@@ -78,7 +81,8 @@ void checkRampInterval()
         intervalometer.interval = intervalometer.intervalBeforeRamping + ((float)(getMillis() - intervalometer.rampingStartTime) / (float)(intervalometer.rampingEndTime - intervalometer.rampingStartTime) * (intervalometer.rampTo - intervalometer.intervalBeforeRamping));
 
         if (intervalometer.releaseTime > intervalometer.interval - intervalometer.MIN_DARK_TIME)
-        { // if ramping makes the interval too short for the exposure time in bulb mode, adjust the exposure time
+        { 
+            // if ramping makes the interval too short for the exposure time in bulb mode, adjust the exposure time
             intervalometer.releaseTime = intervalometer.interval - intervalometer.MIN_DARK_TIME;
         }
     }
@@ -109,12 +113,6 @@ void releaseCamera()
     }
     else
     {
-        // releaseTime > 1 sec
-        // Serial.print("Realease Camera bulbStopTime: ");
-        // Serial.println(bulbStopTime);
-        // Serial.print("Millis(): ");
-        // Serial.println(getMillis());
-        // long trigger in Bulb-Mode for longer exposures
         if (intervalometer.bulbStopTime == 0)
         {
             intervalometer.bulbStopTime = getMillis();
@@ -141,7 +139,6 @@ void run()
             intervalometer.runningTime += (getMillis() - intervalometer.previousMillis);
             intervalometer.previousMillis = getMillis();
             releaseCamera();
-            // intervalometer.shotsCount++;
         }
     }
     checkRampInterval();
@@ -149,12 +146,6 @@ void run()
 
 void checkEndBulbExposure()
 {
-    // Serial.print("Check if release is needed: ");
-    // Serial.println(bulbStopTime + releaseTime * 1000);
-    // Serial.print("bulbStopTime: ");
-    // Serial.println(bulbStopTime);
-    // Serial.print("releaseTime: ");
-    // Serial.println(releaseTime);
 
     if ((intervalometer.bulbStopTime != 0) && (getMillis() >= (intervalometer.bulbStopTime + (intervalometer.releaseTime * 1000))))
     {
@@ -198,5 +189,4 @@ void startShooting(bool singleShot = false)
     intervalometer.runningTime = 0;
     intervalometer.isRunning = 1;
     releaseCamera();
-    // intervalometer.shotsCount++;
 }
