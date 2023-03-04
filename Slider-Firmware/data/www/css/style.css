@@ -5,6 +5,7 @@ html {
   text-align: center;
   background-color: #212936;
   color: #f0f2f6;
+  color-scheme: dark !important;
 }
 
 body {
@@ -12,7 +13,6 @@ body {
   color: #f0f2f6;
   text-align: center;
 }
-
 .bg-dark {
   background-color: #212936 ! important;
 }
@@ -28,7 +28,9 @@ body {
 .btn-success {
   background-color: #12babf ! important;
 }
-
+.input-border-color {
+  border-color: #0d6efd !important;
+}
 .text-info {
   color: #2e144d ! important;
 }
@@ -42,7 +44,7 @@ body {
 }
 
 .text-primary {
-  color: #3370c2 ! important;
+  color: #0d6efd ! important;
 }
 
 .text-light {
@@ -52,7 +54,16 @@ body {
 .title {
   margin-left: 20px !important;
 }
-
+.form-control {
+  background-color: #212936 !important;
+  border-color: #0d6efd !important;
+  color: #f0f2f6 !important;
+}
+.form-control::selection {
+  /* background-color: #212936 !important;
+  border-color: #3370c2 !important; */
+  color: #f0f2f6 !important;
+}
 .header-icon {
   margin-top: -7px !important;
 }
@@ -116,7 +127,11 @@ body {
   height: 188px;
   margin: auto;
 }
-
+.input-group-text{
+  background-color: #0d6efd !important;
+  color: #f0f2f6 ! important;
+  border-color: #0d6efd !important;
+}
 .stick {
   position: absolute;
   left: 32px;
@@ -171,7 +186,7 @@ body {
 
 .button {
   display: inline-block;
-  background-color: #3370c2;
+  background-color: #0d6efd;
   border: none;
   border-radius: 4px;
   color: #f0f2f6;
@@ -226,7 +241,10 @@ body {
   height: 300px;
   margin-top: -5px;
 }
-
+.unit-label {
+  background-color: #212936 !important;
+  color: #0d6efd !important;
+}
 .app-footer {
   height: 55px;
 }
@@ -240,4 +258,88 @@ body {
   margin-right: auto;
   padding-top: 12px;
   font-size: xx-small;
+}
+.dateTimePicker {
+  font-size: small !important;
+}
+.delayedStart {
+  margin-left: 10px !important;
+  margin-bottom: 10px;
+}
+.intervalometer-display-Container {
+  display: flex;
+  font-size: xx-small;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.intervalometer-display {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: #171d26;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  border-color: #0d6efd ;
+  border-width: 1px;
+  border-style:solid;
+  border-radius: 5px;
+  padding-left: 1px;
+  padding-right: 1px;
+}
+.other-unit-display {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 10px;
+  /* padding-left: 1px;
+  padding-right: 1px; */
+}
+.exposure-display-container {
+  display: flex;
+  width: 100%;
+  height:25px;
+  /* padding-left: 1px;
+  padding-right: 1px; */
+}
+.interval-display {
+  background-color: #a17b3f;
+  width: 100%;
+  height: 25px;
+  padding-top: 6px;
+  /* padding-left: 1px;
+  padding-right: 1px; */
+}
+
+.exposure-display {
+  width: 50%;
+  background-color: green;
+  padding-top: 5px;
+}
+.darkTime-display {
+  width: 50%;
+  background-color: black;
+  padding-top: 5px;
+}
+.slider-display {
+  background-color: #12babf;
+  width: 25px;
+  height: 10px;
+  position: absolute;
+  left: 250px;
+}
+.focus-display {
+  background-color: red;
+  width: 5px;
+  height: 10px;
+  position: absolute;
+  left: 150px;
+}
+.minDarkTime-display {
+  background-color: grey;
+  width: 2px;
+  height: 10px;
+  position: absolute;
+  left: 300px;
 }

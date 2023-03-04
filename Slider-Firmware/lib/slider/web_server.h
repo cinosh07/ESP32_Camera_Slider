@@ -109,6 +109,22 @@ void initServer()
             { request->send(SPIFFS, "/www/serviceworker.js", "text/javascript"); });
   server.on("/serviceworker-i.js", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/serviceworker-i.js", "text/javascript"); });
+  // Config and profiles
+  server.on("/config", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/config.json", "text/json"); });
+  server.on("/profile-1", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/profiles/profile-1.json", "text/json"); });
+  server.on("/profile-2", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/profiles/profile-2.json", "text/json"); });
+  server.on("/profile-3", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/profiles/profile-3.json", "text/json"); });
+  server.on("/profile-4", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/profiles/profile-4.json", "text/json"); });
+  server.on("/profile-5", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/profiles/profile-5.json", "text/json"); });
+  server.on("/intervalometer", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/profiles/interval.json", "text/json"); });
+
 
   server.onNotFound(notFound);
   server.addHandler(&ws);

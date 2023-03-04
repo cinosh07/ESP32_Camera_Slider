@@ -165,7 +165,7 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
   if (type == WS_EVT_CONNECT)
   {
     sendWebsocketReadyMessage();
-    client->text("Timelapse Slider connection success");
+    client->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
     globalClient = client;
   }
   else if (type == WS_EVT_DISCONNECT)

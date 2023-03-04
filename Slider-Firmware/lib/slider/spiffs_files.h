@@ -74,7 +74,7 @@ void openProfile()
     {
       Serial.println("Profile File opened!");
       size_t size = profileFile.size();
-      if (size > 1024)
+      if (size > 2048) //1024
       {
         Serial.print("Profile file size is too large: ");
         Serial.println(size);
@@ -82,7 +82,7 @@ void openProfile()
       else
       {
 
-        DynamicJsonDocument doc(1024);
+        DynamicJsonDocument doc(2048);
         DeserializationError error = deserializeJson(doc, profileFile);
         JsonVariant profileJson = doc.as<JsonVariant>();
         config.profileJson = profileJson;
@@ -148,14 +148,14 @@ void readConfigFile()
     {
       Serial.println("Config File opened!");
       size_t size = configFile.size();
-      if (size > 1024)
+      if (size > 2048) //1024
       {
         Serial.print("Config file size is too large: ");
         Serial.println(size);
       }
       else
       {
-        DynamicJsonDocument doc(1024);
+        DynamicJsonDocument doc(2048);
         DeserializationError error = deserializeJson(doc, configFile);
         JsonVariant configJson = doc.as<JsonVariant>();
         config.configJson = configJson;

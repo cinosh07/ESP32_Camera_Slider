@@ -1,0 +1,21 @@
+{
+    "brand" : "",
+    "description" : "",
+    "motors": {
+        "slider": {
+            "include": false,
+            "dir_pin": 0,
+            "step_pin": 0,
+            "enable_pin": 0,
+            "encoder": false,
+            "limit_switch": 0,
+            "step_per_mm": 0,
+            "always_enabled": true,
+            "tmc_driver_address": "0b00"
+        },
+        "pan": {},
+        "tilt": {},
+        "focus": {}
+    },
+    "length": 250
+}

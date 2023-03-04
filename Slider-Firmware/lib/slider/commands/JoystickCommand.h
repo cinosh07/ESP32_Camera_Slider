@@ -28,25 +28,18 @@ void processJoystickCommand(int command[COMMAND_SIZE])
 
     if (speed == 0)
     {
+      commandStatus = CommandStatus::IDLE;
       Serial.println("Webscoket Command : stopMove()");
       stepperSlide->setSpeedInUs(0);
       stepperSlide->applySpeedAcceleration();
       stepperSlide->stopMove();
       previousSlideSpeed = -2.00;
       previousSlideDir = -2;
-      while (stepperSlide->isRunning())
-      {
-        delay(10); // wait until finish
-      }
-      // Serial.print("Step Position: "); 
-      // Serial.println(Step_position);
-
-      // disableMotors();
     }
 
     if (command[JoystickCommandType::DIR] == 0 && speed > 0)
     {
-
+      commandStatus = CommandStatus::JOG;
       Serial.println("Webscoket Command : runForward() Speed: " + (String)getSpeedInUS(speed));
       prepareMotors();
       stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
@@ -56,6 +49,7 @@ void processJoystickCommand(int command[COMMAND_SIZE])
     }
     else if (command[JoystickCommandType::DIR] == -1 && speed > 0)
     {
+      commandStatus = CommandStatus::JOG;
       prepareMotors();
       Serial.println("Webscoket Command : runBackward() Speed: " + (String)getSpeedInUS(speed));
       stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!

@@ -66,36 +66,34 @@ public:
 private:
 };
 
-class TimelapseStatus {
-    public: 
-    enum type {
+class TimelapseStatus
+{
+public:
+    enum type
+    {
         IDLE,
         RUNNING
     };
 };
-class TimelapseCommand {
-    public: 
-    enum type {
+class TimelapseCommand
+{
+public:
+    enum type
+    {
         IDLE,
         START,
         STOP,
         PAUSE,
         TAKE_SINGLE_SHOT,
-        SET_INTERVAL,
-        SET_NUMBER_SHOTS,
-        SET_SHOTS_DURATION,
-        SET_DARK_TIME,
-        SET_DELAY_TIME,
-        SET_PRE_FOCUS_TIME,
-        SET_CAM_WAKE_UP_INTERVAL,
-        SET_START_INTERVAL,
         SET_START_TIME_ALARM,
         GET_START_TIME_ALARM,
         CLEAR_START_TIME_ALARM,
-        SET_RAMP_DURATION,
-        SET_RAMP_TO,
-        SET_RAMP_SHOTS_TOTAL,
-        SET_RAMP_ENABLED,
+        START_INTERVALOMETER,
+        STOP_INTERVALOMETER,
+        PAUSE_INTERVALOMETER,
+        START_INTERVALOMETER_RAMPING,
+        STOP_INTERVALOMETER_RAMPING,
+        UPDATE_INTERVALOMETER_RAMPING
     };
 };
 class TimelapseCommandType
@@ -110,13 +108,13 @@ public:
         N_A3, // Not Availlable
         N_A2, // Not Availlable
         N_A1, // Not Availlable
-        N_A // Not Availlable
+        N_A   // Not Availlable
 
     };
 
 private:
 };
-//SET_START_TIME_ALARM Type
+// SET_START_TIME_ALARM Type
 class TimelapseCommandStartTimeType
 {
 public:
@@ -129,13 +127,13 @@ public:
         DAY,
         HOUR,
         MINUTE,
-        SECOND// Not Availlable
+        SECOND // Not Availlable
 
     };
 
 private:
 };
- class JoystickCommand
+class JoystickCommand
 {
 public:
     enum type
@@ -197,8 +195,9 @@ public:
 private:
 };
 
-class Axis {
-    public:
+class Axis
+{
+public:
     enum type
     {
         SLIDE,
@@ -206,5 +205,6 @@ class Axis {
         TILT,
         FOCUS
     };
-    private:
+
+private:
 };

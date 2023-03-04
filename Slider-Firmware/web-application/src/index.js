@@ -46,6 +46,10 @@ import Chart from "chart.js/auto";
 window.jQuery = jQuery;
 window.Chart = Chart;
 window.$ = $;
+/* ***************************************************************
+                          Imports
+  ****************************************************************
+// */
 require('./js/main.js');
 
 $("#intervalometer").load("interval.html");

@@ -54,8 +54,6 @@ void markIn()
   commandStatus = CommandStatus::IDLE;
   Serial.print("Mark-In: ");
   Serial.println(in_position[Axis::SLIDE]);
-  // Serial.print("Step Position: "); // Ajust encoder to stepper values the number of steps eqiv 2.56
-  // Serial.println(Step_position);
 }
 void markOut()
 {
@@ -69,51 +67,31 @@ void markOut()
   commandStatus = CommandStatus::IDLE;
   Serial.print("Mark-Out: ");
   Serial.println(out_position[Axis::SLIDE]);
-  // Serial.print("Step Position: "); // Ajust encoder to stepper values the number of steps eqiv 2.56
-  // Serial.println(Step_position);
 }
 void gotoIn()
 {
 
-  commandStatus = CommandStatus::RUNNING;
+  commandStatus = CommandStatus::GOTO_IN;
   prepareMotors();
-  Serial.print("Goto In position: ");
-  Serial.println(in_position[Axis::SLIDE]);
   if (current_position[Axis::SLIDE] != (in_position[Axis::SLIDE]))
-  // if (stepperSlide->getCurrentPosition() != (in_position))
   { 
     stepperSlide->setSpeedInUs(FAST_SPEED);
     stepperSlide->setAcceleration(ACCELL);
     stepperSlide->moveTo(in_position[Axis::SLIDE]);
-    while (stepperSlide->isRunning())
-    {
-      delay(10);  // wait until finish
-    }
   }
-  commandStatus = CommandStatus::IDLE;
-  // disableMotors();
 }
 void gotoOut()
 {
 
-commandStatus = CommandStatus::RUNNING;
+commandStatus = CommandStatus::GOTO_OUT;
   prepareMotors();
-  Serial.print("Goto Out position: ");
-  Serial.println(out_position[Axis::SLIDE]);
   if (current_position[Axis::SLIDE] != (out_position[Axis::SLIDE]))
-  // if (stepperSlide->getCurrentPosition() != (out_position))
 
   {
     stepperSlide->setSpeedInUs(FAST_SPEED);
     stepperSlide->setAcceleration(ACCELL);
     stepperSlide->moveTo(out_position[Axis::SLIDE]);
-    while (stepperSlide->isRunning())
-    { 
-      delay(10);  // wait until finish
-    }
   }
-  commandStatus = CommandStatus::IDLE;
-  // disableMotors();
 }
 void forceMotorsLimitTrigered()
 {
@@ -126,7 +104,6 @@ void forceMotorsLimitTrigered()
     delay(10);  // wait until finish
   }
   commandStatus = CommandStatus::IDLE;
-  // disableMotors();
 }
 void homeStepper()
 {
@@ -169,9 +146,6 @@ void homeStepper()
     {
       out_position[Axis::SLIDE] = out_position[Axis::SLIDE] + SAFE_DISTANCE_RECOVERY; // protection
     }
-    // Serial.print("Step Position: "); // Ajust encoder to stepper values the number of steps eqiv 2.56
-    // Serial.println(Step_position);
-    // disableMotors();
     commandStatus = CommandStatus::IDLE;
     
   }
@@ -187,10 +161,6 @@ void gotoMiddle()
   { 
     delay(10);  // wait until finish
   }
-  // Serial.print("Step Position: ");
-  // Serial.println(Step_position);
-
-  // disableMotors();
 }
 void motorsBegin()
 {
@@ -230,34 +200,5 @@ void initMotors()
     //   // If auto enable/disable need delays, just add (one or both):
     //   // stepperSlide->setDelayToEnable(50);
     //   // stepperSlide->setDelayToDisable(1000);
-  }
-}
-
-//*********************************************ARM The SLIDER READY TO START**************************************************
-void Start_1()
-{
-
-  prepareMotors();
-
-  stepperSlide->setSpeedInHz(2000);
-  stepperSlide->setAcceleration(ACCELL);
-
-  // if (SEQ == 0)
-  // {
-  //   stepperSlide->moveTo(in_position);
-  //   delay(10);
-  // }
-  // if (SEQ == 1)
-  // {
-  //   stepperSlide->moveTo(k1_position);
-  //   delay(10);
-  // }
-  while (stepperSlide->isRunning())
-  { 
-    if (digitalRead(slider_Motor.limit_switch) == LOW)
-    {
-      stepperSlide->forceStopAndNewPosition(5); // Force stop if limit switch is triggered
-    }
-    delay(10);
   }
 }

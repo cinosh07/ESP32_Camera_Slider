@@ -27,11 +27,16 @@
         {
             "name": "default",
             "interval": 4.0,
-            "maxNoOfShots": 0,
+            "shotsTotal": 0,
             "mode": 0,
-            "RELEASE_TIME_DEFAULT": 0.1,
+            "releaseTime": 0.1,
             "MIN_DARK_TIME": 0.5,
             "rampDuration": 10,
+            "rampTo": 0,
+            "rampingStartTime": 0,
+            "rampingEndTime": 0,
+            "intervalBeforeRamping": 0,
+            "COMMAND_STATUS": 0,
             "externalClock": true
 
         }

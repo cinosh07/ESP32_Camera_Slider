@@ -66,10 +66,10 @@ void setup()
     motorsBegin();
     sendControllerReadyMessage();
 
-    intervalometer.releaseTime = 5;
-    intervalometer.shotsTotal = 10;
-    // intervalometer.mode = BULB_MODE;
-    startShooting();
+    // intervalometer.releaseTime = 5;
+    // intervalometer.shotsTotal = 10;
+    // // intervalometer.mode = BULB_MODE;
+    // startShooting();
   }
 }
 
@@ -81,12 +81,6 @@ void setup()
 
 void loop()
 {
-  // if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
-  //     String randomNumber = String(random(0,20));
-  //     globalClient->text(randomNumber);
-  //  }
-  // delay(4000);
-
   systemClock.alarmsFired = Clock.checkAlarms();
 
   if (systemClock.alarmsFired & 1)
@@ -95,6 +89,11 @@ void loop()
     time_t unixTimestamp = getUnixTimeStamp(timestamp);
     systemClock.currentUnixTimestamp = (long)unixTimestamp;
     systemClock.lastMillis = millis();
+    
+    if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
+    {
+      globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
+    }
   }
 
   if (systemClock.alarmsFired & 2)
@@ -116,29 +115,29 @@ void loop()
   case CommandStatus::GOTO_IN:
     commandStatus = CommandStatus::RUNNING;
 
-    if (commandStatus != prevCommandStatus)
-    {
-      if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
-      {
+    // if (commandStatus != prevCommandStatus)
+    // {
+    //   if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
+    //   {
 
-        globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
-        prevCommandStatus = commandStatus;
-      }
-    }
+    //     globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
+    //     prevCommandStatus = commandStatus;
+    //   }
+    // }
     gotoIn();
     break;
   case CommandStatus::GOTO_OUT:
     commandStatus = CommandStatus::RUNNING;
 
-    if (commandStatus != prevCommandStatus)
-    {
-      if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
-      {
+    // if (commandStatus != prevCommandStatus)
+    // {
+    //   if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
+    //   {
 
-        globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
-        prevCommandStatus = commandStatus;
-      }
-    }
+    //     globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
+    //     prevCommandStatus = commandStatus;
+    //   }
+    // }
     gotoOut();
     break;
   case CommandStatus::TIMELAPSE:
@@ -162,15 +161,16 @@ void loop()
 
     break;
   default:
-    commandStatus = CommandStatus::IDLE;
-    if (commandStatus != prevCommandStatus)
-    {
-      if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
-      {
-        prevCommandStatus = commandStatus;
-        globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
-      }
-    }
+    // commandStatus = CommandStatus::IDLE;
+    // if (commandStatus != prevCommandStatus)
+    // {
+    //   if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
+    //   {
+    //     prevCommandStatus = commandStatus;
+    //     globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
+    //   }
+    // }
+    break;
   }
   intervalometerLoop();
   if (intervalometer.shotsCount != 0 & intervalometer.lastShotsCount != intervalometer.shotsCount)
@@ -181,6 +181,9 @@ void loop()
       globalClient->text("{\"SHOTS\":" + (String)intervalometer.shotsCount + "}");
     }
   }
+  if ((commandStatus == CommandStatus::GOTO_IN | commandStatus == CommandStatus::GOTO_OUT | commandStatus == CommandStatus::RUNNING | commandStatus == CommandStatus::JOG) & !stepperSlide->isRunning() ) {
+      commandStatus = CommandStatus::IDLE;
+    }
   // if (commandStatus != prevCommandStatus)
   // {
 
@@ -188,7 +191,7 @@ void loop()
   //   {
 
   //     globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
-  //     prevCommandStatus = COMMAND_STATUS;
+  //     prevCommandStatus = commandStatus;
   //   }
   // }
 
