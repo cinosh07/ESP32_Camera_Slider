@@ -13,7 +13,6 @@
  *********************************************************************/ -->
 <br>
 <div class="intervalometer">
-    <p class="kinematic-title">INTERVALOMETER</p>
     <div class="intervalometer-display-Container">
         <div id="intervalometer-display" class="intervalometer-display">
             <div class="other-unit-display">
@@ -28,79 +27,80 @@
             <div id="interval-display" class="interval-display">Interval</div>
         </div>
     </div>
-    <div class="btn-group" role="group" aria-label="Choose Axis">
+    <hr>
+    <div id="delayedStartGroup" class="btn-group delayedStartGroup" role="group">
+        <div class="input-group mb-3 delayedStartMB">
+            <button id="delayedStart" class="input-group-text delayedStartButton" id="delayedStartTime-label">DELAYED START</button>
+            <div class="cs-form delayedStart">
+                <label for="delayedStartDate" class="dateTimePicker dateTimePickerLabel">START DATE & TIME</label>
+                <input id="delayedStartDate" class="form-control dateTimePicker centered" type="date" />
+                <input id="delayedStartTime" value="20:05:00" type="time"  step="2" aria-describedby="delayedStartTime-label"
+                    class="form-control dateTimePicker centered" />
+            </div>
+        </div>
+    </div>
+    <div id="startGroup" class="btn-group startGroup" role="group">
         <button id="startIntervalometer" type="button" class="btn btn-outline-primary active">START</button>
         <button id="stopIntervalometer" type="button" class="btn btn-outline-primary">STOP</button>
         <button id="pauseIntervalometer" type="button" class="btn btn-outline-primary">PAUSE</button>
     </div>
-    <br>
-    <br>
-    <div class="btn-group" role="group" aria-label="Choose Axis">
-        <div class="input-group mb-3">
-            <button id="delayedStart" class="input-group-text " id="delayedStartTime-label">DELAYED START</button>
-            <div class="cs-form delayedStart">
-                <label for="delayedStartDate" class="dateTimePicker">START DATE & TIME</label>
-                <input id="delayedStartDate" class="form-control dateTimePicker" type="date" />
-                <input id="delayedStartTime" value="20:05" type="time" aria-describedby="delayedStartTime-label"
-                    class="form-control dateTimePicker" />
-            </div>
-        </div>
+    <div id="rampingGroup" class="btn-group" role="group" aria-label="Choose Axis">
+        <button id="activateRamping" type="button" class="btn btn-outline-primary firstButton">RAMP</button>
+        <button id="setBulbMode" type="button" class="btn btn-outline-primary notFirstButton active">BULB</button>
+        <button id="singleShot" type="button" class="btn btn-outline-primary notFirstButton active">SINGLE SHOT</button>
     </div>
-    <br>
-    <div class="btn-group" role="group" aria-label="Choose Axis">
-        <button id="activateRamping" type="button" class="btn btn-outline-primary">RAMP</button>
-        <button id="setBulbMode" type="button" class="btn btn-outline-primary active">BULB</button>
-        <button id="singleShot" type="button" class="btn btn-outline-primary active">SINGLE SHOT</button>
+    <div id="intervalometerSliderSettingsGroup">
+        <button>TODO</button>
     </div>
     <hr>
-    <div>
+    <div id="intervalometerSettingsGroup">
         <div class="input-group input-group-sm mb-3">
-            <span class="input-group-text " id="shotsDuration-label">Duration</span>
-            <input id="shotsDuration" type="text" class="form-control" placeholder="Duration of each shots" value="0.1"
+            <span class="input-group-text denominator" id="shotsDuration-label">Exposure</span>
+            <input id="shotsDuration" type="number" class="form-control centered" placeholder="Duration of each shots" value="0.1"
                 aria-label="Shots Duration" aria-describedby="shotsDuration-label">
-            <span class="input-group-text unit-label" id="shotsDuration-label">sec.</span>
-            <span class="input-group-text " id="shotsTotal-label">Total</span>
-            <input id="shotsTotal" type="text" class="form-control" placeholder="Total number of shots to take"
-                value="0" aria-label="Total Shots" aria-describedby="shotsTotal-label">
+            <span class="input-group-text unit-label last" id="shotsDuration-label">sec.</span>
+            <span class="input-group-text denominator notFirst" id="shotsTotal-label">Total</span>
+            <input id="shotsTotal" type="number" class="form-control centered" placeholder="Total number of shots to take"
+                value="0" aria-label="Total Shots" min="0" max="999" aria-describedby="shotsTotal-label">
                 <span class="input-group-text unit-label" id="shotsDuration-label">shots</span>
         </div>
         <div class="input-group input-group-sm mb-3">
-            <span class="input-group-text " id="interval-label">Interval</span>
-            <input id="interval" type="text" class="form-control" placeholder="in seconds" value="4.0"
+            <span class="input-group-text denominator " id="interval-label">Interval</span>
+            <input id="interval" type="number" class="form-control centered" placeholder="in seconds" value="4.0"
                 aria-label="Interval" aria-describedby="interval-label">
-                <span class="input-group-text unit-label" id="shotsDuration-label">sec.</span>
-            <span class="input-group-text " id="minDarkTime-label">Minimum Dark Time</span>
-            <input id="minDarkTime" type="text" class="form-control" placeholder="Minimum dark time in seconds. i.e 1.0"
+                <span class="input-group-text unit-label last" id="shotsDuration-label">sec.</span>
+            <span class="input-group-text denominator  notFirst" id="minDarkTime-label">Min. Dark Time</span>
+            <input id="minDarkTime" type="number" class="form-control centered" placeholder="Minimum dark time in seconds. i.e 1.0"
                 value="0.5" aria-label="Minimum Dark Time" aria-describedby="minDarkTime-label">
                 <span class="input-group-text unit-label" id="shotsDuration-label">sec.</span>
         </div>
         <div class="input-group input-group-sm mb-3">
-            <span class="input-group-text " id="rampDuration-label">Ramp Duration</span>
-            <input id="rampDuration" type="text" class="form-control" placeholder="" value="10"
+            <span class="input-group-text denominator" id="rampDuration-label">Ramp Duration</span>
+            <input id="rampDuration" type="number" class="form-control centered" placeholder="" value="10"
                 aria-label="Ramp Duration" aria-describedby="rampDuration-label">
-                <span class="input-group-text unit-label" id="shotsDuration-label">sec.</span>
-            <span class="input-group-text " id="rampTo-label">Ramp To</span>
-            <input id="rampTo" type="text" class="form-control" placeholder="" value="0" aria-label="Ramp To"
+                <span class="input-group-text unit-label last" id="shotsDuration-label">sec.</span>
+            <span class="input-group-text denominator notFirst" id="rampTo-label">Ramp To</span>
+            <input id="rampTo" type="number" class="form-control centered" placeholder="" value="0" aria-label="Ramp To"
                 aria-describedby="rampTo-label">
                 <span class="input-group-text unit-label" id="shotsDuration-label">sec.</span>
         </div>
         <div class="input-group input-group-sm mb-3">
-            <span class="input-group-text " id="rampingStartTime-label">Ramping Start Time</span>
+            <span class="input-group-text denominator" id="rampingStartTime-label">Ramping Start Time</span>
             <div class="cs-form">
                 <input id="rampingStartTime" type="time" aria-describedby="rampingStartTime-label"
-                    class="form-control  dateTimePicker" value="00:00" />
+                    class="form-control  dateTimePicker centered"  step="2" value="00:00:00" />
             </div>
         </div>
         <div class="input-group input-group-sm mb-3">
-            <span class="input-group-text " id="rampingEndTime-label">Ramping End Time</span>
+            <span class="input-group-text denominator" id="rampingEndTime-label">Ramping End Time</span>
             <div class="cs-form">
                 <input id="rampingEndTime" type="time" aria-describedby="rampingEndTime-label"
-                    class="form-control dateTimePicker" value="00:00" />
+                    class="form-control dateTimePicker centered" step="2" value="00:00:00" />
             </div>
         </div>
         <div class="input-group input-group-sm mb-3">
-            <span class="input-group-text " id="intervalBeforeRamping-label">Interval Before Ramping</span>
-            <input id="intervalBeforeRamping" type="text" class="form-control" placeholder="" value="0"
+            <span class="input-group-text denominator" id="intervalBeforeRamping-label">Interval Before Ramping</span>
+            <input id="intervalBeforeRamping" type="number" class="form-control centered" placeholder="" value="0"
                 aria-label="Intv. Before Ramp" aria-describedby="intervalBeforeRamping-label">
                 <span class="input-group-text unit-label" id="shotsDuration-label">sec.</span>
         </div>

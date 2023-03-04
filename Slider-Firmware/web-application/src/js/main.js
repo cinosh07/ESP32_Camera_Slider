@@ -67,6 +67,8 @@
 // For this to work set DEBUG=true
 
 var DEBUG = false;
+var sliderMode = false;
+var timelapseMode = true;
 
 // The nav bar background color will now appear RED to clearly show that we are now in debug mode.
 
@@ -215,14 +217,18 @@ $(async function () {
   $("#singleShot").on("click", function () {
     singleShot();
   });
-
+  // if (sliderMode) {
+  //   $("#delayedStartGroup").appendTo($("#run"));
+  //   $("#startGroup").appendTo($("#run"));
+  // }
   startWebsocket();
-  setTimeout(setStartDate, 2000);
+  setTimeout(delayedInit, 1000);
 });
 $(window).on("beforeunload", function () {
   socket.close();
 });
-function setStartDate() {
+function delayedInit() {
+  $("#intervalometerSliderSettingsGroup").toggle(false);
   var now = new Date();
   var month = now.getMonth() + 1;
   var day = now.getDate();
@@ -230,6 +236,24 @@ function setStartDate() {
   if (day < 10) day = "0" + day;
   var today = now.getFullYear() + "-" + month + "-" + day;
   $("#delayedStartDate").val(today);
+  if (sliderMode && timelapseMode) {
+    $("#delayedStartGroup").appendTo($("#run"));
+    $("#startGroup").appendTo($("#run"));
+    $("#sliderRunGroup").toggle(false);
+    $("#next-button").html("&raquo; Intervalometer");
+  }
+  if (!timelapseMode && sliderMode) {
+    $("#sliderRunGroup").toggle(true);
+    $("#startGroup").toggle(false);
+    $("#delayedStartGroup").toggle(false);
+    $("#rampingGroup").toggle(false);
+    $("#intervalometerSettingsGroup").toggle(false);
+    $("#intervalometerSliderSettingsGroup").toggle(true);
+    $("#next-button").html("&raquo; Timing");
+  }
+  
+  // rampingGroup
+  // intervalometerSettingsGroup
 }
 /* ***************************************************************
                           Navigation
@@ -257,7 +281,15 @@ function switchPage() {
       $("#intervalometer").toggle(false);
       $("#run").toggle(false);
       $("#previous-button").html("&laquo;");
-      $("#next-button").html("&raquo; Intervalometer");
+      if (timelapseMode) {
+        $("#next-button").html("&raquo; Intervalometer");
+      } else {
+        $("#next-button").html("&raquo; Timing");
+      }
+
+      $("#title").html(
+        '<a id="title" class="navbar-brand text-white-50 " href="#"><img class="header-icon" src="./images/icon-32.png" /> SLIDER CONTROLLER</a>'
+      );
       break;
     case 2:
       $("#control-panel").toggle(false);
@@ -265,13 +297,30 @@ function switchPage() {
       $("#run").toggle(false);
       $("#previous-button").html("Controls &laquo;");
       $("#next-button").html("&raquo; Run");
+      if (timelapseMode) {
+        $("#title").html(
+          '<a id="title" class="navbar-brand text-white-50 " href="#"><img class="header-icon" src="./images/icon-32.png" /> INTERVALOMETER</a>'
+        );
+      } else {
+        $("#title").html(
+          '<a id="title" class="navbar-brand text-white-50 " href="#"><img class="header-icon" src="./images/icon-32.png" /> TIMING</a>'
+        );
+      }
       break;
     case 3:
       $("#control-panel").toggle(false);
       $("#intervalometer").toggle(false);
       $("#run").toggle(true);
-      $("#previous-button").html("Intervalometer &laquo;");
+      if (timelapseMode) {
+        $("#previous-button").html("Intervalometer &laquo;");
+      } else {
+        $("#previous-button").html("Timing &laquo;");
+      }
+
       $("#next-button").html("&raquo;");
+      $("#title").html(
+        '<a id="title" class="navbar-brand text-white-50 " href="#"><img class="header-icon" src="./images/icon-32.png" /> RUN</a>'
+      );
       break;
   }
 }

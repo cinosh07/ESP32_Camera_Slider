@@ -1,0 +1,42 @@
+Date : 2023-03-04 00:30:08
+Directory : d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider
+Total : 16 files,  1256 codes, 329 comments, 194 blanks, all 1779 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| C++      |         16 |      1,256 |        329 |        194 |      1,779 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                          | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                             |         16 |      1,256 |        329 |        194 |      1,779 |
+| . (Files)                                                                                     |         14 |      1,032 |        302 |        168 |      1,502 |
+| commands                                                                                      |          2 |        224 |         27 |         26 |        277 |
++-----------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                      | language | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\clock.h                    | C++      |        111 |         32 |         18 |        161 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\commands\Commands.h        | C++      |        178 |         14 |         18 |        210 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\commands\JoystickCommand.h | C++      |         46 |         13 |          8 |         67 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\definitions.h              | C++      |          4 |         14 |          2 |         20 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\encoders.h                 | C++      |         39 |         15 |          9 |         63 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\includes.h                 | C++      |         10 |         49 |         20 |         79 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\intervalometer.h           | C++      |        154 |         23 |         16 |        193 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\motors.h                   | C++      |        160 |         20 |         25 |        205 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\networking.h               | C++      |         35 |         14 |          3 |         52 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\serial_messages.h          | C++      |         36 |         13 |          7 |         56 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\spiffs_files.h             | C++      |        160 |         28 |         19 |        207 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\stepper_driver.h           | C++      |         12 |         16 |          3 |         31 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\utils.h                    | C++      |         39 |         17 |         11 |         67 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\variables.h                | C++      |         21 |         15 |         10 |         46 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\web_server.h               | C++      |         99 |         25 |          9 |        133 |
+| d:\Timelapse_Slider\ESP32_Camera_Slider\Slider-Firmware\lib\slider\websocket.h                | C++      |        152 |         21 |         16 |        189 |
+| Total                                                                                         |          |      1,256 |        329 |        194 |      1,779 |
++-----------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

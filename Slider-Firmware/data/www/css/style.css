@@ -12,6 +12,7 @@ body {
   background-color: #212936;
   color: #f0f2f6;
   text-align: center;
+  color-scheme: dark !important;
 }
 .bg-dark {
   background-color: #212936 ! important;
@@ -60,8 +61,6 @@ body {
   color: #f0f2f6 !important;
 }
 .form-control::selection {
-  /* background-color: #212936 !important;
-  border-color: #3370c2 !important; */
   color: #f0f2f6 !important;
 }
 .header-icon {
@@ -261,17 +260,22 @@ body {
 }
 .dateTimePicker {
   font-size: small !important;
+  color-scheme: dark !important;
 }
 .delayedStart {
   margin-left: 10px !important;
   margin-bottom: 10px;
 }
+.intervalometer {
+  margin-top: -8px !important;
+}
 .intervalometer-display-Container {
   display: flex;
   font-size: xx-small;
   text-align: center;
-  margin-top: 10px;
+  /* margin-top: 10px; */
   margin-bottom: 10px;
+  color: rgb(202, 205, 208) !important;
 }
 .intervalometer-display {
   display: flex;
@@ -281,65 +285,115 @@ body {
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  border-color: #0d6efd ;
-  border-width: 1px;
-  border-style:solid;
-  border-radius: 5px;
-  padding-left: 1px;
-  padding-right: 1px;
 }
 .other-unit-display {
   position: relative;
   display: flex;
   width: 100%;
   height: 10px;
-  /* padding-left: 1px;
-  padding-right: 1px; */
+  border-color: #0d6efd !important;
+  border: 1px;
+  border-style:solid;
+  border-radius: 5px;
+  margin-bottom: 4px;
 }
 .exposure-display-container {
   display: flex;
   width: 100%;
   height:25px;
-  /* padding-left: 1px;
-  padding-right: 1px; */
+  border-color: #0d6efd !important;
+  border: 1px;
+  border-style:solid;
+  border-radius: 5px;
+  margin-bottom: 4px;
 }
 .interval-display {
-  background-color: #a17b3f;
+  background-color: rgba(255, 255, 0, 0.188);
   width: 100%;
   height: 25px;
   padding-top: 6px;
-  /* padding-left: 1px;
-  padding-right: 1px; */
+  border-color: #0d6efd !important;
+  border: 1px;
+  border-style:solid;
+  border-radius: 5px;
 }
 
 .exposure-display {
   width: 50%;
-  background-color: green;
+  background-color: rgba(0, 128, 0, 0.283);
   padding-top: 5px;
+  border-radius: 5px;
 }
 .darkTime-display {
   width: 50%;
-  background-color: black;
+  background-color: #171d26;
   padding-top: 5px;
+  border-radius: 5px;
 }
 .slider-display {
-  background-color: #12babf;
+  background-color: #12b9bf7f;
   width: 25px;
   height: 10px;
   position: absolute;
   left: 250px;
+  border-radius: 5px;
 }
 .focus-display {
-  background-color: red;
+  background-color: rgba(255, 0, 0, 0.535);
   width: 5px;
   height: 10px;
   position: absolute;
   left: 150px;
+  border-radius: 5px;
 }
 .minDarkTime-display {
-  background-color: grey;
+  background-color: rgba(128, 128, 128, 0.669);
   width: 2px;
   height: 10px;
   position: absolute;
   left: 300px;
+  border-radius: 5px;
+}
+.delayedStart {
+   margin-top: -8px !important;
+}
+.delayedStartGroup {
+  margin-top: -5px;
+  margin-bottom: 5px;
+}
+.delayedStartMB {
+  margin-bottom: 0px !important;
+}
+.delayedStartButton {
+  margin-top: 15px !important;
+    margin-bottom: 10px !important;
+    border-radius: 5px !important;
+}
+.startGroup {
+  margin-bottom: 15px;
+}
+.dateTimePickerLabel {
+  color: #0d6efd !important;
+}
+.notFirst {
+  margin-left: 10px !important;
+  border-radius: 4px 0px 0px 4px !important;
+}
+.last {
+  border-radius: 0px 4px 4px 0px !important;
+}
+.notFirstButton {
+  margin-left: 10px !important;
+  border-radius: 4px !important;
+}
+.firstButton {
+  border-radius: 4px !important;
+}
+.centered {
+  text-align: center !important;
+  background-color: #171d26 !important;
+}
+.denominator {
+  color: #0d6efd !important;
+  background-color: #212936 !important;
 }

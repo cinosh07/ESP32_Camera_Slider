@@ -42,9 +42,13 @@ function start() {
   try {
     mergeFiles(inputPathListIndex, outputPathIndex).then((status) => {
       console.log("Concat index file completed");
+      console.log("");
+      console.log("Waiting for Webpack to complete its task ...");
     });
     mergeFiles(inputPathListMainsJS, outputPathMainJS).then((status) => {
       console.log("Concat js files completed");
+      console.log("");
+      console.log("Waiting for Webpack to complete its task ...");
     });
     mergeFiles(inputPathListIndexnterval, outputPathIndexInterval).then(
       (status) => {

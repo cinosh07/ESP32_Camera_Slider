@@ -22,23 +22,5 @@
         "profile-5": "none"
     },
     "tmc_uart_rx": 16,
-    "tmc_uart_tx": 17,
-    "intervalometer": [
-        {
-            "name": "default",
-            "interval": 4.0,
-            "shotsTotal": 0,
-            "mode": 0,
-            "releaseTime": 0.1,
-            "MIN_DARK_TIME": 0.5,
-            "rampDuration": 10,
-            "rampTo": 0,
-            "rampingStartTime": 0,
-            "rampingEndTime": 0,
-            "intervalBeforeRamping": 0,
-            "COMMAND_STATUS": 0,
-            "externalClock": true
-
-        }
-    ]
+    "tmc_uart_tx": 17  
 }
