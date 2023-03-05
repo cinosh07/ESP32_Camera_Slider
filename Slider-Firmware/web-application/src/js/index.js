@@ -100,8 +100,49 @@ function releaseWakeState() {
   ****************************************************************
 */
 $(async function () {
-  $("#intervalometer").load("interval.html");
-  $("#intervalometer").toggle(false);
+  $("#intervalometer").load("interval.html", function () {
+    $("#intervalometer").toggle(false);
+    $("#startIntervalometer").on("click", function () {
+      startIntervalometer();
+    });
+    $("#stopIntervalometer").on("click", function () {
+      stopIntervalometer();
+    });
+
+    $("#pauseIntervalometer").on("click", function () {
+      pauseIntervalometer();
+    });
+    $("#activateRamping").on("click", function () {
+      activateRamping();
+    });
+    $("#singleShot").on("click", function () {
+      singleShot();
+    });
+    $("#intervalometerSliderSettingsGroup").toggle(false);
+    var now = new Date();
+    var month = now.getMonth() + 1;
+    var day = now.getDate();
+    if (month < 10) month = "0" + month;
+    if (day < 10) day = "0" + day;
+    var today = now.getFullYear() + "-" + month + "-" + day;
+    $("#delayedStartDate").val(today);
+    if (sliderMode && timelapseMode) {
+      $("#delayedStartGroup").appendTo($("#run"));
+      $("#startGroup").appendTo($("#run"));
+      $("#sliderRunGroup").toggle(false);
+      $("#next-button").html("&raquo; Intervalometer");
+    }
+    if (!timelapseMode && sliderMode) {
+      $("#sliderRunGroup").toggle(true);
+      $("#startGroup").toggle(false);
+      $("#delayedStartGroup").toggle(false);
+      $("#rampingGroup").toggle(false);
+      $("#intervalometerSettingsGroup").toggle(false);
+      $("#intervalometerSliderSettingsGroup").toggle(true);
+      $("#next-button").html("&raquo; Timing");
+    }
+  });
+
   $("#run").toggle(false);
   $("#about-mockup").load("about.html");
   $("#settings-mockup").load("settings.html");
@@ -167,60 +208,13 @@ $(async function () {
   $("#goto-out").on("click", function () {
     gotoOut();
   });
-  $("#startIntervalometer").on("click", function () {
-    startIntervalometer();
-  });
-  $("#stopIntervalometer").on("click", function () {
-    stopIntervalometer();
-  });
-
-  $("#pauseIntervalometer").on("click", function () {
-    pauseIntervalometer();
-  });
-  $("#activateRamping").on("click", function () {
-    activateRamping();
-  });
-  $("#singleShot").on("click", function () {
-    singleShot();
-  });
-  // if (sliderMode) {
-  //   $("#delayedStartGroup").appendTo($("#run"));
-  //   $("#startGroup").appendTo($("#run"));
-  // }
+  getIntervalometerProfiles();
   startWebsocket();
-  setTimeout(delayedInit, 1000);
 });
 $(window).on("beforeunload", function () {
   socket.close();
 });
-function delayedInit() {
-  $("#intervalometerSliderSettingsGroup").toggle(false);
-  var now = new Date();
-  var month = now.getMonth() + 1;
-  var day = now.getDate();
-  if (month < 10) month = "0" + month;
-  if (day < 10) day = "0" + day;
-  var today = now.getFullYear() + "-" + month + "-" + day;
-  $("#delayedStartDate").val(today);
-  if (sliderMode && timelapseMode) {
-    $("#delayedStartGroup").appendTo($("#run"));
-    $("#startGroup").appendTo($("#run"));
-    $("#sliderRunGroup").toggle(false);
-    $("#next-button").html("&raquo; Intervalometer");
-  }
-  if (!timelapseMode && sliderMode) {
-    $("#sliderRunGroup").toggle(true);
-    $("#startGroup").toggle(false);
-    $("#delayedStartGroup").toggle(false);
-    $("#rampingGroup").toggle(false);
-    $("#intervalometerSettingsGroup").toggle(false);
-    $("#intervalometerSliderSettingsGroup").toggle(true);
-    $("#next-button").html("&raquo; Timing");
-  }
-  
-  // rampingGroup
-  // intervalometerSettingsGroup
-}
+
 /* ***************************************************************
                           Navigation
   ****************************************************************
@@ -247,14 +241,15 @@ function switchPage() {
       $("#intervalometer").toggle(false);
       $("#run").toggle(false);
       $("#previous-button").html("&laquo;");
-      if (timelapseMode) {
+      if (timelapseMode || !sliderMode) {
         $("#next-button").html("&raquo; Intervalometer");
       } else {
         $("#next-button").html("&raquo; Timing");
       }
 
       $("#title").html(
-        '<a id="title" class="navbar-brand text-white-50 " href="#"><img class="header-icon" src="./images/icon-32.png" /> SLIDER CONTROLLER</a>'
+        '<a id="title" class="navbar-brand text-white-50 " href="#">' +
+          +'<img class="header-icon" src="./images/icon-32.png" /> SLIDER CONTROLLER</a>'
       );
       break;
     case 2:
@@ -263,13 +258,15 @@ function switchPage() {
       $("#run").toggle(false);
       $("#previous-button").html("Controls &laquo;");
       $("#next-button").html("&raquo; Run");
-      if (timelapseMode) {
+      if (timelapseMode || !sliderMode) {
         $("#title").html(
-          '<a id="title" class="navbar-brand text-white-50 " href="#"><img class="header-icon" src="./images/icon-32.png" /> INTERVALOMETER</a>'
+          '<a id="title" class="navbar-brand text-white-50 " href="#">' +
+            '<img class="header-icon" src="./images/icon-32.png" /> INTERVALOMETER</a>'
         );
       } else {
         $("#title").html(
-          '<a id="title" class="navbar-brand text-white-50 " href="#"><img class="header-icon" src="./images/icon-32.png" /> TIMING</a>'
+          '<a id="title" class="navbar-brand text-white-50 " href="#">' +
+            '<img class="header-icon" src="./images/icon-32.png" /> TIMING</a>'
         );
       }
       break;
@@ -277,7 +274,7 @@ function switchPage() {
       $("#control-panel").toggle(false);
       $("#intervalometer").toggle(false);
       $("#run").toggle(true);
-      if (timelapseMode) {
+      if (timelapseMode || !sliderMode) {
         $("#previous-button").html("Intervalometer &laquo;");
       } else {
         $("#previous-button").html("Timing &laquo;");
@@ -285,7 +282,8 @@ function switchPage() {
 
       $("#next-button").html("&raquo;");
       $("#title").html(
-        '<a id="title" class="navbar-brand text-white-50 " href="#"><img class="header-icon" src="./images/icon-32.png" /> RUN</a>'
+        '<a id="title" class="navbar-brand text-white-50 " href="#">' +
+          '<img class="header-icon" src="./images/icon-32.png" /> RUN</a>'
       );
       break;
   }
@@ -310,6 +308,9 @@ function sleep(ms) {
                           Classes
   ****************************************************************
 */
+//<!--
+// **************************************************************
+//                  Averaging joystick values
 class Avg {
   constructor() {}
 

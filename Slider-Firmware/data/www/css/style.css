@@ -275,7 +275,9 @@ body {
   text-align: center;
   /* margin-top: 10px; */
   margin-bottom: 10px;
-  color: rgb(202, 205, 208) !important;
+  /* color: rgb(202, 205, 208) !important;
+   */
+   /* color: #f0f2f6 !important; */
 }
 .intervalometer-display {
   display: flex;
@@ -285,6 +287,7 @@ body {
   width: 100%;
   margin-left: auto;
   margin-right: auto;
+  
 }
 .other-unit-display {
   position: relative;
@@ -316,6 +319,7 @@ body {
   border: 1px;
   border-style:solid;
   border-radius: 5px;
+  color: yellow !important;
 }
 
 .exposure-display {
@@ -323,12 +327,14 @@ body {
   background-color: rgba(0, 128, 0, 0.283);
   padding-top: 5px;
   border-radius: 5px;
+  color: rgb(4, 243, 4);
 }
 .darkTime-display {
   width: 50%;
   background-color: #171d26;
   padding-top: 5px;
   border-radius: 5px;
+  color: white !important;
 }
 .slider-display {
   background-color: #12b9bf7f;
@@ -391,8 +397,9 @@ body {
 }
 .centered {
   text-align: center !important;
-  background-color: #171d26 !important;
-}
+  background-color: #171d266f !important;
+  color: rgb(160, 177, 194) !important;
+} 
 .denominator {
   color: #0d6efd !important;
   background-color: #212936 !important;

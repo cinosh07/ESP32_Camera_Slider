@@ -276,7 +276,7 @@ function pauseIntervalometer() {
   sendCommand(command);
 }
 function activateRamping() {
-    //TODO
+  //TODO
 }
 
 function singleShot() {
@@ -296,6 +296,23 @@ function singleShot() {
     "::" +
     0 + // TODO Add mode MANUAL or BULB
     "::" +
-    0; 
+    0;
   sendCommand(command);
+}
+
+//***************************************************************************** */
+//                        Profile Commands
+//***************************************************************************** */
+
+function getIntervalometerProfiles() {
+  let url = "intervalometer";
+  if (DEBUG) {
+    url = "interval-for-internal-debug-only.json";
+  }
+  $.getJSON(url, function (profiles) {
+    
+    console.log("Intervalometer Profiles received: ");
+    console.log(profiles);
+    
+  });
 }
