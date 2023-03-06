@@ -32,7 +32,7 @@
 //
 // For this to work set DEBUG=true
 
-var DEBUG = false;
+var DEBUG = true;
 var sliderMode = false;
 var timelapseMode = true;
 
