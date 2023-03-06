@@ -404,6 +404,19 @@ body {
   color: #0d6efd !important;
   background-color: #212936 !important;
 }
+.withoutSpace {
+  border-radius: 0px !important;
+  margin-left: 0px !important;
+  border-left-width: 0px !important;
+  border-right-width: 0px !important;
+}
+.noLeftRadius {
+  border-radius: 0px 4px 4px 0px;
+}
+.withoutTrailingSpace{
+  border-radius: 0px !important;
+  
+}
 .selectProfile {
   color: rgb(160, 177, 194) !important;
   /* border-color: #0d6efd !important; */
@@ -423,4 +436,12 @@ body {
 .addRemoveIntervalometerProfile {
   border-radius: 4px !important;
   margin-left: 10px !important;
+}
+
+.red {
+  color: #ff2900 !important;
+}
+
+.yellow {
+  color: yellow !important;
 }

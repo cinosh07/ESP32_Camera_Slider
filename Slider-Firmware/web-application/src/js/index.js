@@ -66,6 +66,9 @@ var joystickSlideMoveArray = [];
 var joystickSlideMoveCount = 0;
 var joystickSlideMovePreviousDir = -2;
 var joystickSlideMovePreviousAverage = 0.0;
+
+var intervalometerProfiles = [];
+var intervalometerProfileChanged = false;
 /* ***************************************************************
                Lock mobile Screen from Sleeping
   ****************************************************************
@@ -100,6 +103,7 @@ function releaseWakeState() {
   ****************************************************************
 */
 $(async function () {
+  $.ajaxSetup({ cache: false });
   $("#intervalometer").load("interval.html", function () {
     $("#intervalometer").toggle(false);
     $("#startIntervalometer").on("click", function () {
@@ -141,6 +145,58 @@ $(async function () {
       $("#intervalometerSliderSettingsGroup").toggle(true);
       $("#next-button").html("&raquo; Timing");
     }
+    $("#intervalometerProfiles").on("change", function () {
+      console.log(
+        "Intervalometer Profile change: " +
+          intervalometerProfiles[this.value].name
+      );
+      setLocalDefaultIntervalometerProfile(
+        this.value,
+        intervalometerProfiles[this.value],
+        true
+      );
+    });
+    $("#interval").on("change", function () {
+      updateLocalIntervalometerProfileValue("interval", this.value);
+    });
+
+    $("#shotsTotal").on("change", function () {
+      updateLocalIntervalometerProfileValue("shotsTotal", this.value);
+    });
+
+    $("#mode").on("change", function () {
+      updateLocalIntervalometerProfileValue("mode", this.value);
+    });
+    $("#shotsDuration").on("change", function () {
+      updateLocalIntervalometerProfileValue("shotsDuration", this.value);
+    });
+    $("#minDarkTime").on("change", function () {
+      updateLocalIntervalometerProfileValue("minDarkTime", this.value);
+    });
+    $("#rampDuration").on("change", function () {
+      updateLocalIntervalometerProfileValue("rampDuration", this.value);
+    });
+    $("#rampTo").on("change", function () {
+      updateLocalIntervalometerProfileValue("rampTo", this.value);
+    });
+    $("#rampingStartTime").on("change", function () {
+      updateLocalIntervalometerProfileValue("rampingStartTime", this.value);
+    });
+    $("#rampingEndTime").on("change", function () {
+      updateLocalIntervalometerProfileValue("rampingEndTime", this.value);
+    });
+    $("#intervalBeforeRamping").on("change", function () {
+      updateLocalIntervalometerProfileValue(
+        "intervalBeforeRamping",
+        this.value
+      );
+    });
+    $("#camSentinel").on("change", function () {
+      updateLocalIntervalometerProfileValue("camSentinel", this.value);
+    });
+    $("#focusDelay").on("change", function () {
+      updateLocalIntervalometerProfileValue("focusDelay", this.value);
+    });
   });
 
   $("#run").toggle(false);
@@ -208,12 +264,17 @@ $(async function () {
   $("#goto-out").on("click", function () {
     gotoOut();
   });
-  getIntervalometerProfiles();
+  // getIntervalometerProfiles();
   startWebsocket();
+  // getIntervalometerProfiles();
 });
 $(window).on("beforeunload", function () {
   socket.close();
 });
+
+function delayedStart() {
+
+}
 
 /* ***************************************************************
                           Navigation

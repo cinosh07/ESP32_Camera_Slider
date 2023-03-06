@@ -18,6 +18,9 @@ function startWebsocket() {
       var toast = new bootstrap.Toast(alertConnected);
       toast.show();
       sendTimeStamp();
+      $("#control-panel").toggle(false);
+      $("#intervalometer").toggle(true);
+      getIntervalometerProfiles(true);
     };
     var previousStatus = -1;
     socket.onmessage = function (event) {
