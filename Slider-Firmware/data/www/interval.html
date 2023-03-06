@@ -13,6 +13,18 @@
  *********************************************************************/ -->
 <br>
 <div class="intervalometer">
+    <div class="btn-group btn-group-sm profile-container">
+        <div class="input-group-text btn-sm  denominator profilesButton">Profiles</div>
+        <select id="intervalometerProfiles" class="form-select form-select-sm text-secondary selectProfile"
+            aria-label="Select Intervalometer Profile">
+        </select>
+        <button class="btn btn-sm btn-outline-primary last active">SAVE</button>
+        <button id="addIntervalometerProfile"
+            class="btn btn-sm btn-outline-primary active addRemoveIntervalometerProfile">+</button>
+        <button id="removeIntervalometerProfile"
+            class="btn btn-sm btn-outline-primary active addRemoveIntervalometerProfile">-</button>
+    </div>
+    <hr>
     <div class="intervalometer-display-Container">
         <div id="intervalometer-display" class="intervalometer-display">
             <div class="other-unit-display">
@@ -78,55 +90,46 @@
             <span class="input-group-text unit-label" id="shotsDuration-label">sec.</span>
         </div>
         <div class="input-group input-group-sm mb-3">
-            <span class="input-group-text denominator" id="rampDuration-label">Ramp Duration</span>
-            <input id="rampDuration" type="number" class="form-control centered" placeholder="" value="10"
-                aria-label="Ramp Duration" aria-describedby="rampDuration-label">
-            <span class="input-group-text unit-label last" id="shotsDuration-label">min.</span>
+
+            <span class="input-group-text denominator" id="focusDelay-label">Focus Delay</span>
+            <input id="focusDelay" type="number" class="form-control centered" placeholder="" value="0"
+                aria-label="focusDelay" aria-describedby="focusDelay-label">
+            <span class="input-group-text unit-label last" id="focusDelay-label">sec.</span>
             <span class="input-group-text denominator notFirst" id="rampTo-label">Ramp To</span>
             <input id="rampTo" type="number" class="form-control centered" placeholder="" value="0" aria-label="Ramp To"
                 aria-describedby="rampTo-label">
             <span class="input-group-text unit-label" id="shotsDuration-label">sec.</span>
         </div>
         <div class="input-group input-group-sm mb-3">
-            <span class="input-group-text denominator" id="rampingStartTime-label">Ramping In</span>
+            <span class="input-group-text denominator" id="rampingStartTime-label">Ramp In</span>
             <div class="cs-form">
                 <input id="rampingStartTime" type="time" aria-describedby="rampingStartTime-label"
-                    class="form-control  dateTimePicker centered" step="2" value="00:00:00" />
+                    class="form-control  dateTimePicker centered withoutTrailingSpace" step="2"  />
             </div>
-            <span class="input-group-text denominator notFirst" id="intervalBeforeRamping-label">Ramp In</span>
+            <span class="input-group-text denominator withoutSpace" id="intervalBeforeRamping-label">or In</span>
             <input id="intervalBeforeRamping" type="number" class="form-control centered" placeholder="" value="0"
-                aria-label="Intv. Before Ramp" aria-describedby="intervalBeforeRamping-label">
+            placeholder="N/A" aria-label="Intv. Before Ramp" aria-describedby="intervalBeforeRamping-label">
             <span class="input-group-text unit-label last" id="shotsDuration-label">min.</span>
         </div>
         <div class="input-group input-group-sm mb-3">
-            <span class="input-group-text denominator" id="rampingEndTime-label">Ramping out</span>
+            <span class="input-group-text denominator" id="rampingEndTime-label">Ramp out</span>
             <div class="cs-form">
                 <input id="rampingEndTime" type="time" aria-describedby="rampingEndTime-label"
-                    class="form-control dateTimePicker centered" step="2" value="00:00:00" />
-            </div>        
+                    class="form-control dateTimePicker centered noLeftRadius withoutTrailingSpace" step="2" />
+            </div>
+            <span class="input-group-text denominator withoutSpace" id="rampDuration-label">or Dur.</span>
+            <input id="rampDuration" type="number" class="form-control centered" placeholder="" value="0"
+            placeholder="N/A" aria-label="Intv. Before Ramp" aria-describedby="rampDuration-label">
+            <span class="input-group-text unit-label last" id="rampDuration-label">min.</span>  
+
         </div>
         <div class="input-group input-group-sm mb-3">
-  
-            <span class="input-group-text denominator" id="focusDelay-label">Focus Delay</span>
-            <input id="focusDelay" type="number" class="form-control centered" placeholder="" value="0"
-                aria-label="focusDelay" aria-describedby="focusDelay-label">
-            <span class="input-group-text unit-label last" id="focusDelay-label">sec.</span>
 
-            <span class="input-group-text denominator notFirst" id="camSentinel-label">Cam Sentinel</span>
+            <span class="input-group-text denominator" id="camSentinel-label">Cam Sentinel</span>
             <input id="camSentinel" type="number" class="form-control centered" placeholder="" value="0"
                 aria-label="camSentinel" aria-describedby="camSentinel-label">
             <span class="input-group-text unit-label last" id="camSentinel-label">sec.</span>
         </div>
     </div>
-    <div class="btn-group btn-group-sm">
-        <div class="input-group-text btn-sm  denominator profilesButton">Profiles</div>
-        <select id="intervalometerProfiles" class="form-select form-select-sm text-secondary selectProfile"
-            aria-label="Select Intervalometer Profile">
-        </select>
-        <button class="btn btn-sm btn-outline-primary last active">SAVE</button>
-        <button id="addIntervalometerProfile"
-            class="btn btn-sm btn-outline-primary active addRemoveIntervalometerProfile">+</button>
-        <button id="removeIntervalometerProfile"
-            class="btn btn-sm btn-outline-primary active addRemoveIntervalometerProfile">-</button>
-    </div>
+    
 </div>

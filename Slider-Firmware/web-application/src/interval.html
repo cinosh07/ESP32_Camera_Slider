@@ -13,6 +13,18 @@
  *********************************************************************/ -->
 <br>
 <div class="intervalometer">
+    <div class="btn-group btn-group-sm profile-container">
+        <div class="input-group-text btn-sm  denominator profilesButton">Profiles</div>
+        <select id="intervalometerProfiles" class="form-select form-select-sm text-secondary selectProfile"
+            aria-label="Select Intervalometer Profile">
+        </select>
+        <button class="btn btn-sm btn-outline-primary last active">SAVE</button>
+        <button id="addIntervalometerProfile"
+            class="btn btn-sm btn-outline-primary active addRemoveIntervalometerProfile">+</button>
+        <button id="removeIntervalometerProfile"
+            class="btn btn-sm btn-outline-primary active addRemoveIntervalometerProfile">-</button>
+    </div>
+    <hr>
     <div class="intervalometer-display-Container">
         <div id="intervalometer-display" class="intervalometer-display">
             <div class="other-unit-display">
@@ -119,15 +131,5 @@
             <span class="input-group-text unit-label last" id="camSentinel-label">sec.</span>
         </div>
     </div>
-    <div class="btn-group btn-group-sm">
-        <div class="input-group-text btn-sm  denominator profilesButton">Profiles</div>
-        <select id="intervalometerProfiles" class="form-select form-select-sm text-secondary selectProfile"
-            aria-label="Select Intervalometer Profile">
-        </select>
-        <button class="btn btn-sm btn-outline-primary last active">SAVE</button>
-        <button id="addIntervalometerProfile"
-            class="btn btn-sm btn-outline-primary active addRemoveIntervalometerProfile">+</button>
-        <button id="removeIntervalometerProfile"
-            class="btn btn-sm btn-outline-primary active addRemoveIntervalometerProfile">-</button>
-    </div>
+    
 </div>

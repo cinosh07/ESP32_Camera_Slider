@@ -67,7 +67,7 @@
 // For this to work set DEBUG=true
 
 var DEBUG = false;
-var sliderMode = true;
+var sliderMode = false;
 var timelapseMode = true;
 
 // The nav bar background color will now appear RED to clearly show that we are now in debug mode.
@@ -102,6 +102,7 @@ var joystickSlideMovePreviousDir = -2;
 var joystickSlideMovePreviousAverage = 0.0;
 
 var intervalometerProfiles = [];
+var intervalometerProfileChanged = false;
 /* ***************************************************************
                Lock mobile Screen from Sleeping
   ****************************************************************
@@ -136,6 +137,7 @@ function releaseWakeState() {
   ****************************************************************
 */
 $(async function () {
+  $.ajaxSetup({ cache: false });
   $("#intervalometer").load("interval.html", function () {
     $("#intervalometer").toggle(false);
     $("#startIntervalometer").on("click", function () {
@@ -187,6 +189,9 @@ $(async function () {
         intervalometerProfiles[this.value],
         true
       );
+    });
+    $("#interval").on("change", function () {
+      updateLocalIntervalometerProfileValue("interval", this.value);
     });
 
     $("#shotsTotal").on("change", function () {
@@ -1030,10 +1035,7 @@ function singleShot() {
 //                        Profile Commands
 //***************************************************************************** */
 
-function getIntervalometerProfiles() {
-  // nextPage();
-  // $("#control-panel").toggle(false);
-  //     $("#intervalometer").toggle(true);
+function getIntervalometerProfiles(isInit) {
   let url = "intervalometer";
   if (DEBUG) {
     url = "interval-for-internal-debug-only.json";
@@ -1058,28 +1060,20 @@ function getIntervalometerProfiles() {
         selected = true;
         setLocalDefaultIntervalometerProfile(x, data.profiles[x], false);
       }
-      // var option =
-      //   '<option value="' +
-      //   x +
-      //   '" ' +
-      //   selected +
-      //   ">" +
-      //   data.profiles[x].name +
-      //   "</option>";
 
-        var option = $(document.createElement("option"));
-        option.val(x);
-        if (selected) {
-          option.attr("selected", true);
-        }
-        option.html(data.profiles[x].name)
+      var option = $(document.createElement("option"));
+      option.val(x);
+      if (selected) {
+        option.attr("selected", true);
+      }
+      option.html(data.profiles[x].name);
 
       $("#intervalometerProfiles").append(option);
     }
-    $("#control-panel").toggle(true);
+    if (isInit) {
+      $("#control-panel").toggle(true);
       $("#intervalometer").toggle(false);
-    // currentPage = 3;
-    // switchPage();
+    }
   });
 }
 
@@ -1105,7 +1099,7 @@ function setIntervalometerProfileData(id, profile, forceChange) {
     rampingEndTime: 0,
     intervalBeforeRamping: 0,
     camSentinel: 0,
-    focusDelay: 0
+    focusDelay: 0,
   };
   if (
     localStorage.getItem("intvProfilesConfigured") === null ||
@@ -1140,24 +1134,24 @@ function setIntervalometerProfileData(id, profile, forceChange) {
     data.camSentinel = profile.camSentinel;
     localStorage.setItem("focusDelay", profile.focusDelay);
     data.focusDelay = profile.focusDelay;
-
-
   } else {
     // Fill UI data with local storage values
-    data.shotsTotal = localStorage.getItem("shotsTotal");
-    data.mode = localStorage.getItem("mode");
-    data.shotsDuration = localStorage.getItem("shotsDuration");
-    data.minDarkTime = localStorage.getItem("minDarkTime");
-    data.rampDuration = localStorage.getItem("rampDuration");
-    data.rampTo = localStorage.getItem("rampTo");
+
+    data.interval = +localStorage.getItem("interval");
+    data.shotsTotal = +localStorage.getItem("shotsTotal");
+    data.mode = +localStorage.getItem("mode");
+    data.shotsDuration = +localStorage.getItem("shotsDuration");
+    data.minDarkTime = +localStorage.getItem("minDarkTime");
+    data.rampDuration = +localStorage.getItem("rampDuration");
+    data.rampTo = +localStorage.getItem("rampTo");
     data.rampingStartTime = localStorage.getItem("rampingStartTime");
     data.rampingEndTime = localStorage.getItem("rampingEndTime");
-    data.intervalBeforeRamping = localStorage.getItem("intervalBeforeRamping");
-    data.camSentinel = localStorage.getItem("camSentinel");
-    data.focusDelay = localStorage.getItem("focusDelay");
-
+    data.intervalBeforeRamping = +localStorage.getItem("intervalBeforeRamping");
+    data.camSentinel = +localStorage.getItem("camSentinel");
+    data.focusDelay = +localStorage.getItem("focusDelay");
   }
   // Fill Intervalometer UI with data
+  $("#interval").val(+data.interval);
   $("#shotsTotal").val(+data.shotsTotal);
   $("#mode").val(+data.mode);
   $("#shotsDuration").val(+data.shotsDuration);
@@ -1173,28 +1167,123 @@ function setIntervalometerProfileData(id, profile, forceChange) {
   localStorage.setItem("intvProfilesConfigured", "true");
   checkIntervalometerMisMatchAndError(id, data);
 }
+
 function checkIntervalometerMisMatchAndError(id, data) {
   // This function is also trigered by on change values events
 
-  // TODO check Intervalometer values MisMatch And Error and
+  // check Intervalometer values MisMatch And Error and
   // change the Intervalometer UI accordingly
 
   // Compare mismatch between intervalometerProfiles[id] & data
+  intervalometerProfileChanged = false;
+  if (id !== 0) {
+    if (intervalometerProfiles[id].interval != +localStorage.getItem("interval")) {
+      $("#interval").addClass("yellow");
+      intervalometerProfileChanged = true;
+    } else {
+      $("#interval").removeClass("yellow");
+    }
+
+    if (intervalometerProfiles[id].shotsTotal != +localStorage.getItem("shotsTotal")) {
+      $("#shotsTotal").addClass("yellow");
+      intervalometerProfileChanged = true;
+    } else {
+      $("#shotsTotal").removeClass("yellow");
+    }
+
+    if (intervalometerProfiles[id].mode != +localStorage.getItem("mode")) {
+      $("#mode").addClass("yellow");
+      intervalometerProfileChanged = true;
+    } else {
+      $("#mode").removeClass("yellow");
+    }
+
+    if (intervalometerProfiles[id].shotsDuration != +localStorage.getItem("shotsDuration")) {
+      $("#shotsDuration").addClass("yellow");
+      intervalometerProfileChanged = true;
+    } else {
+      $("#shotsDuration").removeClass("yellow");
+    }
+
+    if (intervalometerProfiles[id].minDarkTime != +localStorage.getItem("minDarkTime")) {
+      $("#minDarkTime").addClass("yellow");
+      intervalometerProfileChanged = true;
+    } else {
+      $("#minDarkTime").removeClass("yellow");
+    }
+
+    if (intervalometerProfiles[id].rampDuration != +localStorage.getItem("rampDuration")) {
+      $("#rampDuration").addClass("yellow");
+      intervalometerProfileChanged = true;
+    } else {
+      $("#rampDuration").removeClass("yellow");
+    }
+
+    if (intervalometerProfiles[id].rampTo != +localStorage.getItem("rampTo")) {
+      $("#rampTo").addClass("yellow");
+      intervalometerProfileChanged = true;
+    } else {
+      $("#rampTo").removeClass("yellow");
+    }
+
+    if (intervalometerProfiles[id].rampingStartTime != localStorage.getItem("rampingStartTime")) {
+      $("#rampingStartTime").addClass("yellow");
+      intervalometerProfileChanged = true;
+    } else {
+      $("#rampingStartTime").removeClass("yellow");
+    }
+
+    if (intervalometerProfiles[id].rampingEndTime != localStorage.getItem("rampingEndTime")) {
+      $("#rampingEndTime").addClass("yellow");
+      intervalometerProfileChanged = true;
+    } else {
+      $("#rampingEndTime").removeClass("yellow");
+    }
+
+    if (
+      intervalometerProfiles[id].intervalBeforeRamping !=
+      +localStorage.getItem("intervalBeforeRamping")
+    ) {
+      $("#intervalBeforeRamping").addClass("yellow");
+      intervalometerProfileChanged = true;
+    } else {
+      $("#intervalBeforeRamping").removeClass("yellow");
+    }
+
+    if (intervalometerProfiles[id].camSentinel != +localStorage.getItem("camSentinel")) {
+      $("#camSentinel").addClass("yellow");
+      intervalometerProfileChanged = true;
+    } else {
+      $("#camSentinel").removeClass("yellow");
+    }
+
+    if (intervalometerProfiles[id].focusDelay != +localStorage.getItem("focusDelay")) {
+      $("#focusDelay").addClass("yellow");
+      intervalometerProfileChanged = true;
+    } else {
+      $("#focusDelay").removeClass("yellow");
+    }
+  }
 
   // if Mismatch
   // change the Intervalometer UI values accordingly (YELLOW)
   // Save needed to keep local changes
   // Save button enabled
 
-  // Check for mathematical error with intervalometer values
+  // TODO Check for mathematical error with intervalometer values
 
   // if Error
   // change the Intervalometer UI values accordingly (RED)
   // Values are invalid
   // Save button disabled
 
+  // .red {
+  //   color: #ff2900 !important;
+  // }
+
   // if no mismatch
   // Save button disabled
+
   console.log("Intervalometer values changed");
 }
 
@@ -1203,16 +1292,27 @@ function resetLocalIntervalometerProfileValue(type) {
     type,
     intervalometerProfiles[+localStorage.getItem("defaultIntvProfileID")][type]
   );
-  if (type === "name" || type === "rampingStartTime" || type === "rampingEndTime" ) {
-    $("#"+type+"").val(intervalometerProfiles[+localStorage.getItem("defaultIntvProfileID")][type]);
+  if (
+    type === "name" ||
+    type === "rampingStartTime" ||
+    type === "rampingEndTime"
+  ) {
+    $("#" + type + "").val(
+      intervalometerProfiles[+localStorage.getItem("defaultIntvProfileID")][
+        type
+      ]
+    );
   } else {
-    $("#"+type+"").val(+intervalometerProfiles[+localStorage.getItem("defaultIntvProfileID")][type]);
+    $("#" + type + "").val(
+      +intervalometerProfiles[+localStorage.getItem("defaultIntvProfileID")][
+        type
+      ]
+    );
   }
   checkIntervalometerMisMatchAndError(
     +localStorage.getItem("defaultIntvProfileID"),
     intervalometerProfiles[+localStorage.getItem("defaultIntvProfileID")]
   );
-  
 }
 
 function updateLocalIntervalometerProfileValue(type, value) {
@@ -1223,7 +1323,6 @@ function updateLocalIntervalometerProfileValue(type, value) {
   );
   console.log(type + " value updated: ", value);
 }
-
 /* ***************************************************************
                        Joysticks Controls
   ****************************************************************
@@ -1425,7 +1524,9 @@ function startWebsocket() {
       var toast = new bootstrap.Toast(alertConnected);
       toast.show();
       sendTimeStamp();
-      getIntervalometerProfiles();
+      $("#control-panel").toggle(false);
+      $("#intervalometer").toggle(true);
+      getIntervalometerProfiles(true);
     };
     var previousStatus = -1;
     socket.onmessage = function (event) {

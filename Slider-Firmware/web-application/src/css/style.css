@@ -445,3 +445,7 @@ body {
 .yellow {
   color: yellow !important;
 }
+.profile-container {
+  margin-top: -7px !important;
+  margin-bottom: -5px;
+}
