@@ -79,7 +79,7 @@
         </div>
 
 
-        <nav aria-label="Page navigation">
+        <!-- <nav aria-label="Page navigation">
           <ul class="pagination">
 
             <li id="next-button-container" class="page-item">
@@ -89,9 +89,57 @@
               </div>
             </li>
           </ul>
-        </nav>
+        </nav> -->
 
 
       </div>
     </footer>
+    
+<div class="position-fixed top-50 start-50 translate-middle" style="z-index: 11">
+  <div id="alertConnected" class="toast alert-success hide" data-bs-delay="10000" role="alert" aria-live="assertive"
+    aria-atomic="true">
+    <div class="toast-header bg-darker alert-success">
+      <img src="./images/icon-32.png" class=" rounded me-2" alt="...">
+      <strong class="me-auto">Websocket</strong>
+      <small>success</small>
+      <button type="button" class="btn-close btn-success" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body alert-success">
+      Successfully Connected to Intervalometer !
+    </div>
+  </div>
+</div>
+
+<div class="position-fixed top-50 start-50 translate-middle" style="z-index: 11">
+  <div id="alertConnectionError" class="toast alert-danger hide" data-bs-delay="10000" role="alert"
+    aria-live="assertive" aria-atomic="true">
+    <div class="toast-header bg-darker alert-danger">
+      <img src="./images/icon-32.png" class=" rounded me-2" alt="...">
+      <strong class="me-auto">Websocket</strong>
+      <small>Warning</small>
+      <button type="button" class="btn-close btn-danger" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body alert-danger">
+      Intervalometer disconnected !
+    </div>
+  </div>
+</div>
+
+<div class="position-fixed top-50 start-50 translate-middle" style="z-index: 11">
+  <div id="alertConnectionClose" class="toast alert-warning hide" data-bs-delay="10000" role="alert"
+    aria-live="assertive" aria-atomic="true">
+    <div class="toast-header bg-darker alert-warning">
+      <img src="./images/icon-32.png" class=" rounded me-2" alt="...">
+      <strong class="me-auto">Websocket</strong>
+      <small>
+        Error
+      </small>
+      <button type="button" class="btn-close btn-warning" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body alert-warning">
+      Intervalometer disconnected !
+    </div>
+  </div>
+</div>
+
 

@@ -114,6 +114,44 @@ public:
 
 private:
 };
+
+//  COMMAND_TYPE.TIMELAPSE +
+//     "::" +
+//     TIMELAPSE_COMMAND.START_INTERVALOMETER +
+//     "::" +
+//     $("#shotsDuration").val() +
+//     "::" +
+//     $("#shotsTotal").val() +
+//     "::" +
+//     $("#interval").val() +
+//     "::" +
+//     $("#minDarkTime").val() +
+//     "::" +
+//     0 + // TODO Add mode MANUAL or BULB
+//     "::" +
+//     $("#camSentinel").val() +
+//     "::" +
+//     $("#focusDelay").val();
+class TimelapseStartIntervalometerCommandType
+{
+public:
+    enum type
+    {
+        COMMAND_TYPE,
+        COMMAND,
+        VALUE,
+        SHOTS_DURATION, 
+        SHOTS_TOTAL, 
+        INTERVAL, 
+        MIN_DARK_TIME, 
+        MODE,
+        CAM_SENTINEL, 
+        FOCUS_DELAY  
+
+    };
+
+private:
+};
 // SET_START_TIME_ALARM Type
 class TimelapseCommandStartTimeType
 {

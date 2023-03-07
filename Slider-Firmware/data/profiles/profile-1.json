@@ -1,5 +1,6 @@
 {
     "brand": "Cinosh",
+    "name" : "profile-1",
     "description": "1 Axis Slider",
     "motors": {
         "slider": {

@@ -64,3 +64,17 @@ String printInt( int i, int total) {
   String s = dtostrf(f, total, 0, dtostrfbuffer);
   return s;
 }
+
+void rebootESP(String message) {
+  Serial.print("Rebooting Controller: "); 
+  Serial.println(message);
+  ESP.restart();
+}
+// Make size of files human readable
+// source: https://github.com/CelliesProjects/minimalUploadAuthESP32
+String humanReadableSize(const size_t bytes) {
+  if (bytes < 1024) return String(bytes) + " B";
+  else if (bytes < (1024 * 1024)) return String(bytes / 1024.0) + " KB";
+  else if (bytes < (1024 * 1024 * 1024)) return String(bytes / 1024.0 / 1024.0) + " MB";
+  else return String(bytes / 1024.0 / 1024.0 / 1024.0) + " GB";
+}

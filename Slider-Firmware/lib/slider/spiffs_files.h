@@ -205,3 +205,4 @@ void readConfigFile()
     openProfile();
   }
 }
+

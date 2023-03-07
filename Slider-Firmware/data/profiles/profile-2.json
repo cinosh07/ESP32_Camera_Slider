@@ -1,5 +1,6 @@
 {
     "brand": "Dynamic Perception",
+    "name" : "profile-2",
     "description": "3 Axis Slider",
     "motors": {
         "slider": {

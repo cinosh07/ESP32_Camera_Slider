@@ -20,6 +20,7 @@
 #include "motors.h"
 #include "websocket.h"
 #include "SPIFFS.h"
+#include "spiffs_files.h"
 
 // Set web server port number to 80
 AsyncWebServer server(80);
@@ -45,6 +46,111 @@ String processor(const String &var)
 void notFound(AsyncWebServerRequest *request)
 {
   request->send(404, "text/plain", "Not found");
+}
+
+// handles uploads
+void handleUploadIntervProfiles(AsyncWebServerRequest *request)
+{
+
+  int params = request->params();
+  if (request->hasParam("body", true))
+  {
+    DynamicJsonDocument doc(2048);
+    DeserializationError error = deserializeJson(doc, request->getParam("body", true)->value());
+    if (error)
+    {
+      Serial.println("Failed to parse intervalometer profiles file: Error invalid json file");
+      request->send(200, "text/plain", "Error invalid json file\n");
+    }
+    else
+    {
+      // Write the file
+      File file = SPIFFS.open("/profiles/interval.json", "w");
+      serializeJson(doc, file);
+      file.close();
+      Serial.println("Success processing intervalometer profiles file");
+      request->send(200, "text/plain", request->getParam("body", true)->value());
+    }
+  }
+  else
+  {
+    request->send(200, "text/plain", "Error no Data\n");
+  }
+}
+
+void handleUploadProfile(AsyncWebServerRequest *request)
+{
+  int params = request->params();
+  if (request->hasParam("body", true))
+  {
+    DynamicJsonDocument doc(2048);
+    DeserializationError error = deserializeJson(doc, request->getParam("body", true)->value());
+    if (error)
+    {
+      Serial.println("Failed to parse config file: Error invalid json file");
+      request->send(200, "text/plain", "Error invalid json file\n");
+    }
+    else
+    {
+      // Write the file
+      String name = doc["name"];
+      File file = SPIFFS.open("/" + name + ".json", "w");
+      serializeJson(doc, file);
+      file.close();
+      Serial.println("Success processing config file");
+      request->send(200, "text/plain", request->getParam("body", true)->value());
+      String message = "Reboot! New Profile";
+      rebootESP(message);
+    }
+  }
+  else
+  {
+    request->send(200, "text/plain", "Error no Data\n");
+  }
+}
+void handleUploadConfig(AsyncWebServerRequest *request)
+{
+
+  int params = request->params();
+  if (request->hasParam("body", true))
+  {
+    DynamicJsonDocument doc(2048);
+    DeserializationError error = deserializeJson(doc, request->getParam("body", true)->value());
+    if (error)
+    {
+      Serial.println("Failed to parse config file: Error invalid json file");
+      request->send(200, "text/plain", "Error invalid json file\n");
+    }
+    else
+    {
+      // Write the file
+      File file = SPIFFS.open("/config.json", "w");
+      serializeJson(doc, file);
+      file.close();
+      Serial.println("Success processing config file");
+      request->send(200, "text/plain", request->getParam("body", true)->value());
+      String message = "Reboot! New Config";
+      rebootESP(message);
+    }
+  }
+  else
+  {
+    request->send(200, "text/plain", "Error no Data\n");
+  }
+}
+void handleUploadFirmware(AsyncWebServerRequest *request)
+{
+  // TODO upload and install new firmware.
+  String message = "Reboot! New Firmware";
+  request->send(200, "text/plain", message + "\n");
+  rebootESP(message);
+}
+void handleUploadServerData(AsyncWebServerRequest *request)
+{
+  // TODO upload and install new server data.
+  String message = "Reboot! New Server Data";
+  request->send(200, "text/plain", message + "\n");
+  rebootESP(message);
 }
 
 void initServer()
@@ -124,8 +230,22 @@ void initServer()
             { request->send(SPIFFS, "/profiles/profile-5.json", "text/json"); });
   server.on("/intervalometer", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/profiles/interval.json", "text/json"); });
-
-
+  // handle Upload functions
+  server.on(
+      "/uploadIntervProfiles", HTTP_POST, [](AsyncWebServerRequest *request)
+      { handleUploadIntervProfiles(request); });
+  server.on(
+      "/uploadProfile", HTTP_POST, [](AsyncWebServerRequest *request)
+      { handleUploadProfile(request); });
+  server.on(
+      "/uploadConfig", HTTP_POST, [](AsyncWebServerRequest *request)
+      { handleUploadConfig(request); });
+  server.on(
+      "/uploadFirmware", HTTP_POST, [](AsyncWebServerRequest *request)
+      { handleUploadFirmware(request); });
+  server.on(
+      "/uploadServerData", HTTP_POST, [](AsyncWebServerRequest *request)
+      { handleUploadServerData(request); });
   server.onNotFound(notFound);
   server.addHandler(&ws);
   server.begin();

@@ -46,12 +46,6 @@ var timelapseMode = true;
 
 var DEBUG_ESP32_WEBSOCKET_ADDRESS = "slider.local";
 
-// *******************      FORM       *******************
-// https://www.jqueryscript.net/form/Form-JSON-Schema.html
-
-//File Upload
-// https://github.com/smford/esp32-asyncwebserver-fileupload-example
-
 /* ***************************************************************
                           Variables
   ****************************************************************
@@ -197,6 +191,11 @@ $(async function () {
     $("#focusDelay").on("change", function () {
       updateLocalIntervalometerProfileValue("focusDelay", this.value);
     });
+    $("#saveIntervProfile").on("click", function () {
+      if (+localStorage.getItem("defaultIntvProfileID") !== 0) {
+        saveIntervalometerProfiles();
+      }
+    });
   });
 
   $("#run").toggle(false);
@@ -220,28 +219,31 @@ $(async function () {
   await lockWakeState();
 
   const ctx = document.getElementById("myChart");
-  new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: ["Start", "Ease-in", "", "", "", "Ease-out", "Stop"],
-      datasets: [
-        {
-          label: "Speed",
-          data: [0, 10, null, null, null, 10, 0],
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
+  if (ctx) {
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: ["Start", "Ease-in", "", "", "", "Ease-out", "Stop"],
+        datasets: [
+          {
+            label: "Speed",
+            data: [0, 10, null, null, null, 10, 0],
+            borderWidth: 1,
+          },
+        ],
       },
-      spanGaps: true,
-      tension: 0.5,
-    },
-  });
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+        },
+        spanGaps: true,
+        tension: 0.5,
+      },
+    });
+  }
+
   $("#previousPage").on("click", function () {
     previousPage();
   });
@@ -264,17 +266,11 @@ $(async function () {
   $("#goto-out").on("click", function () {
     gotoOut();
   });
-  // getIntervalometerProfiles();
   startWebsocket();
-  // getIntervalometerProfiles();
 });
 $(window).on("beforeunload", function () {
   socket.close();
 });
-
-function delayedStart() {
-
-}
 
 /* ***************************************************************
                           Navigation
@@ -353,7 +349,6 @@ function switchPage() {
             initialization before starting the script
   ****************************************************************
 */
-// $("#intervalometer").toggle(false);
 $("#run").toggle(false);
 
 /* ***************************************************************
@@ -508,9 +503,11 @@ class JoystickPanTiltController {
       joystickPanMove(0.0);
       joystickTiltMove(0.0);
     }
+    if (stick) {
+      stick.addEventListener("mousedown", handleDown);
+      stick.addEventListener("touchstart", handleDown);
+    }
 
-    stick.addEventListener("mousedown", handleDown);
-    stick.addEventListener("touchstart", handleDown);
     document.addEventListener("mousemove", handleMove, {
       passive: false,
     });
@@ -642,9 +639,10 @@ class JoystickSlideFocusController {
       joystickSlideMove(0.0);
       joystickFocusMove(0.0);
     }
-
-    stick.addEventListener("mousedown", handleDown);
-    stick.addEventListener("touchstart", handleDown);
+    if (stick) {
+      stick.addEventListener("mousedown", handleDown);
+      stick.addEventListener("touchstart", handleDown);
+    }
     document.addEventListener("mousemove", handleMove, {
       passive: false,
     });

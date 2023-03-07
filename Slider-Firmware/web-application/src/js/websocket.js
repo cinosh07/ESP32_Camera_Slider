@@ -15,8 +15,10 @@ function startWebsocket() {
       $("#status").addClass("text-success");
       $("#status").text("Connected");
       var alertConnected = document.getElementById("alertConnected");
-      var toast = new bootstrap.Toast(alertConnected);
-      toast.show();
+      if (alertConnected) {
+      var toast = new bootstrap.Toast(alertConnected);   
+        toast.show();
+      }
       sendTimeStamp();
       $("#control-panel").toggle(false);
       $("#intervalometer").toggle(true);

@@ -1,5 +1,6 @@
 {
     "brand" : "",
+    "name" : "profile-3",
     "description" : "",
     "motors": {
         "slider": {

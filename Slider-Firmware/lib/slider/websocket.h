@@ -15,7 +15,6 @@
 #include <Arduino.h>
 #include "clock.h"
 
-
 enum State
 {
   IDLE,
@@ -25,19 +24,32 @@ enum State
 AsyncWebSocket ws("/ws");
 AsyncWebSocketClient *globalClient = NULL;
 
-void processSetClockTime ( int command[COMMAND_SIZE]) {
-  switch(command[ClockCommandType::COMMAND]) {
-    case ClockCommand::SET_CLOCK_TIME:
-        setClockTime(command);
-        
-    break;
-    case ClockCommand::GET_CLOCK_TIME: 
-        getClockTime();
-    break;
+void processSetClockTime(int command[COMMAND_SIZE])
+{
+  switch (command[ClockCommandType::COMMAND])
+  {
+  case ClockCommand::SET_CLOCK_TIME:
+    setClockTime(command);
 
+    break;
+  case ClockCommand::GET_CLOCK_TIME:
+    getClockTime();
+    break;
   }
 }
+void processTimelapseCommand(int command[COMMAND_SIZE])
+{
+  switch (command[TimelapseCommandType::COMMAND_TYPE])
+  {
+  case TimelapseCommand::START_INTERVALOMETER:
+    // setClockTime(command);
 
+    break;
+  case TimelapseCommand::STOP_INTERVALOMETER:
+    // TODO
+    break;
+  }
+}
 void processCommand(int command[COMMAND_SIZE])
 {
   switch (command[CommandType::COMMAND_TYPE])
@@ -57,11 +69,15 @@ void processCommand(int command[COMMAND_SIZE])
   case CommandType::MARK_OUT:
     commandStatus = CommandStatus::MARK_OUT;
     break;
-    case CommandType::GOTO_IN:
+  case CommandType::GOTO_IN:
     commandStatus = CommandStatus::GOTO_IN;
     break;
-    case CommandType::GOTO_OUT:
+  case CommandType::GOTO_OUT:
     commandStatus = CommandStatus::GOTO_OUT;
+    break;
+  case CommandType::TIMELAPSE:
+    commandStatus = CommandStatus::TIMELAPSE;
+    processTimelapseCommand(command);
     break;
   }
 }
