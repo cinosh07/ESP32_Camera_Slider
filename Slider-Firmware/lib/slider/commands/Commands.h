@@ -11,238 +11,93 @@
  *                      (CC BY-NC-ND 4.0)
  *        https://creativecommons.org/licenses/by-nc-nd/4.0/
  *********************************************************************/
-class CommandStatus
+#include "./commands/JoystickCommand.h"
+void processJSONCommand(StaticJsonDocument<1024> command)
 {
-public:
-    enum status
-    {
-        IDLE,
-        HOMING,
-        JOG,
-        RUNNING,
-        MARK_IN,
-        MARK_OUT,
-        GOTO_IN,
-        GOTO_OUT,
-        TIMELAPSE,
-        VIDEO,
-        FORCE_STOP
 
-    };
-};
-
-class CommandType
-{
-public:
-    enum default_type
-    {
-        COMMAND_TYPE,
-        COMMAND
-    };
-    enum type
-    {
-        JOYSTICK,
-        CLOCK,
-        HOME,
-        GOTO_IN,
-        GOTO_OUT,
-        GOTO_KEYFRAME,
-        MARK_IN,
-        MARK_OUT,
-        MARK_KEYFRAME,
-        DEL_KEYFRAME,
-        ADD_KEYFRAME,
-        SET_SLAVE_MODE,
-        SET_TIMELAPSE_MODE,
-        SET_VIDEO_MODE,
-        SET_SLIDE_KINEMATIC,
-        SET_PAN_KINEMATIC,
-        SET_TILT_KINEMATIC,
-        SET_FOCUS_KINEMATIC,
-        TIMELAPSE,
-
-    };
-
-private:
-};
-
-class TimelapseStatus
-{
-public:
-    enum type
-    {
-        IDLE,
-        RUNNING
-    };
-};
-class TimelapseCommand
-{
-public:
-    enum type
-    {
-        IDLE,
-        START,
-        STOP,
-        PAUSE,
-        TAKE_SINGLE_SHOT,
-        SET_START_TIME_ALARM,
-        GET_START_TIME_ALARM,
-        CLEAR_START_TIME_ALARM,
-        START_INTERVALOMETER,
-        STOP_INTERVALOMETER,
-        PAUSE_INTERVALOMETER,
-        START_INTERVALOMETER_RAMPING,
-        STOP_INTERVALOMETER_RAMPING,
-        UPDATE_INTERVALOMETER_RAMPING
-    };
-};
-class TimelapseCommandType
-{
-public:
-    enum type
-    {
-        COMMAND_TYPE,
-        COMMAND,
-        VALUE,
-        N_A4, // Not Availlable
-        N_A3, // Not Availlable
-        N_A2, // Not Availlable
-        N_A1, // Not Availlable
-        N_A   // Not Availlable
-
-    };
-
-private:
-};
-
-//  COMMAND_TYPE.TIMELAPSE +
-//     "::" +
-//     TIMELAPSE_COMMAND.START_INTERVALOMETER +
-//     "::" +
-//     $("#shotsDuration").val() +
-//     "::" +
-//     $("#shotsTotal").val() +
-//     "::" +
-//     $("#interval").val() +
-//     "::" +
-//     $("#minDarkTime").val() +
-//     "::" +
-//     0 + // TODO Add mode MANUAL or BULB
-//     "::" +
-//     $("#camSentinel").val() +
-//     "::" +
-//     $("#focusDelay").val();
-class TimelapseStartIntervalometerCommandType
-{
-public:
-    enum type
-    {
-        COMMAND_TYPE,
-        COMMAND,
-        VALUE,
-        SHOTS_DURATION, 
-        SHOTS_TOTAL, 
-        INTERVAL, 
-        MIN_DARK_TIME, 
-        MODE,
-        CAM_SENTINEL, 
-        FOCUS_DELAY  
-
-    };
-
-private:
-};
-// SET_START_TIME_ALARM Type
-class TimelapseCommandStartTimeType
-{
-public:
-    enum type
-    {
-        COMMAND_TYPE,
-        COMMAND,
-        YEAR,
-        MONTH,
-        DAY,
-        HOUR,
-        MINUTE,
-        SECOND // Not Availlable
-
-    };
-
-private:
-};
-class JoystickCommand
-{
-public:
-    enum type
-    {
-        JOYSTICK_PAN_MOVE,
-        JOYSTICK_TILT_MOVE,
-        JOYSTICK_SLIDE_MOVE,
-        JOYSTICK_FOCUS_MOVE
-    };
-
-private:
-};
-
-class JoystickCommandType
-{
-public:
-    enum type
-    {
-        COMMAND_TYPE,
-        COMMAND,
-        SPEED,
-        DIR,
-        ACCEL,
-        MULTIPLICATOR,
-        SPEED_SCALING,
-        N_A // Not Availlable
-
-    };
-
-private:
-};
-
-class ClockCommandType
-{
-public:
-    enum type
-    {
-        COMMAND_TYPE,
-        COMMAND,
-        YEAR,
-        MONTH,
-        DAY,
-        HOUR,
-        MINUTE,
-        SECOND
-    };
-
-private:
-};
-class ClockCommand
-{
-public:
-    enum type
-    {
-        SET_CLOCK_TIME,
-        GET_CLOCK_TIME
-    };
-
-private:
-};
-
-class Axis
-{
-public:
-    enum type
-    {
-        SLIDE,
-        PAN,
-        TILT,
-        FOCUS
-    };
-
-private:
-};
+  if (command["COMMAND"] == "INTERVALOMETER_SETTINGS")
+  {
+    Serial.println("Command to process INTERVALOMETER_SETTINGS");
+    intervalometer.releaseTime = command["shotsDuration"];
+    intervalometer.shotsTotal = command["shotsTotal"];
+    intervalometer.minDarkTime = command["minDarkTime"];
+    intervalometer.interval = command["interval"];
+    intervalometer.focusDelay = command["focusDelay"];
+    intervalometer.camSentinel = command["camSentinel"];
+    intervalometer.rampDuration = command["rampDuration"];
+    intervalometer.rampingEndTime = command["rampingEndTime"];
+    intervalometer.rampingStartTime = command["rampingStartTime"];
+    intervalometer.rampTo = command["rampTo"];
+    intervalometer.intervalBeforeRamping = command["intervalBeforeRamping"];
+    // intervalometer.mode = command["mode"];
+  }
+  if (command["COMMAND"] == "START_INTERVALOMETER")
+  {
+    intervalometer.releaseTime = command["shotsDuration"];
+    intervalometer.shotsTotal = command["shotsTotal"];
+    intervalometer.minDarkTime = command["minDarkTime"];
+    intervalometer.interval = command["interval"];
+    intervalometer.focusDelay = command["focusDelay"];
+    intervalometer.camSentinel = command["camSentinel"];
+    intervalometer.rampDuration = command["rampDuration"];
+    intervalometer.rampingEndTime = command["rampingEndTime"];
+    intervalometer.rampingStartTime = command["rampingStartTime"];
+    intervalometer.rampTo = command["rampTo"];
+    intervalometer.intervalBeforeRamping = command["intervalBeforeRamping"];
+    // intervalometer.mode = command["mode"];
+    startShooting();
+    Serial.println("Command to process START_INTERVALOMETER");
+  }
+  if (command["COMMAND"] == "STOP_INTERVALOMETER")
+  {
+    stopShooting();
+    Serial.println("Command to process STOP_INTERVALOMETER");
+  }
+  if (command["COMMAND"] == "MARK_IN")
+  {
+    commandStatus = CommandStatus::MARK_IN;
+    Serial.println("Command to process MARK_IN");
+  }
+  if (command["COMMAND"] == "MARK_OUT")
+  {
+    commandStatus = CommandStatus::MARK_OUT;
+    Serial.println("Command to process MARK_OUT");
+  }
+  if (command["COMMAND"] == "GOTO_IN")
+  {
+    commandStatus = CommandStatus::GOTO_IN;
+    Serial.println("Command to process GOTO_IN");
+  }
+  if (command["COMMAND"] == "GOTO_OUT")
+  {
+    commandStatus = CommandStatus::GOTO_OUT;
+    Serial.println("Command to process GOTO_OUT");
+  }
+  if (command["COMMAND"] == "SET_CLOCK_TIME")
+  {
+    setClockTime(command);
+    Serial.println("Command to process SET_CLOCK_TIME");
+  }
+  if (command["COMMAND"] == "TAKE_SINGLE_SHOT")
+  {
+    intervalometer.releaseTime = command["shotsDuration"];
+    intervalometer.shotsTotal = command["shotsTotal"];
+    intervalometer.minDarkTime = command["minDarkTime"];
+    intervalometer.interval = command["interval"];
+    intervalometer.focusDelay = command["focusDelay"];
+    intervalometer.camSentinel = command["camSentinel"];
+    intervalometer.rampDuration = command["rampDuration"];
+    intervalometer.rampingEndTime = command["rampingEndTime"];
+    intervalometer.rampingStartTime = command["rampingStartTime"];
+    intervalometer.rampTo = command["rampTo"];
+    intervalometer.intervalBeforeRamping = command["intervalBeforeRamping"];
+    // intervalometer.mode = command["mode"];
+    startShooting(true);
+    Serial.println("Command to process TAKE_SINGLE_SHOT");
+  }
+  if (command["COMMAND"] == "JOYSTICK_SLIDE_MOVE" | command["COMMAND"] == "JOYSTICK_TILT_MOVE" | command["COMMAND"] == "JOYSTICK_PAN_MOVE" | command["COMMAND"] == "JOYSTICK_FOCUS_MOVE")
+  {
+    processJoystickCommand(command);
+    
+  }
+}

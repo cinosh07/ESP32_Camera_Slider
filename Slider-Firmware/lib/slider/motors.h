@@ -13,15 +13,15 @@
  *********************************************************************/
 
 #include <Arduino.h>
-#include <encoders.h>
+// #include <encoders.h>
 #include <stepper_driver.h>
 
 
-FastAccelStepperEngine engine = FastAccelStepperEngine();
-FastAccelStepper *stepperSlide = NULL;
-FastAccelStepper *stepperPan = NULL;
-FastAccelStepper *stepperTilt = NULL;
-FastAccelStepper *stepperFocus = NULL;
+// FastAccelStepperEngine engine = FastAccelStepperEngine();
+// FastAccelStepper *stepperSlide = NULL;
+// FastAccelStepper *stepperPan = NULL;
+// FastAccelStepper *stepperTilt = NULL;
+// FastAccelStepper *stepperFocus = NULL;
 
 void prepareMotors()
 {
@@ -40,7 +40,7 @@ void prepareMotors()
   delay(10);
 }
 
-#include "./commands/JoystickCommand.h"
+// #include "./commands/JoystickCommand.h"
 
 void markIn()
 {

@@ -33,7 +33,7 @@
 // For this to work set DEBUG=true
 
 var DEBUG = true;
-var sliderMode = false;
+var sliderMode = true;
 var timelapseMode = true;
 
 // The nav bar background color will now appear RED to clearly show that we are now in debug mode.
@@ -52,7 +52,7 @@ var DEBUG_ESP32_WEBSOCKET_ADDRESS = "slider.local";
 */
 let retryConnectWebsocketTimeout = null;
 
-let SLIDER_MODE = true;
+// let SLIDER_MODE = true;
 let socket;
 let currentPage = 1;
 
@@ -104,7 +104,7 @@ $(async function () {
       startIntervalometer();
     });
     $("#stopIntervalometer").on("click", function () {
-      stopIntervalometer();
+      stopIntervalometer(true);
     });
 
     $("#pauseIntervalometer").on("click", function () {
@@ -117,13 +117,13 @@ $(async function () {
       singleShot();
     });
     $("#intervalometerSliderSettingsGroup").toggle(false);
-    var now = new Date();
-    var month = now.getMonth() + 1;
-    var day = now.getDate();
-    if (month < 10) month = "0" + month;
-    if (day < 10) day = "0" + day;
-    var today = now.getFullYear() + "-" + month + "-" + day;
-    $("#delayedStartDate").val(today);
+    // var now = new Date();
+    // var month = now.getMonth() + 1;
+    // var day = now.getDate();
+    // if (month < 10) month = "0" + month;
+    // if (day < 10) day = "0" + day;
+    // var today = now.getFullYear() + "-" + month + "-" + day;
+    // $("#delayedStartDate").val(today);
     if (sliderMode && timelapseMode) {
       $("#delayedStartGroup").appendTo($("#run"));
       $("#startGroup").appendTo($("#run"));
@@ -206,7 +206,7 @@ $(async function () {
     $("#navBar").addClass("bg-danger");
   }
   if ("serviceWorker" in navigator && !DEBUG) {
-    if (SLIDER_MODE) {
+    if (sliderMode) {
       try {
         navigator.serviceWorker.register("/serviceworker.js");
       } catch (e) {}

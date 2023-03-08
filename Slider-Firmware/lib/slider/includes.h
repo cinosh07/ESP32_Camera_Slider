@@ -55,13 +55,23 @@
 // https://github.com/me-no-dev/ESPAsyncWebServer/issues/195
 // https://www.jqueryscript.net/form/Form-JSON-Schema.html
 
+
+// Libraries
 #include <Arduino.h>
 #include "esp_task_wdt.h"
 #include "FastAccelStepper.h"
 #include <Wire.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include "ArduinoJson.h"
+#include "SPIFFS.h"
 
+// Firmware code
 #include "definitions.h"
 #include "variables.h"
+#include "utils.h"
 #include "serial_messages.h"
+#include <encoders.h>
+#include "clock.h"
 #include "web_server.h"
 #include "networking.h"

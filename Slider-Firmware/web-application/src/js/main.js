@@ -67,7 +67,7 @@
 // For this to work set DEBUG=true
 
 var DEBUG = false;
-var sliderMode = false;
+var sliderMode = true;
 var timelapseMode = true;
 
 // The nav bar background color will now appear RED to clearly show that we are now in debug mode.
@@ -86,7 +86,7 @@ var DEBUG_ESP32_WEBSOCKET_ADDRESS = "slider.local";
 */
 let retryConnectWebsocketTimeout = null;
 
-let SLIDER_MODE = true;
+// let SLIDER_MODE = true;
 let socket;
 let currentPage = 1;
 
@@ -138,7 +138,7 @@ $(async function () {
       startIntervalometer();
     });
     $("#stopIntervalometer").on("click", function () {
-      stopIntervalometer();
+      stopIntervalometer(true);
     });
 
     $("#pauseIntervalometer").on("click", function () {
@@ -151,13 +151,13 @@ $(async function () {
       singleShot();
     });
     $("#intervalometerSliderSettingsGroup").toggle(false);
-    var now = new Date();
-    var month = now.getMonth() + 1;
-    var day = now.getDate();
-    if (month < 10) month = "0" + month;
-    if (day < 10) day = "0" + day;
-    var today = now.getFullYear() + "-" + month + "-" + day;
-    $("#delayedStartDate").val(today);
+    // var now = new Date();
+    // var month = now.getMonth() + 1;
+    // var day = now.getDate();
+    // if (month < 10) month = "0" + month;
+    // if (day < 10) day = "0" + day;
+    // var today = now.getFullYear() + "-" + month + "-" + day;
+    // $("#delayedStartDate").val(today);
     if (sliderMode && timelapseMode) {
       $("#delayedStartGroup").appendTo($("#run"));
       $("#startGroup").appendTo($("#run"));
@@ -240,7 +240,7 @@ $(async function () {
     $("#navBar").addClass("bg-danger");
   }
   if ("serviceWorker" in navigator && !DEBUG) {
-    if (SLIDER_MODE) {
+    if (sliderMode) {
       try {
         navigator.serviceWorker.register("/serviceworker.js");
       } catch (e) {}
@@ -943,60 +943,93 @@ function sendCommand(command) {
     toast.show();
   }
 }
-// interval: 4.0,
-//     shotsTotal: 0,
-//     mode: 0,
-//     shotsDuration: 0.1,
-//     minDarkTime: 0.5,
-//     rampDuration: 10,
-//     rampTo: 0,
-//     rampingStartTime: 0,
-//     rampingEndTime: 0,
-//     intervalBeforeRamping: 0,
-//     camSentinel: 0,
-//     focusDelay: 0,
+
 function startIntervalometer() {
-  var command;
-  command =
-    COMMAND_TYPE.TIMELAPSE +
-    "::" +
-    TIMELAPSE_COMMAND.START_INTERVALOMETER +
-    "::" +
-    $("#shotsDuration").val() +
-    "::" +
-    $("#shotsTotal").val() +
-    "::" +
-    $("#interval").val() +
-    "::" +
-    $("#minDarkTime").val() +
-    "::" +
-    0 + // TODO Add mode MANUAL or BULB
-    "::" +
-    $("#camSentinel").val() +
-    "::" +
-    $("#focusDelay").val();
-  sendCommand(command);
+  var command = {
+    COMMAND: "START_INTERVALOMETER",
+    interval: $("#interval").val(),
+    shotsTotal: $("#shotsTotal").val(),
+    mode: 0, //$("#mode").val()
+    shotsDuration: $("#shotsDuration").val(),
+    minDarkTime: $("#minDarkTime").val(),
+    rampDuration: $("#rampDuration").val(),
+    rampTo: $("#rampTo").val(),
+    rampingStartTime: $("#rampingStartTime").val(),
+    rampingEndTime: $("#rampingEndTime").val(),
+    intervalBeforeRamping: $("#intervalBeforeRamping").val(),
+    camSentinel: $("#camSentinel").val(),
+    focusDelay: $("#focusDelay").val(),
+  };
+  sendJSONCommand(command);
+
+  $("#delayedStart").attr("disabled", true);
+  $("#startIntervalometer").attr("disabled", true);
+  $("#singleShot").attr("disabled", true);
+  $("#addIntervalometerProfile").attr("disabled", true);
+  $("#removeIntervalometerProfile").attr("disabled", true);
+  $("#saveIntervProfile").attr("disabled", true);
+  $("#setBulbMode").attr("disabled", true);
+  $("#interval").attr("disabled", true);
+  $("#shotsTotal").attr("disabled", true);
+  $("#mode").attr("disabled", true);
+  $("#shotsDuration").attr("disabled", true);
+  $("#minDarkTime").attr("disabled", true);
+
+  // TODO Check if ramping already activated if yes disable those inputs
+  // $("#rampDuration").attr("disabled", true);
+  // $("#rampTo").attr("disabled", true);
+  // $("#rampingStartTime").attr("disabled", true);
+  // $("#rampingEndTime").attr("disabled", true);
+  // $("#intervalBeforeRamping").attr("disabled", true);
+
+  $("#camSentinel").attr("disabled", true);
+  $("#focusDelay").attr("disabled", true);
+  $("#delayedStartDate").attr("disabled", true);
+  $("#delayedStartTime").attr("disabled", true);
+
+  $("#stopIntervalometer").attr("disabled", false);
+  $("#pauseIntervalometer").attr("disabled", false);
+  $("#activateRamping").attr("disabled", false);
 }
-function stopIntervalometer() {
-  var command;
-  command =
-    COMMAND_TYPE.TIMELAPSE +
-    "::" +
-    TIMELAPSE_COMMAND.STOP_INTERVALOMETER +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0;
-  sendCommand(command);
+
+function stopIntervalometer(withCommand) {
+  if (withCommand) {
+    var command = {
+      COMMAND: "STOP_INTERVALOMETER",
+    };
+    sendJSONCommand(command);
+  }
+
+  $("#delayedStart").attr("disabled", false);
+  $("#startIntervalometer").attr("disabled", false);
+  $("#singleShot").attr("disabled", false);
+  $("#addIntervalometerProfile").attr("disabled", false);
+  $("#removeIntervalometerProfile").attr("disabled", false);
+  $("#saveIntervProfile").attr("disabled", false);
+  $("#setBulbMode").attr("disabled", false);
+  $("#interval").attr("disabled", false);
+  $("#shotsTotal").attr("disabled", false);
+  $("#mode").attr("disabled", false);
+  $("#shotsDuration").attr("disabled", false);
+  $("#minDarkTime").attr("disabled", false);
+
+  // TODO Check if ramping already activated if yes enable those inputs
+  // $("#rampDuration").attr("disabled", false);
+  // $("#rampTo").attr("disabled", false);
+  // $("#rampingStartTime").attr("disabled", false);
+  // $("#rampingEndTime").attr("disabled", false);
+  // $("#intervalBeforeRamping").attr("disabled", false);
+
+  $("#camSentinel").attr("disabled", false);
+  $("#focusDelay").attr("disabled", false);
+  $("#delayedStartDate").attr("disabled", false);
+  $("#delayedStartTime").attr("disabled", false);
+
+  $("#stopIntervalometer").attr("disabled", true);
+  $("#pauseIntervalometer").attr("disabled", true);
+  $("#activateRamping").attr("disabled", true);
 }
+
 function pauseIntervalometer() {
   var command;
   command =
@@ -1198,9 +1231,11 @@ function checkIntervalometerMisMatchAndError(id, data) {
       intervalometerProfiles[id].interval != +localStorage.getItem("interval")
     ) {
       $("#interval").addClass("yellow");
+      $("#interval").removeClass("red");
       intervalometerProfileChanged = true;
     } else {
       $("#interval").removeClass("yellow");
+      $("#interval").removeClass("red");
     }
 
     if (
@@ -1208,16 +1243,20 @@ function checkIntervalometerMisMatchAndError(id, data) {
       +localStorage.getItem("shotsTotal")
     ) {
       $("#shotsTotal").addClass("yellow");
+      $("#interval").removeClass("red");
       intervalometerProfileChanged = true;
     } else {
       $("#shotsTotal").removeClass("yellow");
+      $("#interval").removeClass("red");
     }
 
     if (intervalometerProfiles[id].mode != +localStorage.getItem("mode")) {
       $("#mode").addClass("yellow");
+      $("#interval").removeClass("red");
       intervalometerProfileChanged = true;
     } else {
       $("#mode").removeClass("yellow");
+      $("#interval").removeClass("red");
     }
 
     if (
@@ -1225,9 +1264,11 @@ function checkIntervalometerMisMatchAndError(id, data) {
       +localStorage.getItem("shotsDuration")
     ) {
       $("#shotsDuration").addClass("yellow");
+      $("#interval").removeClass("red");
       intervalometerProfileChanged = true;
     } else {
       $("#shotsDuration").removeClass("yellow");
+      $("#interval").removeClass("red");
     }
 
     if (
@@ -1235,9 +1276,11 @@ function checkIntervalometerMisMatchAndError(id, data) {
       +localStorage.getItem("minDarkTime")
     ) {
       $("#minDarkTime").addClass("yellow");
+      $("#interval").removeClass("red");
       intervalometerProfileChanged = true;
     } else {
       $("#minDarkTime").removeClass("yellow");
+      $("#interval").removeClass("red");
     }
 
     if (
@@ -1245,16 +1288,20 @@ function checkIntervalometerMisMatchAndError(id, data) {
       +localStorage.getItem("rampDuration")
     ) {
       $("#rampDuration").addClass("yellow");
+      $("#interval").removeClass("red");
       intervalometerProfileChanged = true;
     } else {
       $("#rampDuration").removeClass("yellow");
+      $("#interval").removeClass("red");
     }
 
     if (intervalometerProfiles[id].rampTo != +localStorage.getItem("rampTo")) {
       $("#rampTo").addClass("yellow");
+      $("#interval").removeClass("red");
       intervalometerProfileChanged = true;
     } else {
       $("#rampTo").removeClass("yellow");
+      $("#interval").removeClass("red");
     }
 
     if (
@@ -1262,9 +1309,11 @@ function checkIntervalometerMisMatchAndError(id, data) {
       localStorage.getItem("rampingStartTime")
     ) {
       $("#rampingStartTime").addClass("yellow");
+      $("#interval").removeClass("red");
       intervalometerProfileChanged = true;
     } else {
       $("#rampingStartTime").removeClass("yellow");
+      $("#interval").removeClass("red");
     }
 
     if (
@@ -1272,9 +1321,11 @@ function checkIntervalometerMisMatchAndError(id, data) {
       localStorage.getItem("rampingEndTime")
     ) {
       $("#rampingEndTime").addClass("yellow");
+      $("#interval").removeClass("red");
       intervalometerProfileChanged = true;
     } else {
       $("#rampingEndTime").removeClass("yellow");
+      $("#interval").removeClass("red");
     }
 
     if (
@@ -1282,9 +1333,11 @@ function checkIntervalometerMisMatchAndError(id, data) {
       +localStorage.getItem("intervalBeforeRamping")
     ) {
       $("#intervalBeforeRamping").addClass("yellow");
+      $("#interval").removeClass("red");
       intervalometerProfileChanged = true;
     } else {
       $("#intervalBeforeRamping").removeClass("yellow");
+      $("#interval").removeClass("red");
     }
 
     if (
@@ -1292,9 +1345,11 @@ function checkIntervalometerMisMatchAndError(id, data) {
       +localStorage.getItem("camSentinel")
     ) {
       $("#camSentinel").addClass("yellow");
+      $("#interval").removeClass("red");
       intervalometerProfileChanged = true;
     } else {
       $("#camSentinel").removeClass("yellow");
+      $("#interval").removeClass("red");
     }
 
     if (
@@ -1302,29 +1357,112 @@ function checkIntervalometerMisMatchAndError(id, data) {
       +localStorage.getItem("focusDelay")
     ) {
       $("#focusDelay").addClass("yellow");
+      $("#interval").removeClass("red");
       intervalometerProfileChanged = true;
     } else {
       $("#focusDelay").removeClass("yellow");
+      $("#interval").removeClass("red");
     }
   }
 
-  // TODO Check for mathematical error with intervalometer values
+  // Check for mathematical error with intervalometer values
 
   // if Error
   // change the Intervalometer UI values accordingly (RED)
-  // Values are invalid
-  // Save button disabled
 
-  // .red {
-  //   color: #ff2900 !important;
-  // }
+  let isIntervalConform =
+    $("#interval").val() -
+    $("#shotsDuration").val() -
+    $("#minDarkTime").val() -
+    $("#focusDelay").val();
 
-  // if no mismatch
-  // Save button disabled
+  if (isIntervalConform < 0) {
+    // Values are invalid
+    // Do not send it to ESP32 - intervalometerProfileChanged = false;
 
-  console.log("Intervalometer values changed");
+    // Save button disabled
+    $("#saveIntervProfile").attr("disabled", true);
+    // .red {
+    //   color: #ff2900 !important;
+    // }
+
+    intervalometerProfileChanged = false;
+    $("#interval").addClass("red");
+    $("#interval").removeClass("yellow");
+    $("#shotsDuration").addClass("red");
+    $("#shotsDuration").removeClass("yellow");
+    $("#minDarkTime").addClass("red");
+    $("#minDarkTime").removeClass("yellow");
+    $("#focusDelay").addClass("red");
+    $("#focusDelay").removeClass("yellow");
+
+    $("#delayedStart").attr("disabled", true);
+    $("#startIntervalometer").attr("disabled", true);
+    $("#singleShot").attr("disabled", true);
+    $("#addIntervalometerProfile").attr("disabled", true);
+
+    // Display Toast telling what's wrong on the intervalometer's settings
+    var alertIntervalometerError = document.getElementById(
+      "alertIntervalometerError"
+    );
+    var toast = new bootstrap.Toast(alertIntervalometerError);
+    toast.show();
+  } else {
+    $("#interval").removeClass("red");
+    $("#shotsDuration").removeClass("red");
+    $("#minDarkTime").removeClass("red");
+    $("#focusDelay").removeClass("red");
+
+    $("#delayedStart").attr("disabled", false);
+    $("#startIntervalometer").attr("disabled", false);
+    $("#singleShot").attr("disabled", false);
+    $("#addIntervalometerProfile").attr("disabled", false);
+  }
+
+  if (intervalometerProfileChanged) {
+    // Save button Enabled
+    $("#saveIntervProfile").attr("disabled", false);
+    sendIntervalometerDataToESP32(data);
+    console.log("Intervalometer values changed");
+  } else {
+    $("#saveIntervProfile").attr("disabled", true);
+  }
+  updateIntervalometerDisplay();
+  
 }
-
+function sendJSONCommand(command) {
+  try {
+    if (socket && socket.readyState !== 3) {
+      socket.send(JSON.stringify(command));
+    } else {
+      var alertConnected = document.getElementById("alertConnectionError");
+      var toast = new bootstrap.Toast(alertConnected);
+      toast.show();
+    }
+  } catch (e) {
+    var alertConnected = document.getElementById("alertConnectionError");
+    var toast = new bootstrap.Toast(alertConnected);
+    toast.show();
+  }
+}
+function sendIntervalometerDataToESP32(data) {
+  var command = {
+    COMMAND: "INTERVALOMETER_SETTINGS",
+    interval: data.interval,
+    shotsTotal: data.shotsTotal,
+    mode: data.mode,
+    shotsDuration: data.shotsDuration,
+    minDarkTime: data.minDarkTime,
+    rampDuration: data.rampDuration,
+    rampTo: data.rampTo,
+    rampingStartTime: data.rampingStartTime,
+    rampingEndTime: data.rampingEndTime,
+    intervalBeforeRamping: data.intervalBeforeRamping,
+    camSentinel: data.camSentinel,
+    focusDelay: data.focusDelay,
+  };
+  sendJSONCommand(command);
+}
 function resetLocalIntervalometerProfileValue(type) {
   localStorage.setItem(
     type,
@@ -1421,7 +1559,27 @@ async function saveIntervalometerProfiles() {
     },
   });
 }
-/* ***************************************************************
+//********************************************************************* */
+//
+//                    Intervalometer Display
+//
+function updateIntervalometerDisplay() {
+
+  // TODO
+  // CSS Class left -> .slider-display || .minDarkTime-display
+  // CSS Class width -> .darkTime-display || .exposure-display || .focus-display { 
+  // $("#other-unit-display") toggle true or false depending on Slider Mode true or false
+  // $("#interval-display") width = 100% of intervalometer display width
+  $("#other-unit-display").toggle(sliderMode);
+  var interval = parseFloat($("#interval").val());
+  var shotsDuration = parseFloat($("#shotsDuration").val());
+  var focusDelay = parseFloat($("#focusDelay").val());
+  var darkTime = interval - shotsDuration - focusDelay;
+  
+  $("#interval-display").html("Interval " + interval + " sec.");
+  $("#exposure-display").html("Exp. " + shotsDuration + " sec.");
+  $("#darkTime-display").html("Dark " + darkTime + " sec.");
+}/* ***************************************************************
                        Joysticks Controls
   ****************************************************************
 */
@@ -1630,13 +1788,16 @@ function startWebsocket() {
     };
     var previousStatus = -1;
     socket.onmessage = function (event) {
-      // TODO
       try {
         var object = JSON.parse(event.data);
         if (object.SHOTS !== undefined) {
           var callback = {
             SHOTS: object.SHOTS,
           };
+          
+          if (parseInt($("#shotsTotal").val()) !== 0 && parseInt($("#shotsTotal").val()) === object.SHOTS) {
+            stopIntervalometer(false);
+          }
           console.log(callback);
         }
         if (object.COMMAND_STATUS !== undefined && previousStatus !== object.COMMAND_STATUS) {
@@ -1678,9 +1839,5 @@ function startWebsocket() {
       var alertConnected = document.getElementById("alertConnectionError");
       var toast = new bootstrap.Toast(alertConnected);
       toast.show();
-    //   retryConnectWebsocketTimeout = null;
-    //   retryConnectWebsocketTimeout = setTimeout(tryReconnect, 10000);
-    //   socket.close();
-    //   socket = null;
     };
   }

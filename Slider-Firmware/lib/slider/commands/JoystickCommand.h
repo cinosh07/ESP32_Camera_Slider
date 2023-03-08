@@ -13,19 +13,25 @@
  *********************************************************************/
 #include <Arduino.h>
 
-void processJoystickCommand(int command[COMMAND_SIZE])
+void processJoystickCommand(StaticJsonDocument<1024> command)
 {
-  double speed = command[JoystickCommandType::SPEED];
-  switch (command[JoystickCommandType::COMMAND])
+  double speed = (double)command["speed"];
+  if (command["COMMAND"] == "JOYSTICK_PAN_MOVE")
   {
-  case JoystickCommand::JOYSTICK_PAN_MOVE:
+    Serial.println("Command to process JOYSTICK_PAN_MOVE");
+  }
+  if (command["COMMAND"] == "JOYSTICK_TILT_MOVE")
+  {
+    Serial.println("Command to process JOYSTICK_TILT_MOVE");
+  }
+  if (command["COMMAND"] == "JOYSTICK_SLIDE_MOVE")
+  {
+    Serial.println("Command to process JOYSTICK_SLIDE_MOVE");
 
-    break;
-  case JoystickCommand::JOYSTICK_TILT_MOVE:
-
-    break;
-  case JoystickCommand::JOYSTICK_SLIDE_MOVE:
-
+    Serial.print("Speed: ");
+    Serial.println(speed);
+    Serial.print("Dir: ");
+    Serial.println((int) command["dir"]);
     if (speed == 0)
     {
       commandStatus = CommandStatus::IDLE;
@@ -37,7 +43,7 @@ void processJoystickCommand(int command[COMMAND_SIZE])
       previousSlideDir = -2;
     }
 
-    if (command[JoystickCommandType::DIR] == 0 && speed > 0)
+    if ((int) command["dir"] == 0 && speed > 0)
     {
       commandStatus = CommandStatus::JOG;
       Serial.println("Webscoket Command : runForward() Speed: " + (String)getSpeedInUS(speed));
@@ -45,9 +51,9 @@ void processJoystickCommand(int command[COMMAND_SIZE])
       stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
       stepperSlide->setAcceleration(ACCELL);
       stepperSlide->runForward();
-      previousSlideDir = command[JoystickCommandType::DIR];
+      previousSlideDir = command["dir"];
     }
-    else if (command[JoystickCommandType::DIR] == -1 && speed > 0)
+    else if ((int) command["dir"] == -1 && speed > 0)
     {
       commandStatus = CommandStatus::JOG;
       prepareMotors();
@@ -55,12 +61,11 @@ void processJoystickCommand(int command[COMMAND_SIZE])
       stepperSlide->setSpeedInUs(getSpeedInUS(speed)); // the parameter is us/step !!!
       stepperSlide->setAcceleration(ACCELL);
       stepperSlide->runBackward();
-      previousSlideDir = command[JoystickCommandType::DIR];
+      previousSlideDir = command["dir"];
     }
-
-    break;
-  case JoystickCommand::JOYSTICK_FOCUS_MOVE:
-
-    break;
+  }
+  if (command["COMMAND"] == "JOYSTICK_FOCUS_MOVE")
+  {
+    Serial.println("Command to process JOYSTICK_FOCUS_MOVE");
   }
 }

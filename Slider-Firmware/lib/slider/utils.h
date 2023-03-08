@@ -78,3 +78,34 @@ String humanReadableSize(const size_t bytes) {
   else if (bytes < (1024 * 1024 * 1024)) return String(bytes / 1024.0 / 1024.0) + " MB";
   else return String(bytes / 1024.0 / 1024.0 / 1024.0) + " GB";
 }
+
+void displayJSONError(DeserializationError error) {
+  String code = "OK";
+            switch (error.code())
+            {
+            case DeserializationError::Ok:
+              code = "OK";
+              break;
+            case DeserializationError::EmptyInput:
+              code = "EmptyInput";
+              break;
+            case DeserializationError::IncompleteInput:
+              code = "IncompleteInput";
+              break;
+            case DeserializationError::InvalidInput:
+              code = "InvalidInput";
+              break;
+            case DeserializationError::NoMemory:
+              code = "NoMemory";
+              break;
+            case DeserializationError::TooDeep:
+              code = "TooDeep";
+              break;
+            }
+            Serial.print("Failed to parse the JSON data. Error: ");
+            Serial.println(code);
+}
+String ipToString(const IPAddress &address)
+{
+  return String() + address[0] + "." + address[1] + "." + address[2] + "." + address[3];
+};

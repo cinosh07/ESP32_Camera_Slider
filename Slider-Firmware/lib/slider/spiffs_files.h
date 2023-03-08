@@ -18,8 +18,8 @@
 // disableCore0WDT();
 // disableLoopWDT();
 
-#include <Arduino.h>
-#include "ArduinoJson.h"
+// #include <Arduino.h>
+// #include "ArduinoJson.h"
 
 struct Config
 {
@@ -89,6 +89,7 @@ void openProfile()
         if (error)
         {
           Serial.println("Failed to parse profile file");
+          displayJSONError(error);
         }
         else
         {
@@ -162,6 +163,7 @@ void readConfigFile()
         if (error)
         {
           Serial.println("Failed to parse config file");
+          displayJSONError(error);
         }
         else
         {

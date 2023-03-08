@@ -18,7 +18,7 @@
         <select id="intervalometerProfiles" class="form-select form-select-sm text-secondary selectProfile"
             aria-label="Select Intervalometer Profile">
         </select>
-        <button id="saveIntervProfile" class="btn btn-sm btn-outline-primary last active">SAVE</button>
+        <button id="saveIntervProfile" class="btn btn-sm btn-outline-primary last active" disabled>SAVE</button>
         <button id="addIntervalometerProfile"
             class="btn btn-sm btn-outline-primary active addRemoveIntervalometerProfile">+</button>
         <button id="removeIntervalometerProfile"
@@ -27,14 +27,18 @@
     <hr>
     <div class="intervalometer-display-Container">
         <div id="intervalometer-display" class="intervalometer-display">
-            <div class="other-unit-display">
+            <div id="other-unit-display" class="other-unit-display">
+                <div id="slider-display-label">
+                    Slider Move
+                </div>
                 <div id="slider-display" class="slider-display"></div>
-                <div id="focus-display" class="focus-display"></div>
-                <div id="minDarkTime-display" class="minDarkTime-display"></div>
+                
             </div>
             <div class="exposure-display-container">
                 <div id="exposure-display" class="exposure-display">Exp.</div>
                 <div id="darkTime-display" class="darkTime-display">Dark Time</div>
+                <div id="focus-display" class="focus-display"></div>
+                <div id="minDarkTime-display" class="minDarkTime-display"></div>
             </div>
             <div id="interval-display" class="interval-display">Interval</div>
         </div>
@@ -47,18 +51,18 @@
             <div class="cs-form delayedStart">
                 <label for="delayedStartDate" class="dateTimePicker dateTimePickerLabel">START DATE & TIME</label>
                 <input id="delayedStartDate" class="form-control dateTimePicker centered" type="date" />
-                <input id="delayedStartTime" value="20:05:00" type="time" step="2"
+                <input id="delayedStartTime" type="time" step="2"
                     aria-describedby="delayedStartTime-label" class="form-control dateTimePicker centered" />
             </div>
         </div>
     </div>
     <div id="startGroup" class="btn-group startGroup" role="group">
         <button id="startIntervalometer" type="button" class="btn btn-outline-primary active">START</button>
-        <button id="stopIntervalometer" type="button" class="btn btn-outline-primary">STOP</button>
-        <button id="pauseIntervalometer" type="button" class="btn btn-outline-primary">PAUSE</button>
+        <button id="stopIntervalometer" type="button" class="btn btn-outline-primary active" disabled>STOP</button>
+        <button id="pauseIntervalometer" type="button" class="btn btn-outline-primary active" disabled>PAUSE</button>
     </div>
     <div id="rampingGroup" class="btn-group" role="group" aria-label="Choose Axis">
-        <button id="activateRamping" type="button" class="btn btn-outline-primary firstButton">RAMP</button>
+        <button id="activateRamping" type="button" class="btn btn-outline-primary firstButton active" disabled>RAMP</button>
         <button id="setBulbMode" type="button" class="btn btn-outline-primary notFirstButton active">BULB</button>
         <button id="singleShot" type="button" class="btn btn-outline-primary notFirstButton active">SINGLE SHOT</button>
     </div>
@@ -133,3 +137,18 @@
     </div>
     
 </div>
+
+<div class="position-fixed top-50 start-50 translate-middle" style="z-index: 11">
+    <div id="alertIntervalometerError" class="toast alert-danger hide" data-bs-delay="10000" role="alert"
+      aria-live="assertive" aria-atomic="true">
+      <div class="toast-header bg-darker alert-danger">
+        <img src="./images/icon-32.png" class=" rounded me-2" alt="...">
+        <strong class="me-auto">Intervalometer</strong>
+        <small>Error</small>
+        <button type="button" class="btn-close btn-danger" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body alert-danger">
+        Interval is needed to be greater than the total of: Exposure + Min. Dark Time + Focus Delay
+      </div>
+    </div>
+  </div>

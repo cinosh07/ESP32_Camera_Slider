@@ -51,6 +51,22 @@ time_t getUnixTimeStamp(DateTime timestamp, bool init = false)
   }
   return unixTimestamp;
 }
+long getMillis()
+{
+  if (systemClock.intervalometerRTCClock)
+  {
+    // RTC System Clock
+
+    // to get exact latest millis() after the last second of RTC.
+    // Synch System Clock to the last passed millis to obtain 1/1000th seconds timing accuracy +/- 10 ms
+    return ((systemClock.currentUnixTimestamp - systemClock.startUnixTimeStamp) * 1000) + (millis() - systemClock.lastMillis);
+  }
+  else
+  {
+    // Internal System Clock
+    return millis();
+  }
+};
 #include "intervalometer.h"
 
 void IRAM_ATTR onShootingTimer()
@@ -68,7 +84,7 @@ DateTime initClock()
   Clock.begin();
   // disable any existing alarms
   Clock.disableAlarms();
-  
+
   Clock.setAlarm(DS3231_Simple::ALARM_EVERY_SECOND);
   // Camera trigger pins
   pinMode(2, OUTPUT);
@@ -88,6 +104,7 @@ DateTime initClock()
 
 void displayTimestampsMessage(DateTime timestamp)
 {
+  Serial.print("20");
   Serial.print(timestamp.Year);
   Serial.print("-");
   Serial.print(timestamp.Month);
@@ -141,15 +158,15 @@ void getClockTime()
   //   myFunction(&myCallback);
   // }
 }
-void setClockTime(int _timestamp[COMMAND_SIZE])
+void setClockTime(StaticJsonDocument<1024> command)
 {
   DateTime timestamp;
-  timestamp.Day = _timestamp[ClockCommandType::DAY];
-  timestamp.Month = _timestamp[ClockCommandType::MONTH];
-  timestamp.Year = _timestamp[ClockCommandType::YEAR];
-  timestamp.Hour = _timestamp[ClockCommandType::HOUR];
-  timestamp.Minute = _timestamp[ClockCommandType::MINUTE];
-  timestamp.Second = _timestamp[ClockCommandType::SECOND];
+  timestamp.Day =(uint8_t) command["DAY"];
+  timestamp.Month = (uint8_t) command["MONTH"];
+  timestamp.Year = (uint8_t) command["YEAR"];
+  timestamp.Hour = (uint8_t) command["HOUR"];
+  timestamp.Minute = (uint8_t) command["MINUTE"];
+  timestamp.Second = (uint8_t) command["SECOND"];
 
   Clock.write(timestamp);
   Serial.print("RTC Clock has been set to: ");

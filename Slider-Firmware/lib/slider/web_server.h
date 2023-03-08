@@ -13,22 +13,14 @@
  *********************************************************************/
 
 #include <Arduino.h>
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
-#include "./commands/Commands.h"
-#include "utils.h"
 #include "motors.h"
+#include "./commands/Commands.h"
+// #include "motors.h"
 #include "websocket.h"
-#include "SPIFFS.h"
 #include "spiffs_files.h"
 
 // Set web server port number to 80
 AsyncWebServer server(80);
-
-String ipToString(const IPAddress &address)
-{
-  return String() + address[0] + "." + address[1] + "." + address[2] + "." + address[3];
-};
 
 String processor(const String &var)
 {
@@ -60,6 +52,7 @@ void handleUploadIntervProfiles(AsyncWebServerRequest *request)
     if (error)
     {
       Serial.println("Failed to parse intervalometer profiles file: Error invalid json file");
+      displayJSONError(error);
       request->send(200, "text/plain", "Error invalid json file\n");
     }
     else
@@ -88,6 +81,7 @@ void handleUploadProfile(AsyncWebServerRequest *request)
     if (error)
     {
       Serial.println("Failed to parse config file: Error invalid json file");
+      displayJSONError(error);
       request->send(200, "text/plain", "Error invalid json file\n");
     }
     else
@@ -119,6 +113,7 @@ void handleUploadConfig(AsyncWebServerRequest *request)
     if (error)
     {
       Serial.println("Failed to parse config file: Error invalid json file");
+      displayJSONError(error);
       request->send(200, "text/plain", "Error invalid json file\n");
     }
     else

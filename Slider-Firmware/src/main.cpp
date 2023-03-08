@@ -65,11 +65,6 @@ void setup()
     disableCore0WDT();
     motorsBegin();
     sendControllerReadyMessage();
-
-    // intervalometer.releaseTime = 5;
-    // intervalometer.shotsTotal = 10;
-    // // intervalometer.mode = BULB_MODE;
-    // startShooting();
   }
 }
 
@@ -89,7 +84,7 @@ void loop()
     time_t unixTimestamp = getUnixTimeStamp(timestamp);
     systemClock.currentUnixTimestamp = (long)unixTimestamp;
     systemClock.lastMillis = millis();
-    
+
     if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
     {
       globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
@@ -114,62 +109,13 @@ void loop()
     break;
   case CommandStatus::GOTO_IN:
     commandStatus = CommandStatus::RUNNING;
-
-    // if (commandStatus != prevCommandStatus)
-    // {
-    //   if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
-    //   {
-
-    //     globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
-    //     prevCommandStatus = commandStatus;
-    //   }
-    // }
     gotoIn();
     break;
   case CommandStatus::GOTO_OUT:
     commandStatus = CommandStatus::RUNNING;
-
-    // if (commandStatus != prevCommandStatus)
-    // {
-    //   if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
-    //   {
-
-    //     globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
-    //     prevCommandStatus = commandStatus;
-    //   }
-    // }
     gotoOut();
     break;
-  case CommandStatus::TIMELAPSE:
-
-    switch (intervalometer.COMMAND_STATUS)
-    {
-    case TimelapseCommand::START:
-      intervalometer.COMMAND_STATUS = TimelapseCommand::IDLE;
-      intervalometer.STATUS = TimelapseStatus::RUNNING;
-
-      startShooting();
-      break;
-    case TimelapseCommand::TAKE_SINGLE_SHOT:
-      startShooting(true);
-      break;
-    case TimelapseCommand::STOP:
-      intervalometer.STATUS = TimelapseStatus::IDLE;
-      stopShooting();
-      break;
-    }
-
-    break;
   default:
-    // commandStatus = CommandStatus::IDLE;
-    // if (commandStatus != prevCommandStatus)
-    // {
-    //   if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
-    //   {
-    //     prevCommandStatus = commandStatus;
-    //     globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
-    //   }
-    // }
     break;
   }
   intervalometerLoop();
@@ -181,19 +127,10 @@ void loop()
       globalClient->text("{\"SHOTS\":" + (String)intervalometer.shotsCount + "}");
     }
   }
-  if ((commandStatus == CommandStatus::GOTO_IN | commandStatus == CommandStatus::GOTO_OUT | commandStatus == CommandStatus::RUNNING | commandStatus == CommandStatus::JOG) & !stepperSlide->isRunning() ) {
-      commandStatus = CommandStatus::IDLE;
-    }
-  // if (commandStatus != prevCommandStatus)
-  // {
-
-  //   if (globalClient != NULL && globalClient->status() == WS_CONNECTED)
-  //   {
-
-  //     globalClient->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
-  //     prevCommandStatus = commandStatus;
-  //   }
-  // }
+  if ((commandStatus == CommandStatus::GOTO_IN | commandStatus == CommandStatus::GOTO_OUT | commandStatus == CommandStatus::RUNNING | commandStatus == CommandStatus::JOG) & !stepperSlide->isRunning())
+  {
+    commandStatus = CommandStatus::IDLE;
+  }
 
   delay(10);
 }

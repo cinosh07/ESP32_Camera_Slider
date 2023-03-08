@@ -9,7 +9,10 @@ function startWebsocket() {
       socket = new WebSocket("ws://" + window.location.hostname + "/ws");
     }
     socket.onopen = function (e) {
-      socket.send("CONNECTED");
+      var message = {
+        COMMAND: "CONNECTED"
+      }
+      socket.send(JSON.stringify(message));
       $("#status").removeClass("text-danger");
       $("#status").removeClass("text-muted");
       $("#status").addClass("text-success");
@@ -26,13 +29,16 @@ function startWebsocket() {
     };
     var previousStatus = -1;
     socket.onmessage = function (event) {
-      // TODO
       try {
         var object = JSON.parse(event.data);
         if (object.SHOTS !== undefined) {
           var callback = {
             SHOTS: object.SHOTS,
           };
+          
+          if (parseInt($("#shotsTotal").val()) !== 0 && parseInt($("#shotsTotal").val()) === object.SHOTS) {
+            stopIntervalometer(false);
+          }
           console.log(callback);
         }
         if (object.COMMAND_STATUS !== undefined && previousStatus !== object.COMMAND_STATUS) {
@@ -74,9 +80,5 @@ function startWebsocket() {
       var alertConnected = document.getElementById("alertConnectionError");
       var toast = new bootstrap.Toast(alertConnected);
       toast.show();
-    //   retryConnectWebsocketTimeout = null;
-    //   retryConnectWebsocketTimeout = setTimeout(tryReconnect, 10000);
-    //   socket.close();
-    //   socket = null;
     };
   }
