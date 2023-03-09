@@ -97,6 +97,7 @@ function releaseWakeState() {
   ****************************************************************
 */
 $(async function () {
+  
   $.ajaxSetup({ cache: false });
   $("#intervalometer").load("interval.html", function () {
     $("#intervalometer").toggle(false);
@@ -693,3 +694,30 @@ Date.prototype.toDateInputValue = function () {
   local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
   return local.toJSON().slice(0, 10);
 };
+if (window.innerWidth > 400) {
+  // var mvp = document.getElementById("appViewport");
+  // mvp.setAttribute("content", "width=400");
+  // $("#body").width(400);
+  // $("#sticky-footer").width(400);
+  // $("#navBar").addClass("navbarForceMobile");
+
+
+}
+$( window ).on("resize", function() {
+  if (window.innerWidth > 400) {
+    // var mvp = document.getElementById("appViewport");
+    // mvp.setAttribute("content", "width=400");
+    // $("#body").width(400);
+    // $("#sticky-footer").width(400);
+    // $("#navBar").addClass("navbarForceMobile");
+  
+  } else {
+
+    // var mvp = document.getElementById("appViewport");
+    // mvp.setAttribute("content", "width="+(window.innerWidth - 10)+"");
+    // $("#body").width(window.innerWidth - 10);
+    // $("#sticky-footer").width(window.innerWidth- 10);
+    // $("#navBar").removeClass("navbarForceMobile");
+
+  }
+});

@@ -2,17 +2,28 @@ html {
   font-family: Helvetica;
   display: inline-block;
   margin: 0px auto;
-  text-align: center;
+  text-align: center !important;
   background-color: #212936;
   color: #f0f2f6;
   color-scheme: dark !important;
 }
 
 body {
-  background-color: #212936;
+  background-color: #212936 !important;
   color: #f0f2f6;
-  text-align: center;
+  text-align: center !important;
   color-scheme: dark !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.navbarForceMobile {
+  position: relative !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
 }
 .bg-dark {
   background-color: #212936 ! important;
@@ -20,6 +31,10 @@ body {
 
 .bg-darker {
   background-color: #171d26 ! important;
+}
+.app-footer {
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 .text-success {
@@ -330,7 +345,7 @@ body {
   width: 50%;
   background-color: rgba(0, 128, 0, 0.283);
   padding-top: 5px;
-  border-radius: 5px;
+  border-radius: 5px 0px 0px 5px;
   color: rgb(4, 243, 4);
 }
 .darkTime-display {
@@ -345,9 +360,35 @@ body {
   width: 25px;
   height: 25px;
   position: absolute;
-  left: 250px;
-  border-radius: 5px;
+  left: 0px;
+  border-radius: 0px;
   margin-top: -5px;
+  padding-top: 5px;
+  color: #11eaf1;
+}
+.sliderTimeBuffer-display {
+  
+  background-color: #fe94007f;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  left: 125px;
+  border-radius: 0px;
+  margin-top: -5px;
+  padding-top: 5px;
+  color: #fde0c57f;
+}
+.sliderDampeningTime-display {
+  background-color: #1229bf7f;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  left: 195px;
+  border-radius: 0px;
+  margin-top: -5px;
+  padding-top: 5px;
+  color: #8f9eff7f;
+  
 }
 .focus-display {
   background-color: rgba(255, 0, 0, 0.535);
@@ -356,15 +397,15 @@ body {
   position: absolute;
   left: 1px;
   /* top: 1px; */
-  border-radius: 5px;
+  border-radius: 5px 0px 0px 5px;
 }
 .minDarkTime-display {
   background-color: rgba(128, 128, 128, 0.669);
   width: 2px;
-  height: 25px;
+  height: 23px;
   position: absolute;
-  left: 225px;
-  border-radius: 5px;
+  right: 1px;
+  border-radius: 0px 5px 5px 0px;
 }
 .delayedStart {
    margin-top: -8px !important;

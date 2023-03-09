@@ -43,8 +43,6 @@ void setup()
   // Get an initialized timestamp
   DateTime MyTimestamp = initClock();
 
-  // We want the alarm at this second
-  MyTimestamp.Second = 30;
   Serial.print("Real TIme CLock initialized: ");
   displayTimestampsMessage(MyTimestamp);
 

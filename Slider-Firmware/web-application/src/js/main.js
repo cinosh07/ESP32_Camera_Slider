@@ -727,170 +727,35 @@ Date.prototype.toDateInputValue = function () {
   local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
   return local.toJSON().slice(0, 10);
 };
-const COMMAND_TYPE = {
-  JOYSTICK: 0,
-  CLOCK: 1,
-  HOME: 2,
-  GOTO_IN: 3,
-  GOTO_OUT: 4,
-  GOTO_KEYFRAME: 5,
-  MARK_IN: 6,
-  MARK_OUT: 7,
-  MARK_KEYFRAME: 8,
-  DEL_KEYFRAME: 9,
-  ADD_KEYFRAME: 10,
-  SET_SLAVE_MODE: 11,
-  SET_TIMELAPSE_MODE: 12,
-  SET_SLIDE_KINEMATIC: 13,
-  SET_PAN_KINEMATIC: 14,
-  SET_TILT_KINEMATIC: 15,
-  SET_FOCUS_KINEMATIC: 16,
-};
-const JOYSTICK_COMMAND = {
-  JOYSTICK_PAN_MOVE: 0,
-  JOYSTICK_TILT_MOVE: 1,
-  JOYSTICK_SLIDE_MOVE: 2,
-  JOYSTICK_FOCUS_MOVE: 3,
-};
-const COMMAND_TYPE_JOYSTICK = {
-  COMMAND_TYPE: 0,
-  COMMAND: 1,
-  SPEED: 2,
-  DIR: 3,
-  ACCEL: 4,
-  MULTIPLICATOR: 5,
-  SPEED_SCALING: 6,
-  NOT_USE_ENTRY_7: 7,
-};
-const COMMAND_TYPE_CLOCK = {
-  COMMAND_TYPE: 0,
-  COMMAND: 1,
-  YEAR: 2,
-  MONTH: 3,
-  DAY: 4,
-  HOUR: 5,
-  MINUTE: 6,
-  SECOND: 7,
-};
-const CLOCK_COMMAND = {
-  SET_CLOCK_TIME: 0,
-  GET_CLOCK_TIME: 1,
-};
-const TIMELAPSE_COMMAND = {
-  IDLE: 0,
-  START: 1,
-  STOP: 2,
-  PAUSE: 3,
-  TAKE_SINGLE_SHOT: 4,
-  SET_START_TIME_ALARM: 5,
-  GET_START_TIME_ALARM: 6,
-  CLEAR_START_TIME_ALARM: 7,
-  START_INTERVALOMETER: 8,
-  STOP_INTERVALOMETER: 9,
-  PAUSE_INTERVALOMETER: 10,
-  START_INTERVALOMETER_RAMPING: 11,
-  STOP_INTERVALOMETER_RAMPING: 12,
-  UPDATE_INTERVALOMETER_RAMPING: 13,
-};
 function markIn() {
-  var command;
-  command =
-    COMMAND_TYPE.MARK_IN +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0;
-  sendCommand(command);
+  var command = {
+    COMMAND: "MARK_IN",
+  };
+  sendJSONCommand(command);
 }
 function markOut() {
-  var command;
-  command =
-    COMMAND_TYPE.MARK_OUT +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0;
-  sendCommand(command);
+  var command = {
+    COMMAND: "MARK_OUT",
+  };
+  sendJSONCommand(command);
 }
 function gotoIn() {
-  var command;
-  command =
-    COMMAND_TYPE.GOTO_IN +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0;
-  sendCommand(command);
+  var command = {
+    COMMAND: "GOTO_IN",
+  };
+  sendJSONCommand(command);
 }
 function gotoOut() {
-  var command;
-  command =
-    COMMAND_TYPE.GOTO_OUT +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0;
-  sendCommand(command);
+  var command = {
+    COMMAND: "GOTO_OUT",
+  };
+  sendJSONCommand(command);
 }
 function sendHomeSlider() {
-  var command;
-  command =
-    COMMAND_TYPE.HOME +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0;
-  sendCommand(command);
+  var command = {
+    COMMAND: "HOME",
+  };
+  sendJSONCommand(command);
 }
 function sendTimeStamp() {
   var now = new Date();
@@ -905,24 +770,17 @@ function sendTimeStamp() {
     now.getSeconds();
   var fullDate = now.toISOString().substring(0, 10).slice(2).split("-");
 
-  var command;
-  command =
-    COMMAND_TYPE.CLOCK +
-    "::" +
-    CLOCK_COMMAND.SET_CLOCK_TIME +
-    "::" +
-    fullDate[0] + // Year
-    "::" +
-    fullDate[1] + // Month
-    "::" +
-    fullDate[2] + // Day
-    "::" +
-    now.getHours() +
-    "::" +
-    now.getMinutes() +
-    "::" +
-    now.getSeconds();
-  sendCommand(command);
+  var command = {
+    COMMAND: "SET_CLOCK_TIME",
+    DAY: fullDate[2],
+    MONTH: fullDate[1],
+    YEAR: fullDate[0],
+    HOUR: now.getHours(),
+    MINUTE: now.getMinutes(),
+    SECOND: now.getSeconds(),
+  };
+  sendJSONCommand(command);
+
   console.log("Set ESP32 RTC time : " + timestampToSend);
 }
 
@@ -1031,48 +889,32 @@ function stopIntervalometer(withCommand) {
 }
 
 function pauseIntervalometer() {
-  var command;
-  command =
-    COMMAND_TYPE.TIMELAPSE +
-    "::" +
-    TIMELAPSE_COMMAND.PAUSE_INTERVALOMETER +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0 +
-    "::" +
-    0;
-  sendCommand(command);
+  // TODO
+  // PAUSE_INTERVALOMETER
+
+  // sendJSONCommand(command);
 }
 function activateRamping() {
   //TODO
 }
 
 function singleShot() {
-  var command;
-  command =
-    COMMAND_TYPE.TIMELAPSE +
-    "::" +
-    TIMELAPSE_COMMAND.TAKE_SINGLE_SHOT +
-    "::" +
-    $("#shotsDuration").val() +
-    "::" +
-    1 + // Take only one shot
-    "::" +
-    $("#interval").val() +
-    "::" +
-    $("#minDarkTime").val() +
-    "::" +
-    0 + // TODO Add mode MANUAL or BULB
-    "::" +
-    0;
-  sendCommand(command);
+  var command = {
+    COMMAND: "TAKE_SINGLE_SHOT",
+    interval: $("#interval").val(),
+    shotsTotal: $("#shotsTotal").val(),
+    mode: 0, //$("#mode").val()
+    shotsDuration: $("#shotsDuration").val(),
+    minDarkTime: $("#minDarkTime").val(),
+    rampDuration: $("#rampDuration").val(),
+    rampTo: $("#rampTo").val(),
+    rampingStartTime: $("#rampingStartTime").val(),
+    rampingEndTime: $("#rampingEndTime").val(),
+    intervalBeforeRamping: $("#intervalBeforeRamping").val(),
+    camSentinel: $("#camSentinel").val(),
+    focusDelay: $("#focusDelay").val(),
+  };
+  sendJSONCommand(command);
 }
 
 //***************************************************************************** */
@@ -1428,7 +1270,6 @@ function checkIntervalometerMisMatchAndError(id, data) {
     $("#saveIntervProfile").attr("disabled", true);
   }
   updateIntervalometerDisplay();
-  
 }
 function sendJSONCommand(command) {
   try {
@@ -1564,64 +1405,64 @@ async function saveIntervalometerProfiles() {
 //                    Intervalometer Display
 //
 function updateIntervalometerDisplay() {
-
   // TODO
   // CSS Class left -> .slider-display || .minDarkTime-display
-  // CSS Class width -> .darkTime-display || .exposure-display || .focus-display { 
+  // CSS Class width -> .darkTime-display || .exposure-display || .focus-display {
   // $("#other-unit-display") toggle true or false depending on Slider Mode true or false
   // $("#interval-display") width = 100% of intervalometer display width
+  // $("#slider-display-label") for slider duration
+
   $("#other-unit-display").toggle(sliderMode);
   var interval = parseFloat($("#interval").val());
   var shotsDuration = parseFloat($("#shotsDuration").val());
   var focusDelay = parseFloat($("#focusDelay").val());
   var darkTime = interval - shotsDuration - focusDelay;
-  
+
   $("#interval-display").html("Interval " + interval + " sec.");
   $("#exposure-display").html("Exp. " + shotsDuration + " sec.");
   $("#darkTime-display").html("Dark " + darkTime + " sec.");
-}/* ***************************************************************
+}
+/* ***************************************************************
                        Joysticks Controls
   ****************************************************************
 */
 function joystickPanMove(data) {
     // console.log("############### joystickPan value: " + data);
-    let speed = data;
     let dir = 0;
     if (data < 0) {
       dir = -1;
       data = Math.abs(data);
     }
     let command = {
-      command: "JOYSTICK_PAN_MOVE",
+      COMMAND: "JOYSTICK_PAN_MOVE",
       speed: data,
       dir: dir,
     };
-    // sendCommand(command);
+    // sendJSONCommand(command);
   }
   function joystickTiltMove(data) {
     // console.log("############### joysticTilt value: " + data);
-    let speed = data;
     let dir = 0;
     if (data < 0) {
       dir = -1;
       data = Math.abs(data);
     }
     let command = {
-      command: "JOYSTICK_TILT_MOVE",
+      COMMAND: "JOYSTICK_TILT_MOVE",
       speed: data,
       dir: dir,
     };
-    // sendCommand(command);
+    // sendJSONCommand(command);
   }
   
   function joystickSlideMove(data) {
-    let speed = data;
+    
     let dir = 0;
-  
     if (data < 0) {
       dir = -1;
       data = Math.abs(data);
     }
+    
     if (joystickSlideMoveCount === 10) {
       var average = Avg.average(joystickSlideMoveArray);
       if (Math.round(average) !== joystickSlideMovePreviousAverage) {
@@ -1634,121 +1475,50 @@ function joystickPanMove(data) {
             joystickSlideMovePreviousAverage
         );
         joystickSlideMovePreviousAverage = Math.round(average);
-        // const COMMAND_TYPE_JOYSTICK = {
-        //   COMMAND_TYPE: 0,
-        //   COMMAND: 1,
-        //   SPEED: 2,
-        //   DIR: 3,
-        //   ACCEL: 4,
-        //   MULTIPLICATOR: 5,
-        //   SPEED_SCALING: 6,
-        // };
-        var command;
-        command =
-          COMMAND_TYPE.JOYSTICK +
-          "::" +
-          JOYSTICK_COMMAND.JOYSTICK_SLIDE_MOVE +
-          "::" +
-          Math.round(Avg.average(joystickSlideMoveArray)) +
-          "::" +
-          dir +
-          "::" +
-          0 +
-          "::" +
-          0 +
-          "::" +
-          0 +
-          "::0";
-  
-        // let command = {
-        //   command: "JOYSTICK_SLIDE_MOVE",
-        //   speed: Avg.average(joystickSlideMoveArray),
-        //   dir: dir,
-        // };
-  
-        sendCommand(command);
+        let command = {
+          COMMAND: "JOYSTICK_SLIDE_MOVE",
+          speed:  Math.round(Avg.average(joystickSlideMoveArray)),
+          dir: dir,
+        };
+        sendJSONCommand(command);
       }
-      // joystickSlideMovePreviousAverage = 0;
       joystickSlideMoveArray = [];
       joystickSlideMoveCount = 0;
     } else {
-      // sleep(10).then(() => {
       joystickSlideMoveArray.push(Math.round(data * 100));
       joystickSlideMoveCount = joystickSlideMoveCount + 1;
-      // });
     }
     if (dir !== joystickSlideMovePreviousDir) {
       console.log(
         "############### CHANGE DIR joystickSlide value: " +
           Math.round(data * 100)
       );
-      // let command = {
-      //   command: "JOYSTICK_SLIDE_MOVE",
-      //   speed: data,
-      //   dir: dir,
-      // };
-      // var command = [];
-      // command[COMMAND.COMMAND] = JOYSTICK_COMMAND.JOYSTICK_SLIDE_MOVE;
-      // command[COMMAND.SPEED] = Math.round(data * 100);
-      // command[COMMAND.DIR] = dir;
-      // command[COMMAND.ACCEL] = 0;
-      // command[COMMAND.MULTIPLICATOR] = 0;
-      // command[COMMAND.SPEED_SCALING] = 0;
-  
-      var command;
-      command =
-        COMMAND_TYPE.JOYSTICK +
-        "::" +
-        JOYSTICK_COMMAND.JOYSTICK_SLIDE_MOVE +
-        "::" +
-        Math.round(data * 100) +
-        "::" +
-        dir +
-        "::" +
-        0 +
-        "::" +
-        0 +
-        "::" +
-        0;
-  
-      sendCommand(command);
+      let command = {
+        COMMAND: "JOYSTICK_SLIDE_MOVE",
+        speed:  Math.round(data * 100),
+        dir: dir,
+      };
+      sendJSONCommand(command);
       joystickSlideMovePreviousDir = dir;
     }
     if (data === 0) {
       console.log(
         "############### STOP joystickSlide value: " + Math.round(data * 100)
       );
-      // let command = {
-      //   command: "JOYSTICK_SLIDE_MOVE",
-      //   speed: data,
-      //   dir: dir,
-      // };
-  
-      var command;
-      command =
-        COMMAND_TYPE.JOYSTICK +
-        "::" +
-        JOYSTICK_COMMAND.JOYSTICK_SLIDE_MOVE +
-        "::" +
-        Math.round(data * 100) +
-        "::" +
-        dir +
-        "::" +
-        0 +
-        "::" +
-        0 +
-        "::" +
-        0;
-  
-      sendCommand(command);
+      let command = {
+        COMMAND: "JOYSTICK_SLIDE_MOVE",
+        speed:  Math.round(data * 100),
+        dir: dir,
+      };
+      sendJSONCommand(command);
   
       joystickSlideMovePreviousDir = -2;
     }
+    console.log("Joystick Slide Move Dir: " + dir);
   }
   
   function joystickFocusMove(data) {
     // console.log("############### joystickFocus value: " + data);
-    let speed = data;
     let dir = 0;
     if (data < 0) {
       dir = -1;
@@ -1759,7 +1529,7 @@ function joystickPanMove(data) {
       speed: data,
       dir: dir,
     };
-    // sendCommand(command);
+    // sendJSONCommand(command);
   }/* ***************************************************************
                           Websocket
   ****************************************************************
@@ -1771,7 +1541,10 @@ function startWebsocket() {
       socket = new WebSocket("ws://" + window.location.hostname + "/ws");
     }
     socket.onopen = function (e) {
-      socket.send("CONNECTED");
+      var message = {
+        COMMAND: "CONNECTED"
+      }
+      socket.send(JSON.stringify(message));
       $("#status").removeClass("text-danger");
       $("#status").removeClass("text-muted");
       $("#status").addClass("text-success");
