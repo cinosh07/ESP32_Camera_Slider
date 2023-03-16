@@ -40,10 +40,14 @@ void displayEncoderReadyMessage(int b) {
 }
 
 
-void sendControllerReadyMessage() {
+void sendControllerReadyMessage(bool intervalMode) {
+    String controllerType = "Slider Controller ready !";
+    if (intervalMode) {
+        controllerType = "Intervalometer ready!";
+    }
     Serial.println("");
     Serial.println("**********************************");
-    Serial.println("Slider controller ready!");
+    Serial.println(controllerType);
     Serial.println("**********************************");
     Serial.println("");
 }

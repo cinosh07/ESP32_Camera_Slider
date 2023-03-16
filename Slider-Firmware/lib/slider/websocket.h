@@ -52,7 +52,7 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
   if (type == WS_EVT_CONNECT)
   {
     sendWebsocketReadyMessage();
-    client->text("{\"COMMAND_STATUS\":" + (String)commandStatus + "}");
+    client->text("{\"COMMAND_STATUS\":" + (String)commandStatus + ", \"INTERVALOMETER_MODE\":"+config.intervalMode+"}");
     globalClient = client;
   }
   else if (type == WS_EVT_DISCONNECT)

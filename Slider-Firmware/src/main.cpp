@@ -70,7 +70,7 @@ void setup()
       motorsBegin();
     }
 
-    sendControllerReadyMessage();
+    sendControllerReadyMessage(config.intervalMode);
   }
 }
 
