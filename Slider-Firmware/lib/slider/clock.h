@@ -55,7 +55,7 @@ long getMillis()
 {
   if (systemClock.intervalometerRTCClock)
   {
-    // RTC System Clock
+    // RTC System Clock2
 
     // to get exact latest millis() after the last second of RTC.
     // Synch System Clock to the last passed millis to obtain 1/1000th seconds timing accuracy +/- 10 ms
@@ -87,8 +87,8 @@ DateTime initClock()
 
   Clock.setAlarm(DS3231_Simple::ALARM_EVERY_SECOND);
   // Camera trigger pins
-  pinMode(2, OUTPUT);
-  digitalWrite(2, LOW);
+  pinMode(config.cam1Trigger, OUTPUT);
+  digitalWrite(config.cam1Trigger, LOW);
 
   systemClock.shootingTimer = timerBegin(0, 80, true);
   timerAttachInterrupt(systemClock.shootingTimer, &onShootingTimer, true);
@@ -125,9 +125,12 @@ void core0_timing_task(void *pvParameters)
 {
   for (;;)
   {
-    readEncoders();
-    vTaskDelay(10);
-    checkLimitSwitch();
+    
+      readEncoders();
+      vTaskDelay(10);
+      checkLimitSwitch();
+    
+
     // BatCheck();
   }
 }
@@ -161,12 +164,12 @@ void getClockTime()
 void setClockTime(StaticJsonDocument<1024> command)
 {
   DateTime timestamp;
-  timestamp.Day =(uint8_t) command["DAY"];
-  timestamp.Month = (uint8_t) command["MONTH"];
-  timestamp.Year = (uint8_t) command["YEAR"];
-  timestamp.Hour = (uint8_t) command["HOUR"];
-  timestamp.Minute = (uint8_t) command["MINUTE"];
-  timestamp.Second = (uint8_t) command["SECOND"];
+  timestamp.Day = (uint8_t)command["DAY"];
+  timestamp.Month = (uint8_t)command["MONTH"];
+  timestamp.Year = (uint8_t)command["YEAR"];
+  timestamp.Hour = (uint8_t)command["HOUR"];
+  timestamp.Minute = (uint8_t)command["MINUTE"];
+  timestamp.Second = (uint8_t)command["SECOND"];
 
   Clock.write(timestamp);
   Serial.print("RTC Clock has been set to: ");

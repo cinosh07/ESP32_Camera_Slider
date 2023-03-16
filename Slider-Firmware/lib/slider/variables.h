@@ -113,3 +113,21 @@ struct Intervalometer_Cfg
     byte cameraTriggerStop = SHOOTING_STOPPED;
     int exposureTriggerTime = 0; // Time to keep the camera trigger on in Timer Interrupt duration - 10 ms
 };
+struct Config
+{
+  String ssidap;
+  String passwordap;
+  String ssid;
+  String password;
+  bool intervalMode;
+  int tmc_uart_rx;
+  int tmc_uart_tx;
+  bool access_point;
+  JsonVariant configJson;
+  JsonVariant profileJson;
+  int cam1Trigger;
+  int cam2Trigger;
+  int slaveTrigger;
+};
+
+Config config;

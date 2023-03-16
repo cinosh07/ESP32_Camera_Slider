@@ -32,8 +32,8 @@
 //
 // For this to work set DEBUG=true
 
-var DEBUG = true;
-var sliderMode = true;
+var DEBUG = false;
+var sliderMode = false;
 var timelapseMode = true;
 
 // The nav bar background color will now appear RED to clearly show that we are now in debug mode.

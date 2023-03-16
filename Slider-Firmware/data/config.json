@@ -13,7 +13,7 @@
     },
     "bat_pin": 39,
     "profile": "profile-1",
-    "interval-mode": false,
+    "interval-mode": true,
     "profiles_name": {
         "profile-1": "Cinosh - 1 axis slider",
         "profile-2": "Dynamic Perception - 3 axis slider",

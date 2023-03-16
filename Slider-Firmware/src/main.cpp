@@ -37,9 +37,13 @@ void setup()
   // Networking
   initNetwork();
 
-  // Encoder
-  int result = initEncoder();
-  displayEncoderReadyMessage(result);
+  if (!config.intervalMode)
+  {
+    // Encoder
+    int result = initEncoder();
+    displayEncoderReadyMessage(result);
+  }
+
   // Get an initialized timestamp
   DateTime MyTimestamp = initClock();
 
@@ -57,11 +61,15 @@ void setup()
   {
     initServer();
     initWebsocket();
-    initMotors();
-    initTimingCoreTask();
-    delay(100);
-    disableCore0WDT();
-    motorsBegin();
+    if (!config.intervalMode)
+    {
+      initMotors();
+      initTimingCoreTask();
+      delay(100);
+      disableCore0WDT();
+      motorsBegin();
+    }
+
     sendControllerReadyMessage();
   }
 }
@@ -125,9 +133,12 @@ void loop()
       globalClient->text("{\"SHOTS\":" + (String)intervalometer.shotsCount + "}");
     }
   }
-  if ((commandStatus == CommandStatus::GOTO_IN | commandStatus == CommandStatus::GOTO_OUT | commandStatus == CommandStatus::RUNNING | commandStatus == CommandStatus::JOG) & !stepperSlide->isRunning())
+  if (!config.intervalMode)
   {
-    commandStatus = CommandStatus::IDLE;
+    if ((commandStatus == CommandStatus::GOTO_IN | commandStatus == CommandStatus::GOTO_OUT | commandStatus == CommandStatus::RUNNING | commandStatus == CommandStatus::JOG) & !stepperSlide->isRunning())
+    {
+      commandStatus = CommandStatus::IDLE;
+    }
   }
 
   delay(10);

@@ -151,13 +151,22 @@ void handleUploadServerData(AsyncWebServerRequest *request)
 void initServer()
 {
   // HTML Files
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/www/index.html", String(), false, processor); });
-  // TODO Swtich to this index page if firmware is in intervalometer mode -> "interval-mode" : true in config.json,
-  //  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-  //            { request->send(SPIFFS, "/www/index-interv.html", String(), false, processor); });
-  server.on("/index.html", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/www/index.html", String(), false, processor); });
+  if (!config.intervalMode)
+  {
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/www/index.html", String(), false, processor); });
+    server.on("/index.html", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/www/index.html", String(), false, processor); });
+  }
+  else
+  {
+    // Swtich to this index page if firmware is in intervalometer mode -> "interval-mode" : true in config.json,
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/www/index-interv.html", String(), false, processor); });
+    server.on("/index.html", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/www/index-interv.html", String(), false, processor); });
+  }
+
   server.on("/index-interv.html", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/www/index-interv.html", String(), false, processor); });
   server.on("/interval.html", HTTP_GET, [](AsyncWebServerRequest *request)

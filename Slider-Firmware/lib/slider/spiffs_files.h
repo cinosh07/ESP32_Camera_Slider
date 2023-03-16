@@ -21,20 +21,21 @@
 // #include <Arduino.h>
 // #include "ArduinoJson.h"
 
-struct Config
-{
-  String ssidap;
-  String passwordap;
-  String ssid;
-  String password;
-  int tmc_uart_rx;
-  int tmc_uart_tx;
-  bool access_point;
-  JsonVariant configJson;
-  JsonVariant profileJson;
-};
+// struct Config
+// {
+//   String ssidap;
+//   String passwordap;
+//   String ssid;
+//   String password;
+//   bool intervalMode;
+//   int tmc_uart_rx;
+//   int tmc_uart_tx;
+//   bool access_point;
+//   JsonVariant configJson;
+//   JsonVariant profileJson;
+// };
 
-Config config;
+// Config config;
 
 bool initSPIFFS()
 {
@@ -170,7 +171,22 @@ void readConfigFile()
           String ssidap = doc["wifi"]["ssidap"];
           config.ssidap = ssidap;
           Serial.println();
+          bool intervalMode = doc["interval-mode"];
+          config.intervalMode = intervalMode;
 
+          if (config.intervalMode) {
+            config.cam1Trigger = 27;
+            config.cam2Trigger = 26;
+            config.slaveTrigger = 4;
+          } else {
+            int cam1Trigger = doc["camera_trigger"]["cam1_pin"];
+            int cam2Trigger = doc["camera_trigger"]["cam2_pin"];
+            int slaveTrigger = doc["camera_trigger"]["slave_pin"];
+
+            config.cam1Trigger = cam1Trigger;
+            config.cam2Trigger = cam2Trigger;
+            config.slaveTrigger = slaveTrigger;
+          }
           String passwordap = doc["wifi"]["passwordap"];
           config.passwordap = passwordap;
           String ssid = doc["wifi"]["ssid"];

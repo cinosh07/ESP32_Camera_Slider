@@ -67,7 +67,7 @@
 // For this to work set DEBUG=true
 
 var DEBUG = false;
-var sliderMode = true;
+var sliderMode = false;
 var timelapseMode = true;
 
 // The nav bar background color will now appear RED to clearly show that we are now in debug mode.
@@ -131,6 +131,7 @@ function releaseWakeState() {
   ****************************************************************
 */
 $(async function () {
+  
   $.ajaxSetup({ cache: false });
   $("#intervalometer").load("interval.html", function () {
     $("#intervalometer").toggle(false);
@@ -727,7 +728,33 @@ Date.prototype.toDateInputValue = function () {
   local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
   return local.toJSON().slice(0, 10);
 };
-function markIn() {
+if (window.innerWidth > 400) {
+  // var mvp = document.getElementById("appViewport");
+  // mvp.setAttribute("content", "width=400");
+  // $("#body").width(400);
+  // $("#sticky-footer").width(400);
+  // $("#navBar").addClass("navbarForceMobile");
+
+
+}
+$( window ).on("resize", function() {
+  if (window.innerWidth > 400) {
+    // var mvp = document.getElementById("appViewport");
+    // mvp.setAttribute("content", "width=400");
+    // $("#body").width(400);
+    // $("#sticky-footer").width(400);
+    // $("#navBar").addClass("navbarForceMobile");
+  
+  } else {
+
+    // var mvp = document.getElementById("appViewport");
+    // mvp.setAttribute("content", "width="+(window.innerWidth - 10)+"");
+    // $("#body").width(window.innerWidth - 10);
+    // $("#sticky-footer").width(window.innerWidth- 10);
+    // $("#navBar").removeClass("navbarForceMobile");
+
+  }
+});function markIn() {
   var command = {
     COMMAND: "MARK_IN",
   };
@@ -891,7 +918,6 @@ function stopIntervalometer(withCommand) {
 function pauseIntervalometer() {
   // TODO
   // PAUSE_INTERVALOMETER
-
   // sendJSONCommand(command);
 }
 function activateRamping() {
@@ -1417,10 +1443,120 @@ function updateIntervalometerDisplay() {
   var shotsDuration = parseFloat($("#shotsDuration").val());
   var focusDelay = parseFloat($("#focusDelay").val());
   var darkTime = interval - shotsDuration - focusDelay;
+  var minDarkTime = parseFloat($("#minDarkTime").val());
+
+  var exposureWidth =
+    ((shotsDuration + focusDelay) * $("#interval-display").width()) / interval;
+  var darkWidth = $("#interval-display").width() - exposureWidth;
+  var focusDelayWidth = 0;
+  if (focusDelay > 0) {
+    focusDelayWidth = (focusDelay * $("#interval-display").width()) / interval;
+    if (focusDelayWidth < 1) {
+      focusDelayWidth = 1;
+    }
+  }
+  var minDarkTimeWidth = 0;
+  if (minDarkTime > 0) {
+    minDarkTimeWidth =
+      (minDarkTime * $("#interval-display").width()) / interval;
+    if (minDarkTimeWidth < 1) {
+      minDarkTimeWidth = 1;
+    }
+  }
+
+  var sliderTimeBuffer = 0;
+  var sliderDampeningTime = 1;
+  var sliderTime =
+    darkTime - minDarkTime - sliderTimeBuffer - sliderDampeningTime;
+  var sliderWidth =
+    (sliderTime * (darkWidth - minDarkTimeWidth)) / interval + "px";
+  var sliderPosition = "150px";
+
+  console.log("darkTime: " + darkTime);
+  console.log("minDarkTime: " + minDarkTime);
+  console.log("sliderTime: " + sliderTime);
+
+  console.log("darkWidth: " + darkWidth);
+  console.log("exposureWidth: " + exposureWidth);
+  console.log("minDarkTimeWidth: " + minDarkTimeWidth);
+  console.log("focusDelayWidth: " + focusDelayWidth);
+  console.log("sliderWidth: " + sliderWidth);
+
+  // .sliderTimeBuffer-display {
+  // .sliderDampeningTime-display {
+
+  $("#minDarkTime-display").css({
+    width: minDarkTimeWidth,
+    "background-color": "rgba(128, 128, 128, 0.3)",
+    "padding-top": "5px",
+    "border-radius": "0px 5px 5px 0px",
+    color: "gray",
+  });
+  $("#darkTime-display").css({
+    width: darkWidth,
+    "background-color": "#171d26",
+    "padding-top": "5px",
+    "border-radius": "5px",
+    color: "white",
+  });
+  $("#exposure-display").css({
+    width: exposureWidth,
+    "background-color": "#00800088",
+    "padding-top": "5px",
+    "border-radius": "5px 0px 0px 5px",
+    color: "#04f304",
+  });
+  $("#focus-display").css({
+    width: focusDelayWidth,
+    "background-color": "#ff000066",
+    "padding-top": "5px",
+    "border-radius": "5px 0px 0px 5px",
+  });
+  // .css({"width":sliderWidth not work with JQuery on absolute position element so I did it with document
+  document.getElementById("slider-display").style.left = sliderPosition;
+  document.getElementById("slider-display").style.width = sliderWidth;
+
+  var exposureDisplay;
+  if (exposureWidth < 50) {
+    exposureDisplay = shotsDuration;
+  } else {
+    exposureDisplay = "Exp. " + shotsDuration + " sec.";
+  }
+
+  var darkDisplay;
+  if (darkWidth < 55) {
+    darkDisplay = Math.round((darkTime + Number.EPSILON) * 100) / 100;
+  } else {
+    darkDisplay =
+      "Dark " + Math.round((darkTime + Number.EPSILON) * 100) / 100 + " sec.";
+  }
 
   $("#interval-display").html("Interval " + interval + " sec.");
-  $("#exposure-display").html("Exp. " + shotsDuration + " sec.");
-  $("#darkTime-display").html("Dark " + darkTime + " sec.");
+  $("#exposure-display").html(exposureDisplay);
+  $("#darkTime-display").html(darkDisplay);
+  if (minDarkTime > 0) {
+    $("#minDarkTime-display").html(
+      Math.round((minDarkTime + Number.EPSILON) * 100) / 100
+    );
+  } else {
+    $("#minDarkTime-display").html("");
+  }
+  if (sliderTime > 0) {
+    $("#slider-display").html(
+      Math.round((sliderTime + Number.EPSILON) * 100) / 100 + " sec."
+    );
+  } else {
+    $("#slider-display").html(
+      Math.round((sliderTime + Number.EPSILON) * 100) / 100
+    );
+  }
+  if (sliderTime < 0 || sliderTime === 0) {
+    $("#slider-display").addClass("red");
+    $("#slider-display-label").addClass("red");
+  } else {
+    $("#slider-display").removeClass("red");
+    $("#slider-display-label").removeClass("red");
+  }
 }
 /* ***************************************************************
                        Joysticks Controls

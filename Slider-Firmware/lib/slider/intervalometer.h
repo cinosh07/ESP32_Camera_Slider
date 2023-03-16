@@ -60,7 +60,7 @@ void releaseCamera()
         }
         intervalometer.cameraTriggerStop = intervalometer.SHOOTING_STARTED;
 
-        digitalWrite(2, HIGH);
+        digitalWrite(config.cam1Trigger, HIGH);
     }
     else
     {
@@ -69,7 +69,7 @@ void releaseCamera()
             intervalometer.bulbStopTime = getMillis();
             intervalometer.exposureTriggerTime = intervalometer.releaseTime * 100;
             intervalometer.cameraTriggerStop = intervalometer.SHOOTING_STARTED;
-            digitalWrite(2, HIGH);
+            digitalWrite(config.cam1Trigger, HIGH);
         }
     }
 }
@@ -113,7 +113,7 @@ void intervalometerLoop()
             // Camera Trigger released
             intervalometer.cameraTriggerStop = intervalometer.SHOOTING_STOPPED;
             intervalometer.shotsCount++;
-            digitalWrite(2, LOW);
+            digitalWrite(config.cam1Trigger, LOW);
         }
     }
     if (intervalometer.isRunning)
